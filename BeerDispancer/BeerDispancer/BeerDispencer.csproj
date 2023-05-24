@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
+   
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DomainLayer\" />
+    <None Remove="Controllers\" />
+    <None Remove="ApplicationLayer\" />
+    <None Remove="DataLayer\" />
+    <None Remove="DataLayer\Models\" />
+    <None Remove="Extensions\" />
+    <None Remove="DataLayer\Abstractions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DomainLayer\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="ApplicationLayer\" />
+    <Folder Include="DataLayer\" />
+    <Folder Include="DataLayer\Models\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="DataLayer\Abstractions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Migrations\Migrations.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
