@@ -1,21 +1,19 @@
-﻿using BeerDispancer.ApplicationLayer;
-using BeerDispancer.DataLayer;
-using BeerDispancer.DataLayer.Abstractions;
+﻿
+
 using Microsoft.EntityFrameworkCore;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
-using BeerDispancer.Extensions;
-using Migrations;
 using BeerDispencer.Infrastructure.Settings;
+using BeerDispancer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Persistence.Models;
+using BeerDispencer.Infrastructure.Implementations;
+using BeerDispencer.WebApi.Services;
+using BeerDispencer.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEntityFrameworkNpgsql();
 
-var dbSettings = builder.Configuration.GetSection("DbSettings").Get<DbSettings>();
-
-
-builder.Services.AddSingleton<DbSettings>(dbSettings);
 
 
 builder.Services.AddControllers();
@@ -23,12 +21,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<BeerDispancerDbContext>();
+builder.Services.AddSettings(builder.Configuration);
+
+builder.Services.AddTransient<IBeerDispancerDbContext, BeerDispencerDbContext>();
 
 builder.Services.AddTransient<IDispencerUof, BeerDispancerUof>();
-builder.Services.AddTransient<DispencerManager>();
+builder.Services.AddTransient<DispencerService>();
 
-builder.Services.AddMigrations(dbSettings.ConnectionString);
+builder.Services.AddMigrations(builder.Configuration);
 builder.Services.AddHostedService<MigratorJob>();
 
 var app = builder.Build();

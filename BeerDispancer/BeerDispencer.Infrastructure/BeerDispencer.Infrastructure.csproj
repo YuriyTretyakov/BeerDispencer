@@ -8,8 +8,27 @@
 
   <ItemGroup>
     <None Remove="Settings\" />
+    <None Remove="Persistence\" />
+    <None Remove="Implementations\" />
+    <None Remove="Persistence\Migrations\" />
+    <None Remove="DTO\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />
+    <Folder Include="Persistence\" />
+    <Folder Include="Implementations\" />
+    <Folder Include="Persistence\Migrations\" />
+    <Folder Include="DTO\" />
+  </ItemGroup>
+  <ItemGroup>
+     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
+   
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />
+    <ProjectReference Include="..\Beerdispancer.Domain\Beerdispancer.Domain.csproj" />
   </ItemGroup>
 </Project>

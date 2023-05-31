@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BeerDispancer.ApplicationLayer;
-using BeerDispancer.Extensions;
-using BeerDispancer.PresentationLayer;
+using Beerdispancer.Infrastructure.DTO;
+using BeerDispencer.Infrastructure.Implementations;
+using BeerDispencer.WebApi.Commands;
+using BeerDispencer.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -14,19 +15,18 @@ namespace BeerDispancer.Controllers
     [Route("api/[controller]")]
     public class DispencerController : Controller
     {
-        private readonly DispencerManager _dispencerManager;
+        private readonly DispencerService _dispencerService;
 
-        public DispencerController(DispencerManager dispencerManager)
+        public DispencerController(DispencerService dispencerMService)
         {
-            _dispencerManager = dispencerManager;
+            _dispencerService = dispencerMService;
         }
 
         [HttpPost()]
-        public async Task<IActionResult> CreateDispancer([FromBody] DispencerCreate createDispancer)
+        public async Task<IActionResult> CreateDispancer([FromBody] DispencerCreateCommand createDispancer)
         {
             var dispencerDto = createDispancer.ToDto();
-
-            var dispencer = await _dispencerManager.CreateDispencerAsync(dispencerDto);
+            var dispencer = await _dispencerService.CreateDispencerAsync(dispencerDto);
             var dispencerResponse = dispencer.ToViewModel();
 
             return Ok(dispencerResponse);
@@ -34,10 +34,10 @@ namespace BeerDispancer.Controllers
 
        
         [HttpPut("{id}/status")]
-        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdate udpateCommand, Guid id)
+        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateCommand udpateCommand, Guid id)
         {
-            var updateDt = udpateCommand.ToDto(id);
-            var result = await _dispencerManager.ChangeDispancerStateAsync(updateDt);
+            var updateDto = udpateCommand.ToDto(id);
+            var result = await _dispencerService.ChangeDispancerStateAsync(updateDto);
             return result == true ? Accepted() : Conflict();
         }
        
@@ -45,8 +45,8 @@ namespace BeerDispancer.Controllers
         [HttpGet("{id}/spending")]
         public IActionResult GetSpending(Guid id)
         {
-            var result =  _dispencerManager.GetSpending(id);
-            return Ok(result);
+            var result =  _dispencerService.GetSpending(id);
+            return Ok(result.ToViewModel());
         }
     }
 }
