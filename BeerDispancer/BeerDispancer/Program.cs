@@ -6,9 +6,11 @@ using FluentMigrator.Runner.Initialization;
 using BeerDispencer.Infrastructure.Settings;
 using BeerDispancer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.Infrastructure.Implementations;
 using BeerDispencer.WebApi.Services;
 using BeerDispencer.WebApi.Extensions;
+using MediatR;
+using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +28,10 @@ builder.Services.AddSettings(builder.Configuration);
 builder.Services.AddTransient<IBeerDispancerDbContext, BeerDispencerDbContext>();
 
 builder.Services.AddTransient<IDispencerUof, BeerDispancerUof>();
-builder.Services.AddTransient<DispencerService>();
-
+builder.Services.AddSingleton<IBeerFlowCalculator, Calculator>();
 builder.Services.AddMigrations(builder.Configuration);
 builder.Services.AddHostedService<MigratorJob>();
-
+builder.Services.AddMediatR(typeof(Program));
 var app = builder.Build();
 
 

@@ -18,26 +18,33 @@
     <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
     <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
    
+    <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Controllers\" />
     <None Remove="Extensions\" />
     <None Remove="Services\" />
+    <None Remove="Queries\" />
+    <None Remove="Handlers\" />
+    <None Remove="Responses\" />
+    <None Remove="RequestModels\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Extensions\" />
     <Folder Include="Services\" />
+    <Folder Include="Queries\" />
+    <Folder Include="Handlers\" />
+    <Folder Include="Responses\" />
+    <Folder Include="RequestModels\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\Beerdispancer.Domain\Beerdispancer.Domain.csproj">
+    <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

@@ -1,9 +1,11 @@
 ﻿using System;
+using BeerDispencer.Application.Abstractions;
+
 namespace BeerDispencer.Infrastructure.Implementations
 {
-	public static class Calculator
+	public  class Calculator :IBeerFlowCalculator
 	{
-        public static double? GetFlowVolume(DateTime? closedAt, DateTime? openAt, double litersPerSec)
+        public  double? GetFlowVolume(DateTime? closedAt, DateTime? openAt, double litersPerSec)
         {
             var duration = closedAt - openAt;
 
@@ -15,7 +17,7 @@ namespace BeerDispencer.Infrastructure.Implementations
             return duration.Value.TotalSeconds * litersPerSec;
         }
 
-        public static double? GetTotalSpent(double? volume, double pricePerLiter)
+        public  double? GetTotalSpent(double? volume, double pricePerLiter)
         {
             return volume * pricePerLiter;
         }
