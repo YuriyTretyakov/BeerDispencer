@@ -11,6 +11,7 @@ using BeerDispencer.WebApi.Extensions;
 using MediatR;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Implementations;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddTransient<IDispencerUof, BeerDispancerUof>();
 builder.Services.AddSingleton<IBeerFlowCalculator, Calculator>();
 builder.Services.AddMigrations(builder.Configuration);
 builder.Services.AddHostedService<MigratorJob>();
-builder.Services.AddMediatR(typeof(Program));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 var app = builder.Build();
 
 
