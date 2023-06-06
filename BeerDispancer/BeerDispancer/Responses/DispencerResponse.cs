@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace BeerDispencer.WebApi.Commands
+namespace BeerDispencer.WebApi.Responses
 {
 	public class DispencerResponse
 	{

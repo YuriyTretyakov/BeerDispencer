@@ -6,9 +6,14 @@ using FluentMigrator.Runner.Initialization;
 using BeerDispencer.Infrastructure.Settings;
 using BeerDispancer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.Infrastructure.Implementations;
 using BeerDispencer.WebApi.Services;
 using BeerDispencer.WebApi.Extensions;
+using MediatR;
+using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Implementations;
+using System.Reflection;
+using FluentValidation;
+using BeerDispencer.WebApi.PipelineBehavior;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +31,13 @@ builder.Services.AddSettings(builder.Configuration);
 builder.Services.AddTransient<IBeerDispancerDbContext, BeerDispencerDbContext>();
 
 builder.Services.AddTransient<IDispencerUof, BeerDispancerUof>();
-builder.Services.AddTransient<DispencerService>();
-
+builder.Services.AddSingleton<IBeerFlowCalculator, Calculator>();
 builder.Services.AddMigrations(builder.Configuration);
 builder.Services.AddHostedService<MigratorJob>();
-
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+//??????????????builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 var app = builder.Build();
 
 
@@ -47,6 +54,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+//app.UseHealthChecks("/health");
 
 app.Run();
 

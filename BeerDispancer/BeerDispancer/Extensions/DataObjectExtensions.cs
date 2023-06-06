@@ -1,8 +1,9 @@
 ﻿
 using System;
 using Beerdispancer.Domain.Entities;
-using Beerdispancer.Infrastructure.DTO;
+
 using BeerDispencer.WebApi.Commands;
+using BeerDispencer.WebApi.Responses;
 
 namespace BeerDispencer.WebApi.Extensions
 {
@@ -16,29 +17,6 @@ namespace BeerDispencer.WebApi.Extensions
         public static DispencerDto ToDto(this DispencerCreateCommand dispencerCommand)
         {
             return new DispencerDto { Volume = dispencerCommand.FlowVolume };
-        }
-
-        public static DispencerUpdateDto ToDto(this DispenserUpdateCommand udpateCommand, Guid id)
-        {
-            return new DispencerUpdateDto
-            { Id = id, Status = udpateCommand.Status, UpdatedAt = udpateCommand.UpdatedAt };
-        }
-
-        public static UsageResponse ToViewModel(this SpendingsDto dto)
-        {
-            var usages = dto.Usages.Select(x =>
-             {
-                 return new UsageEntry
-                 {
-                     OpenedAt = x.OpenAt,
-                     ClosedAt = x.ClosedAt,
-                     FlowVolume = x.FlowVolume,
-                     TotalSpent = x.TotalSpent
-                 };
-             });
-
-            return new UsageResponse { Amount = dto.Amount, Usages = usages.ToArray() };
-
         }
 
     }

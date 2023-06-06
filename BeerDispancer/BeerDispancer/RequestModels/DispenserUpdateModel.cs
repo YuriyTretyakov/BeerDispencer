@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Net;
 using Beerdispancer.Domain.Entities;
+using MediatR;
 using Newtonsoft.Json;
-namespace BeerDispencer.WebApi.Commands
+namespace BeerDispencer.WebApi.RequestModels
 
 {
-    public class DispenserUpdateCommand
+    public class DispenserUpdateModel
     {
         [JsonProperty("updated_at")]
         public DateTime UpdatedAt { get; set; }

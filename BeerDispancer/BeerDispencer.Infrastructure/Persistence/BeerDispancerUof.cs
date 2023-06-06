@@ -2,9 +2,8 @@
 using System.Threading;
 using System.Transactions;
 using Beerdispancer.Domain.Entities;
-using Beerdispancer.Infrastructure.DTO;
 using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Implementations;
+using BeerDispencer.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
@@ -12,14 +11,15 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
 	public class BeerDispancerUof: IDispencerUof
     {
         private readonly IBeerDispancerDbContext _dbcontext;
-
+        private readonly IBeerFlowCalculator _calculator;
         private CancellationToken _cancellationToken = new CancellationToken();
 
-        public BeerDispancerUof(IBeerDispancerDbContext dbcontext)
+        public BeerDispancerUof(IBeerDispancerDbContext dbcontext, IBeerFlowCalculator calculator)
 		{
             DispencerRepo = new DispencerRepository(dbcontext);
             UsageRepo = new UsageRepository(dbcontext);
             _dbcontext = dbcontext;
+            _calculator = calculator;
         }
 
        
@@ -45,7 +45,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
                 TransactionScopeOption.RequiresNew,
                 new TransactionOptions
                 {
-                    IsolationLevel = IsolationLevel.ReadCommitted
+                    IsolationLevel = IsolationLevel.ReadUncommitted
                 },
                 TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -66,8 +66,8 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
                 {
                     var usageFound = UsageRepo.GetActiveUsageByDispencerId(dispencerUpdate.Id);
                     usageFound.ClosedAt = dispencerUpdate.UpdatedAt;
-                    usageFound.FlowVolume = Calculator.GetFlowVolume(usageFound.ClosedAt, usageFound.OpenAt, beerFlowSettings.LitersPerSecond);
-                    usageFound.TotalSpent = Calculator.GetTotalSpent(usageFound.FlowVolume, beerFlowSettings.PricePerLiter);
+                    usageFound.FlowVolume = _calculator.GetFlowVolume(usageFound.ClosedAt, usageFound.OpenAt, beerFlowSettings.LitersPerSecond);
+                    usageFound.TotalSpent = _calculator.GetTotalSpent(usageFound.FlowVolume, beerFlowSettings.PricePerLiter);
                 }
 
                 await Complete();

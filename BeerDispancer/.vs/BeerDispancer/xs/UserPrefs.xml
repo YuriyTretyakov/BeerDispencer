@@ -1,53 +1,59 @@
 ﻿<Properties StartupConfiguration="{0EFC082C-BFF4-4D2A-B267-C33D9F266ECF}|http">
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="BeerDispancer/DTO/DispencerUpdateDto.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="BeerDispancer/appsettings.json">
     <Files>
-      <File FileName="BeerDispancer/Program.cs" Line="32" Column="28" />
-      <File FileName="BeerDispancer/ApplicationLayer/DispencerManager.cs" Line="11" Column="60" />
-      <File FileName="BeerDispancer/PresentationLayer/Usages.cs" />
-      <File FileName="BeerDispancer/PresentationLayer/DispencerCreateResponse.cs" />
-      <File FileName="BeerDispancer/appsettings.json" />
-      <File FileName="BeerDispencer.Infrastructure/Settings/DbSettings.cs" Line="12" Column="1" />
-      <File FileName="BeerDispencer.Application/Abstractions/IDispencerUof.cs" Line="1" Column="1" />
-      <File FileName="Beerdispancer.Domain/Extensions/AppServiceExtensions.cs" Line="8" Column="39" />
-      <File FileName="BeerDispancer/BeerDispencer.WebApi.csproj" Line="16" Column="2" />
-      <File FileName="BeerDispencer.Infrastructure/BeerDispencer.Infrastructure.csproj" Line="18" Column="37" />
-      <File FileName="BeerDispencer.Infrastructure/Migrations/M0001_CreateInitial.cs" Line="11" Column="35" />
-      <File FileName="BeerDispencer.Infrastructure/Migrations/MigratorJob.cs" Line="6" Column="36" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/Models/Dispencer.cs" Line="6" Column="58" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/Models/Usage.cs" Line="5" Column="1" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/BeerDispancerDbContext.cs" Line="29" Column="1" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/BeerDispancerUof.cs" Line="23" Column="49" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/DispencerRepository.cs" Line="7" Column="58" />
-      <File FileName="BeerDispencer.Infrastructure/Persistence/UsageRepository.cs" Line="6" Column="58" />
-      <File FileName="Beerdispancer.Domain/DTO/DispencerStatusDto.cs" Line="1" Column="1" />
-      <File FileName="Beerdispancer.Domain/DTO/DispencerDto.cs" Line="1" Column="1" />
-      <File FileName="BeerDispancer/Commands/DispencerCreate.cs" Line="1" Column="1" />
-      <File FileName="BeerDispancer/DTO/DispencerUpdateDto.cs" Line="1" Column="1" />
+      <File FileName="BeerDispancer/Handlers/CreateDispencerHandler.cs" Line="15" Column="65" />
+      <File FileName="BeerDispancer/Program.cs" Line="54" Column="3" />
+      <File FileName="BeerDispencer.Infrastructure/Persistence/BeerDispencerDbContext.cs" Line="27" Column="1" />
+      <File FileName="BeerDispancer/appsettings.json" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="BeerDispancer" expanded="True">
             <Node name="Beerdispancer.Domain" expanded="True">
-              <Node name="Extensions" expanded="True" />
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Entities" expanded="True" />
             </Node>
             <Node name="BeerDispencer.Application" expanded="True">
+              <Node name="Dependencies" expanded="True" />
               <Node name="Abstractions" expanded="True" />
             </Node>
             <Node name="BeerDispencer.Infrastructure" expanded="True">
-              <Node name="Extensions" expanded="True" />
-              <Node name="Migrations" expanded="True" />
-              <Node name="Persistence" expanded="True">
-                <Node name="Models" expanded="True" />
+              <Node name="Dependencies" expanded="True">
+                <Node name="ProjectDependencies" expanded="True" />
               </Node>
-              <Node name="Settings" expanded="True" />
+              <Node name="Implementations" expanded="True" />
+              <Node name="Persistence" expanded="True" />
             </Node>
-            <Node name="BeerDispencer.WebApi" expanded="True" selected="True">
+            <Node name="BeerDispencer.WebApi" expanded="True">
+              <Node name="Dependencies" expanded="True" />
               <Node name="Commands" expanded="True" />
-              <Node name="DTO" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Extensions" expanded="True" />
+              <Node name="Handlers" expanded="True" />
+              <Node name="Queries" expanded="True" />
+              <Node name="RequestModels" expanded="True" />
+              <Node name="Responses" expanded="True" />
+              <Node name="Services" expanded="True" />
+              <Node name="appsettings.json" selected="True" />
             </Node>
           </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>map.Count - </Value>
+          <Value>typeof(Migrations.M0001_CreateInitial).Assembly</Value>
+          <Value>scope.ServiceProvider</Value>
+          <Value>scope.ServiceProvider.GetRequiredService&lt;FluentMigrator.Runner.Initialization.ConnectionStringAccessor&gt;()</Value>
+          <Value>scope.ServiceProvider</Value>
+          <Value>e</Value>
+          <Value>dispencer.ToViewModel()</Value>
+          <Value>dispencerUpdate.UpdatedAt.ToUniversalTime()</Value>
+          <Value>DateTime.UtcNow</Value>
+          <Value>totalAmount.HasValue ? totalAmount.Value : 0</Value>
+          <Value>x</Value>
         </State>
       </Pad>
     </Pads>
@@ -58,9 +64,7 @@
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/BeerDispancer/DataLayer/MigratorJob.cs" relfile="BeerDispancer/DataLayer/MigratorJob.cs" line="18" column="13" />
       <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/Infrastructure/Migrations/AppServiceExtensions.cs" relfile="Infrastructure/Migrations/AppServiceExtensions.cs" line="20" column="9" />
-      <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/BeerDispencer.Infrastructure/Migrations/MigratorJob.cs" relfile="BeerDispencer.Infrastructure/Migrations/MigratorJob.cs" line="36" column="17" />
-      <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/BeerDispencer.Infrastructure/Persistence/BeerDispancerDbContext.cs" relfile="BeerDispencer.Infrastructure/Persistence/BeerDispancerDbContext.cs" line="27" column="13" />
-      <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/BeerDispencer.Infrastructure/Persistence/BeerDispancerDbContext.cs" relfile="BeerDispencer.Infrastructure/Persistence/BeerDispancerDbContext.cs" line="24" column="17" />
+      <Breakpoint enabled="false" file="/Users/yuriitretiakov/Documents/beerdispancer/BeerDispancer/BeerDispancer/Services/MigratorJob.cs" relfile="BeerDispancer/Services/MigratorJob.cs" line="36" column="17" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

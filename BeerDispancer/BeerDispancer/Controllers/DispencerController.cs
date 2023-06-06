@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Beerdispancer.Infrastructure.DTO;
 using BeerDispencer.Infrastructure.Implementations;
 using BeerDispencer.WebApi.Commands;
 using BeerDispencer.WebApi.Extensions;
+using BeerDispencer.WebApi.Queries;
+using BeerDispencer.WebApi.RequestModels;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -15,38 +18,36 @@ namespace BeerDispancer.Controllers
     [Route("api/[controller]")]
     public class DispencerController : Controller
     {
-        private readonly DispencerService _dispencerService;
+        private readonly IMediator _mediator;
 
-        public DispencerController(DispencerService dispencerMService)
+        public DispencerController(IMediator mediator)
         {
-            _dispencerService = dispencerMService;
+            _mediator = mediator;
         }
 
         [HttpPost()]
-        public async Task<IActionResult> CreateDispancer([FromBody] DispencerCreateCommand createDispancer)
+        public async Task<IActionResult> CreateDispencerAsync([FromBody] DispencerCreateCommand createDispencer)
         {
-            var dispencerDto = createDispancer.ToDto();
-            var dispencer = await _dispencerService.CreateDispencerAsync(dispencerDto);
-            var dispencerResponse = dispencer.ToViewModel();
-
-            return Ok(dispencerResponse);
+            var result = await _mediator.Send(createDispencer);
+            return Ok(result);
         }
 
        
         [HttpPut("{id}/status")]
-        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateCommand udpateCommand, Guid id)
+        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel udpate, Guid id)
         {
-            var updateDto = udpateCommand.ToDto(id);
-            var result = await _dispencerService.ChangeDispancerStateAsync(updateDto);
+            var command = new DispencerUpdateCommand { Id = id, Status = udpate.Status, UpdatedAt = udpate.UpdatedAt };
+            var result = await _mediator.Send(command);
             return result == true ? Accepted() : Conflict();
         }
        
      
         [HttpGet("{id}/spending")]
-        public IActionResult GetSpending(Guid id)
+        public async Task<IActionResult> GetSpendingAsync(Guid id)
         {
-            var result =  _dispencerService.GetSpending(id);
-            return Ok(result.ToViewModel());
+            var query = new GetSpendingsQuery { DispencerId = id };
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }
