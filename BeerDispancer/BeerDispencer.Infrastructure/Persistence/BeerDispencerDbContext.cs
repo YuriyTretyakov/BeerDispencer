@@ -1,12 +1,14 @@
 ﻿using System;
 using Beerdispancer.Domain.Entities;
 using BeerDispancer.Application.Abstractions;
+using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
 {
-    public class BeerDispencerDbContext : DbContext, IBeerDispancerDbContext 
+    public class BeerDispencerDbContext : DbContext, IBeerDispancerDbContext
     {
         private readonly IServiceProvider _service;
         private readonly DBSettings _dbSettings;
@@ -21,7 +23,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         DbSet<DispencerDto> IBeerDispancerDbContext.Dispencers { get ; set ; }
        
         DbSet<UsageDto> IBeerDispancerDbContext.Usage { get; set; }
-        
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +38,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
             modelBuilder.Entity<UsageDto>(x=>x.ToTable("Usage").HasKey(x => x.Id));
             
         }
+
     }
 }
 

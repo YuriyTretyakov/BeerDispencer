@@ -20,6 +20,10 @@
    
     <PackageReference Include="MediatR" Version="12.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +34,8 @@
     <None Remove="Handlers\" />
     <None Remove="Responses\" />
     <None Remove="RequestModels\" />
+    <None Remove="Validation\" />
+    <None Remove="PipelineBehavior\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -39,6 +45,8 @@
     <Folder Include="Handlers\" />
     <Folder Include="Responses\" />
     <Folder Include="RequestModels\" />
+    <Folder Include="Validation\" />
+    <Folder Include="PipelineBehavior\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">

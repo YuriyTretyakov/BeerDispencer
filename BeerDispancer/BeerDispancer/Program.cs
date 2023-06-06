@@ -12,6 +12,8 @@ using MediatR;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Implementations;
 using System.Reflection;
+using FluentValidation;
+using BeerDispencer.WebApi.PipelineBehavior;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,9 @@ builder.Services.AddSingleton<IBeerFlowCalculator, Calculator>();
 builder.Services.AddMigrations(builder.Configuration);
 builder.Services.AddHostedService<MigratorJob>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+//??????????????builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 var app = builder.Build();
 
 
@@ -49,6 +54,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+//app.UseHealthChecks("/health");
 
 app.Run();
 

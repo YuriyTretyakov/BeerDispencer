@@ -45,7 +45,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
                 TransactionScopeOption.RequiresNew,
                 new TransactionOptions
                 {
-                    IsolationLevel = IsolationLevel.ReadCommitted
+                    IsolationLevel = IsolationLevel.ReadUncommitted
                 },
                 TransactionScopeAsyncFlowOption.Enabled))
             {
