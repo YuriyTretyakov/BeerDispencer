@@ -9,11 +9,11 @@ using BeerDispencer.Infrastructure.Persistence.Models;
 using BeerDispencer.WebApi.Services;
 using BeerDispencer.WebApi.Extensions;
 using MediatR;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Implementations;
 using System.Reflection;
 using FluentValidation;
 using BeerDispencer.WebApi.PipelineBehavior;
+using Beerdispancer.Domain.Implementations;
+using Beerdispancer.Domain.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 

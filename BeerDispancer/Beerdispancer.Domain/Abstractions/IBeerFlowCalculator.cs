@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.Application.Abstractions
+namespace Beerdispancer.Domain.Abstractions
 {
 	public interface IBeerFlowCalculator
 	{

@@ -10,13 +10,11 @@
     <None Remove="Settings\" />
     <None Remove="Persistence\" />
     <None Remove="Persistence\Migrations\" />
-    <None Remove="Implementations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />
     <Folder Include="Persistence\" />
     <Folder Include="Persistence\Migrations\" />
-    <Folder Include="Implementations\" />
   </ItemGroup>
   <ItemGroup>
      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
@@ -27,6 +25,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />
-    <ProjectReference Include="..\Beerdispancer.Domain\Beerdispancer.Domain.csproj" />
   </ItemGroup>
 </Project>

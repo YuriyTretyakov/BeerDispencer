@@ -1,7 +1,7 @@
 ﻿using System;
-using BeerDispencer.Application.Abstractions;
+using Beerdispancer.Domain.Abstractions;
 
-namespace BeerDispencer.Infrastructure.Implementations
+namespace Beerdispancer.Domain.Implementations
 {
 	public  class Calculator :IBeerFlowCalculator
 	{

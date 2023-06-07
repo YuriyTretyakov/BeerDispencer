@@ -3,7 +3,6 @@ using System.Threading;
 using System.Transactions;
 using Beerdispancer.Domain.Entities;
 using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models

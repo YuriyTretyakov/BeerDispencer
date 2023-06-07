@@ -1,8 +1,7 @@
 ﻿using System;
+using Beerdispancer.Domain.Abstractions;
 using Beerdispancer.Domain.Entities;
 using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Implementations;
 using BeerDispencer.WebApi.Extensions;
 using BeerDispencer.WebApi.Queries;
 using BeerDispencer.WebApi.Responses;
