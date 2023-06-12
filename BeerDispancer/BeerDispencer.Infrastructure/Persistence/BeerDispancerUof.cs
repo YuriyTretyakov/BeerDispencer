@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading;
 using System.Transactions;
-using Beerdispancer.Domain.Entities;
+using Beerdispancer.Domain.Abstractions;
 using BeerDispancer.Application.Abstractions;
+using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Application.DTO;
+using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeerDispencer.Infrastructure.Persistence.Models
+namespace BeerDispencer.Infrastructure.Persistence
 {
 	public class BeerDispancerUof: IDispencerUof
     {
@@ -16,6 +19,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
 
         public BeerDispancerUof(IBeerDispancerDbContext dbcontext, IBeerFlowCalculator calculator)
 		{
+            
             DispencerRepo = new DispencerRepository(dbcontext);
             UsageRepo = new UsageRepository(dbcontext);
             _dbcontext = dbcontext;
@@ -37,49 +41,46 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         }
 
 
-        public async Task<bool> UpdateDispencerStateAsync(
-            IDispencerUpdate dispencerUpdate,
-            IBeerFlowSettings beerFlowSettings)
-        {
-            using (TransactionScope scope = new TransactionScope(
-                TransactionScopeOption.RequiresNew,
-                new TransactionOptions
-                {
-                    IsolationLevel = IsolationLevel.ReadUncommitted
-                },
-                TransactionScopeAsyncFlowOption.Enabled))
-            {
+        //public async Task<bool> UpdateDispencerStateAsync(
+        //    DispencerUpdateDto dispencerUpdate)
+        //{
+        //    using (TransactionScope scope = new TransactionScope(
+        //        TransactionScopeOption.RequiresNew,
+        //        new TransactionOptions
+        //        {
+        //            IsolationLevel = IsolationLevel.ReadUncommitted
+        //        },
+        //        TransactionScopeAsyncFlowOption.Enabled))
+        //    {
 
-                var result = DispencerRepo.UpdateDispencerStatus(dispencerUpdate.Id, dispencerUpdate.Status);
+        //        var result = DispencerRepo.UpdateAsync(dispencerUpdate);
 
-                if (result == false)
-                {
-                    return false;
-                }
+        //        if (result == false)
+        //        {
+        //            return false;
+        //        }
 
-                if (dispencerUpdate.Status == DispencerStatusDto.Open)
-                {
-                    await UsageRepo.AddSUsageAsync(new UsageDto { DispencerId = dispencerUpdate.Id, OpenAt = dispencerUpdate.UpdatedAt } );
-                }
+        //        if (dispencerUpdate.Status == DispencerStatusDto.Open)
+        //        {
+        //            await UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerUpdate.Id, OpenAt = dispencerUpdate.UpdatedAt } );
+        //        }
 
-                else if (dispencerUpdate.Status == DispencerStatusDto.Close)
-                {
-                    var usageFound = UsageRepo.GetActiveUsageByDispencerId(dispencerUpdate.Id);
-                    usageFound.ClosedAt = dispencerUpdate.UpdatedAt;
-                    usageFound.FlowVolume = _calculator.GetFlowVolume(usageFound.ClosedAt, usageFound.OpenAt, beerFlowSettings.LitersPerSecond);
-                    usageFound.TotalSpent = _calculator.GetTotalSpent(usageFound.FlowVolume, beerFlowSettings.PricePerLiter);
-                }
+        //        else if (dispencerUpdate.Status == DispencerStatusDto.Close)
+        //        {
+        //            var usagesFound = await UsageRepo.GetByDispencerIdAsync(dispencerUpdate.Id);
 
-                await Complete();
-                scope.Complete();
-            }
-            return true;
-        }
+        //            var activeUsage = usagesFound.SingleOrDefault(x => x.ClosedAt == null);
 
-        public IEnumerable<UsageDto> GetSpendings(Guid id)
-        {
-            return UsageRepo.GetUsagesByDispencerId(id);       
-        }   
+        //            activeUsage.ClosedAt = dispencerUpdate.UpdatedAt;
+        //            activeUsage.FlowVolume = _calculator.GetFlowVolume(activeUsage.ClosedAt, activeUsage.OpenAt);
+        //            activeUsage.TotalSpent = _calculator.GetTotalSpent(activeUsage.FlowVolume);
+        //        }
+
+        //        await Complete();
+        //        scope.Complete();
+        //    }
+        //    return true;
+        //}
     }
 }
 

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BeerDispencer.Infrastructure.Implementations;
-using BeerDispencer.WebApi.Commands;
+using BeerDispancer.Application.Implementation.Commands;
+using BeerDispancer.Application.Implementation.Queries;
 using BeerDispencer.WebApi.Extensions;
-using BeerDispencer.WebApi.Queries;
-using BeerDispencer.WebApi.RequestModels;
+using BeerDispencer.WebApi.ViewModels.Request;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,16 +28,16 @@ namespace BeerDispancer.Controllers
         public async Task<IActionResult> CreateDispencerAsync([FromBody] DispencerCreateCommand createDispencer)
         {
             var result = await _mediator.Send(createDispencer);
-            return Ok(result);
+            return Ok(result.ToViewModel());
         }
 
        
         [HttpPut("{id}/status")]
-        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel udpate, Guid id)
+        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel update, Guid id)
         {
-            var command = new DispencerUpdateCommand { Id = id, Status = udpate.Status, UpdatedAt = udpate.UpdatedAt };
+            var command = update.ToCommand(id);
             var result = await _mediator.Send(command);
-            return result == true ? Accepted() : Conflict();
+            return result.Result ? Accepted() : Conflict();
         }
        
      

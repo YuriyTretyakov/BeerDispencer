@@ -1,9 +1,13 @@
 ﻿using System;
-using Beerdispancer.Domain.Entities;
-using BeerDispancer.Application.Abstractions;
+using BeerDispancer.Application.DTO;
+using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Extensions;
+using BeerDispencer.Infrastructure.Persistence.Abstractions;
+using BeerDispencer.Infrastructure.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-
-namespace BeerDispencer.Infrastructure.Persistence.Models
+namespace BeerDispencer.Infrastructure.Persistence
 {
     public class UsageRepository : IUsageRepository
     {
@@ -14,25 +18,69 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
             _dbcontext = dbcontext;
         }
 
-        public async Task AddSUsageAsync(UsageDto usage)
+
+        public async Task<UsageDto> AddAsync(UsageDto dto)
         {
-            await _dbcontext
+            var entity = dto.ToDbEntity();
+             await _dbcontext
                 .Usage
-                .AddAsync(usage);
+                .AddAsync(entity);
+            return entity.ToDto();
         }
 
-        public IEnumerable<UsageDto> GetUsagesByDispencerId(Guid id)
+        public async Task<IEnumerable<UsageDto>> GetAllAsync()
         {
-            return _dbcontext
-                .Usage.Where(x => x.DispencerId == id);
+            var entityList = await _dbcontext.Usage.ToListAsync();
+
+            return entityList.Cast<UsageDto>();
         }
 
-        public UsageDto GetActiveUsageByDispencerId(Guid id)
+        public async Task<UsageDto> GetByIdAsync(int id)
         {
-            return _dbcontext
-                .Usage.SingleOrDefault(x => x.DispencerId == id && x.ClosedAt==null && x.OpenAt!=null);
+            var entity = await _dbcontext
+                        .Usage
+                       .SingleOrDefaultAsync(x => x.Id == id);
+
+            return entity==null?null:entity.ToDto();
+               
         }
 
+       
+        public Task UpdateAsync(UsageDto dto)
+        {
+            var entity = _dbcontext.Usage.SingleOrDefault(x => x.Id.Equals(dto.Id));
+
+            if (entity != null)
+            {
+                entity.ClosedAt = dto.ClosedAt ?? entity.ClosedAt;
+                entity.FlowVolume = dto.FlowVolume ?? entity.FlowVolume;
+                entity.TotalSpent = dto.TotalSpent ?? entity.TotalSpent;
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            return Task.FromResult(_dbcontext
+               .Usage.Remove(new Usage { Id = id }));
+        }
+
+        public async Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId)
+        {
+            var entitiesList = await _dbcontext
+               .Usage.Where(x => x.DispencerId == dispencerId).ToListAsync();
+            return entitiesList
+                .Select(x =>
+                new UsageDto
+                {
+                    ClosedAt = x.ClosedAt,
+                    Id=x.Id,
+                    OpenAt = x.OpenAt,
+                    FlowVolume = x.FlowVolume,
+                    TotalSpent=x.TotalSpent,
+                    DispencerId =x.DispencerId
+                }).ToArray() ;
+        }
     }
 }
 

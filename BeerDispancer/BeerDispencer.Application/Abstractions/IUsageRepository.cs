@@ -1,13 +1,12 @@
 ﻿using System;
-using Beerdispancer.Domain.Entities;
+using BeerDispancer.Application.DTO;
+using BeerDispencer.Application.Abstractions;
 
-namespace BeerDispancer.Application.Abstractions
+namespace BeerDispencer.Application.Abstractions
 {
-    public interface IUsageRepository
+    public interface IUsageRepository:IRepository<UsageDto,int>
     {
-        Task AddSUsageAsync(UsageDto usage);
-        IEnumerable<UsageDto> GetUsagesByDispencerId(Guid id);
-        UsageDto GetActiveUsageByDispencerId(Guid id);
+        Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId);
     }
 }
 

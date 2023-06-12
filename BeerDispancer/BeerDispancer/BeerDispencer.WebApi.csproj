@@ -29,24 +29,14 @@
   <ItemGroup>
     <None Remove="Controllers\" />
     <None Remove="Extensions\" />
-    <None Remove="Services\" />
-    <None Remove="Queries\" />
-    <None Remove="Handlers\" />
-    <None Remove="Responses\" />
-    <None Remove="RequestModels\" />
-    <None Remove="Validation\" />
-    <None Remove="PipelineBehavior\" />
+    <None Remove="ViewModels\" />
+    <None Remove="ViewModels\Response\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Services\" />
-    <Folder Include="Queries\" />
-    <Folder Include="Handlers\" />
-    <Folder Include="Responses\" />
-    <Folder Include="RequestModels\" />
-    <Folder Include="Validation\" />
-    <Folder Include="PipelineBehavior\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="ViewModels\Response\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">
