@@ -10,18 +10,26 @@
     <None Remove="Settings\" />
     <None Remove="Persistence\" />
     <None Remove="Persistence\Migrations\" />
+    <None Remove="Persistence\Entities\" />
+    <None Remove="Persistence\Abstractions\" />
+    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />
     <Folder Include="Persistence\" />
     <Folder Include="Persistence\Migrations\" />
+    <Folder Include="Persistence\Entities\" />
+    <Folder Include="Persistence\Abstractions\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
     <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
-   
+  
+  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
+   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />

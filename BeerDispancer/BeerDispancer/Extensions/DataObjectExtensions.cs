@@ -1,22 +1,35 @@
 ﻿
 using System;
-using Beerdispancer.Domain.Entities;
-
-using BeerDispencer.WebApi.Commands;
-using BeerDispencer.WebApi.Responses;
+using BeerDispancer.Application.DTO;
+using BeerDispancer.Application.Implementation.Commands;
+using BeerDispencer.WebApi.ViewModels.Request;
+using BeerDispencer.WebApi.ViewModels.Response;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BeerDispencer.WebApi.Extensions
 {
 	public static class DataObjectExtensions
 	{
-        public static DispencerResponse ToViewModel(this DispencerDto dispencerDto)
+        public static Dispencer ToViewModel(this DispencerDto dispencerDto)
         {
-            return new DispencerResponse { Id = dispencerDto.Id, FlowVolume = dispencerDto.Volume };
+            return new Dispencer
+            { Id = dispencerDto.Id,
+                FlowVolume =
+                dispencerDto.Volume==null?
+                default(double):
+                dispencerDto.Volume.Value };
         }
 
         public static DispencerDto ToDto(this DispencerCreateCommand dispencerCommand)
         {
             return new DispencerDto { Volume = dispencerCommand.FlowVolume };
+        }
+
+        public static DispencerUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
+        {
+            return  new DispencerUpdateCommand { Id = id,
+                Status = Enum.Parse<BeerDispancer.Application.DTO.DispencerStatusDto>( model.Status.ToString()),
+                UpdatedAt = model.UpdatedAt };
         }
 
     }

@@ -1,7 +1,6 @@
 ﻿using System;
-using Beerdispancer.Domain.Entities;
-using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Persistence.Abstractions;
+using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispencer.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -20,9 +19,9 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         }
 
         
-        DbSet<DispencerDto> IBeerDispancerDbContext.Dispencers { get ; set ; }
+        DbSet<Dispencer> IBeerDispancerDbContext.Dispencers { get ; set ; }
        
-        DbSet<UsageDto> IBeerDispancerDbContext.Usage { get; set; }
+        DbSet<Usage> IBeerDispancerDbContext.Usage { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,8 +33,8 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DispencerDto>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
-            modelBuilder.Entity<UsageDto>(x=>x.ToTable("Usage").HasKey(x => x.Id));
+            modelBuilder.Entity<Dispencer>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
+            modelBuilder.Entity<Usage>(x=>x.ToTable("Usage").HasKey(x => x.Id));
             
         }
 

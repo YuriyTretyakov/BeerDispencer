@@ -5,14 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <None Remove="Entities\" />
+  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
+   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+
+  </ItemGroup>
+  
+  <ItemGroup>
     <None Remove="Abstractions\" />
     <None Remove="Implementations\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Abstractions\" />
     <Folder Include="Implementations\" />
   </ItemGroup>

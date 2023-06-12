@@ -5,7 +5,14 @@ namespace Beerdispancer.Domain.Implementations
 {
 	public  class Calculator :IBeerFlowCalculator
 	{
-        public  double? GetFlowVolume(DateTime? closedAt, DateTime? openAt, double litersPerSec)
+        private readonly IBeerFlowSettings _settings;
+
+        public Calculator(IBeerFlowSettings settings)
+        {
+            _settings = settings;
+        }
+
+        public  double? GetFlowVolume(DateTime? closedAt, DateTime? openAt)
         {
             var duration = closedAt - openAt;
 
@@ -14,12 +21,12 @@ namespace Beerdispancer.Domain.Implementations
                 return null;
             }
 
-            return duration.Value.TotalSeconds * litersPerSec;
+            return duration.Value.TotalSeconds * _settings.LitersPerSecond;
         }
 
-        public  double? GetTotalSpent(double? volume, double pricePerLiter)
+        public  double? GetTotalSpent(double? volume)
         {
-            return volume * pricePerLiter;
+            return volume * _settings.PricePerLiter;
         }
     }
 }

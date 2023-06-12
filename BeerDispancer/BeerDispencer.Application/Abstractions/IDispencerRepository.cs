@@ -1,12 +1,12 @@
 ﻿using System;
-using Beerdispancer.Domain.Entities;
+using BeerDispancer.Application.DTO;
+using BeerDispencer.Application.Abstractions;
 
-namespace BeerDispancer.Application.Abstractions
-{
-	public interface IDispencerRepository
+
+namespace BeerDispencer.Application.Abstractions
+{ 
+    public interface IDispencerRepository: IRepository<DispencerDto,Guid>
 	{
-		public Task<DispencerDto> CreateAsync(DispencerDto dispencer);
-		public bool UpdateDispencerStatus(Guid id, DispencerStatusDto status);
 	}
 }
 
