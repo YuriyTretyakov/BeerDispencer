@@ -9,6 +9,7 @@ using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Models;
 using BeerDispencer.Infrastructure.Settings;
 using FluentMigrator.Runner;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,7 +19,11 @@ namespace BeerDispancer.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection collection, ConfigurationManager configuration)
         {
-            collection.AddTransient<IBeerDispancerDbContext, BeerDispencerDbContext>();
+
+            collection.AddDbContext<BeerDispencerDbContext>();
+            collection.AddTransient<IBeerDispancerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
+
+           // collection.AddTransient<IBeerDispancerDbContext, BeerDispencerDbContext>();
             collection.AddTransient<IDispencerUof, BeerDispancerUof>();
             collection.AddMigrations(configuration);
 
