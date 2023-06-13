@@ -35,7 +35,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DispencerCreateCommandValidator).Assembly));
 builder.Services.AddValidatorsFromAssembly(typeof(DispencerCreateCommandValidator).Assembly);
-//??????????????builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
+builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 var app = builder.Build();
 
@@ -51,7 +51,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.UseHealthChecks("/health");
+app.UseHealthChecks("/health");
 
 app.Run();
 
