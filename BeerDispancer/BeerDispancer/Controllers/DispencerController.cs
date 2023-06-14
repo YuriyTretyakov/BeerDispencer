@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BeerDispancer.Application.Implementation.Commands;
+using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispancer.Application.Implementation.Queries;
 using BeerDispencer.WebApi.Extensions;
 using BeerDispencer.WebApi.ViewModels.Request;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -24,6 +27,7 @@ namespace BeerDispancer.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Roles = UserRoles.Service)]
         [HttpPost()]
         public async Task<IActionResult> CreateDispencerAsync([FromBody] DispencerCreateCommand createDispencer)
         {

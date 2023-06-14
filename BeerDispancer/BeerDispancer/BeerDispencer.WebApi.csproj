@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3461e225-0b6b-4585-862c-3e5883ee9803</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
@@ -24,6 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="FluentValidation" Version="11.5.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+    
   </ItemGroup>
 
   <ItemGroup>
@@ -31,12 +33,14 @@
     <None Remove="Extensions\" />
     <None Remove="ViewModels\" />
     <None Remove="ViewModels\Response\" />
+    <None Remove="Autghorization\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Extensions\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Response\" />
+    <Folder Include="Autghorization\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">
