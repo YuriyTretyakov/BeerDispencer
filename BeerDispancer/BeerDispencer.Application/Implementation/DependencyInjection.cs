@@ -4,6 +4,7 @@ using System.Text;
 using Beerdispancer.Domain.Abstractions;
 using Beerdispancer.Domain.Implementations;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
+using BeerDispencer.Application;
 using BeerDispencer.Application.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -24,7 +25,7 @@ namespace BeerDispancer.Application.Implementation
         public static void AddJWTAuthentication(this IServiceCollection collection, ConfigurationManager configuration)
         {
             
-            var jwtSettings = configuration.GetSection("JWT").Get<JWTSettings>();
+            var jwtSettings = configuration.GetSection(nameof(JWTSettings)).Get<JWTSettings>();
 
             collection.AddAuthentication(options =>
             {

@@ -1,9 +1,9 @@
 ﻿using System;
 using BeerDispencer.Application.Abstractions;
 
-namespace BeerDispancer.Application.Implementation
+namespace BeerDispencer.Application
 {
-    public class JWTSettings : IJWTSettings
+    public class JWTSettings
     {
         public string Issuer { get; set; }
         public string Audience { get; set; }
