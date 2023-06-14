@@ -84,7 +84,7 @@ namespace BeerDispancer.Infrastructure
 
 
                     using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-                    var result = await _userManager.AddToRolesAsync(user, new[] { "admin" });
+                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRoles.Admin });
                 }
             }
         }
@@ -95,6 +95,7 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddIdentity<IdentityUser, IdentityRole>(opt =>
                 {
+                    opt.SignIn.RequireConfirmedAccount = false;
                     opt.Password.RequireDigit = false;
                     opt.Password.RequiredLength = 1;
                     opt.Password.RequiredUniqueChars = 1;

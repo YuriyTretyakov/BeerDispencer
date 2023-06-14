@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using BeerDispancer.Application.Implementation;
+using BeerDispencer.Application;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Migrations;
 using BeerDispencer.Infrastructure.Settings;
@@ -17,15 +18,9 @@ namespace BeerDispencer.WebApi.Extensions
     {
         public static void AddSettings(this IServiceCollection collection, ConfigurationManager configuration)
         {
-            var dbSettings = configuration.GetSection(nameof(DBSettings)).Get<DBSettings>();
-            collection.AddSingleton<DBSettings>(dbSettings);
-
-            var jwtSettings = configuration.GetSection("JWT").Get<JWTSettings>();
-            collection.AddSingleton<IJWTSettings>(jwtSettings);
-
-            var loginDbSettings = configuration.GetSection(nameof(LoginDBSettings)).Get<LoginDBSettings>();
-            collection.AddSingleton<LoginDBSettings>(loginDbSettings);
-
+            collection.Configure<DBSettings>(configuration.GetSection(nameof(DBSettings)));
+            collection.Configure<JWTSettings>(configuration.GetSection(nameof(JWTSettings)));
+            collection.Configure<LoginDBSettings>(configuration.GetSection(nameof(LoginDBSettings)));
         } 
     }
 }

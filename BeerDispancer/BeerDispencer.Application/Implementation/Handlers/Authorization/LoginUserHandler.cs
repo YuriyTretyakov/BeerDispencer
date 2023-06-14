@@ -7,6 +7,7 @@ using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Application.Implementation.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 
@@ -16,16 +17,16 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
 	{
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly IJWTSettings _jwtSettings;
+        private readonly JWTSettings _jwtSettings;
 
         public LoginUserHandler(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IJWTSettings jwtSettings)
+            IOptions<JWTSettings> jwtSettings)
 		{
             _userManager = userManager;
             _signInManager = signInManager;
-            _jwtSettings = jwtSettings;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<AuthResponseDto> Handle(UserLoginCommand request, CancellationToken cancellationToken)

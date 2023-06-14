@@ -4,6 +4,7 @@ using FluentMigrator.Runner;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Npgsql;
 
 namespace BeerDispencer.Infrastructure.Migrations
@@ -11,10 +12,12 @@ namespace BeerDispencer.Infrastructure.Migrations
 	public class MigratorJob:BackgroundService
 	{
         private readonly IServiceProvider _service;
-      
-        public MigratorJob(IServiceProvider service)
+        private readonly DBSettings _dbSettings;
+
+        public MigratorJob(IServiceProvider service, IOptions<DBSettings> dbSettings)
 		{
             _service = service;
+            _dbSettings = dbSettings.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,15 +26,11 @@ namespace BeerDispencer.Infrastructure.Migrations
             using (var scope = _service.CreateScope())
             {
 
-                IMigrationRunner _migrationRunner = scope.ServiceProvider.GetService<IMigrationRunner>();
+                var _migrationRunner = scope.ServiceProvider.GetService<IMigrationRunner>();               
 
-                var dbSettings = scope.ServiceProvider.GetRequiredService<DBSettings>();
-
-                
-
-                if (await CheckIfDbExistsAsync(dbSettings.SpecialConnectionString, dbSettings.DbName)!=true)
+                if (await CheckIfDbExistsAsync(_dbSettings.SpecialConnectionString, _dbSettings.DbName)!=true)
                 {
-                    await CreateDbAsync(dbSettings.SpecialConnectionString, dbSettings.DbName);
+                    await CreateDbAsync(_dbSettings.SpecialConnectionString, _dbSettings.DbName);
                 }
               
 

@@ -4,18 +4,18 @@ using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispencer.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Options;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
 {
     public class BeerDispencerDbContext : DbContext, IBeerDispancerDbContext
     {
-        private readonly IServiceProvider _service;
+        
         private readonly DBSettings _dbSettings;
 
-        public BeerDispencerDbContext(IServiceProvider service, DBSettings dbSettings)
+        public BeerDispencerDbContext(IServiceProvider service, IOptions<DBSettings> dbSettings)
         {
-            _service = service;
-            _dbSettings = dbSettings;
+            _dbSettings = dbSettings.Value;
         }
 
         
