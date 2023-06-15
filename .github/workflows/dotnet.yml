@@ -21,6 +21,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./BeerDispancer/BeerDispancer.sln
+      run: dotnet restore ./BeerDispancer/BeerDispencer.sln
     - name: Build
-      run: dotnet build ./BeerDispancer/BeerDispancer.sln --no-restore
+      run: dotnet build ./BeerDispancer/BeerDispencer.sln --no-restore
