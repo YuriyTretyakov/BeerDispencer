@@ -17,13 +17,12 @@ namespace BeerDispencer.Infrastructure.Persistence
         private readonly IBeerFlowCalculator _calculator;
         private CancellationToken _cancellationToken = new CancellationToken();
 
-        public BeerDispancerUof(IBeerDispancerDbContext dbcontext, IBeerFlowCalculator calculator)
+        public BeerDispancerUof(IBeerDispancerDbContext dbcontext)
 		{
             
             DispencerRepo = new DispencerRepository(dbcontext);
             UsageRepo = new UsageRepository(dbcontext);
             _dbcontext = dbcontext;
-            _calculator = calculator;
         }
 
        
