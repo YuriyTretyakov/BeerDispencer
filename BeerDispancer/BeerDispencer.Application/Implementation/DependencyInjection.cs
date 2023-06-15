@@ -1,21 +1,15 @@
-﻿using System;
-using System.Runtime;
-using System.Text;
-using Beerdispancer.Domain.Abstractions;
+﻿using System.Text;
 using Beerdispancer.Domain.Implementations;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.Application;
-using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Domain.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BeerDispancer.Application.Implementation
 {
-	public static class DependencyInjection
+    public static class DependencyInjection
     {
         public static void AddApplication(this IServiceCollection collection)
         {

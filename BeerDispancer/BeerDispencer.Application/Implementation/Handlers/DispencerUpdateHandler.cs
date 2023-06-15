@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Net.NetworkInformation;
-using Beerdispancer.Domain.Abstractions;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Application.DTO;
 using BeerDispencer.Application.Implementation.Response;
+using BeerDispencer.Domain.Abstractions;
 using MediatR;
 using static System.Formats.Asn1.AsnWriter;
 

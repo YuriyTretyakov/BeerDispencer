@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime;
-using Beerdispancer.Domain.Abstractions;
 using Beerdispancer.Domain.Implementations;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Commands.Authorization;

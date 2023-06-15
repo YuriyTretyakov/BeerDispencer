@@ -1,5 +1,5 @@
 ﻿using System;
-using Beerdispancer.Domain.Abstractions;
+using BeerDispencer.Domain.Abstractions;
 
 namespace Beerdispancer.Domain.Implementations
 {

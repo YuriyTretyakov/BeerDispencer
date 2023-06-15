@@ -1,5 +1,5 @@
 ﻿using System;
-using Beerdispancer.Domain.Abstractions;
+using BeerDispencer.Domain.Abstractions;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Queries;
 using BeerDispancer.Application.Implementation.Response;
