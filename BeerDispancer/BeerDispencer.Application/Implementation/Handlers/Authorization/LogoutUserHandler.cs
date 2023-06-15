@@ -1,12 +1,13 @@
 ﻿using System;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
+using BeerDispencer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.Application.Implementation.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace BeerDispencer.Application.Implementation.Handlers.Authorization
 {
-	public class LogoutUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
+	public class LogoutUserHandler:IRequestHandler<LogoutCommand, AuthResponseDto>
 	{
         private readonly SignInManager<IdentityUser> _signInManager;
 
@@ -15,7 +16,7 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
             _signInManager = signInManager;
         }
 
-        public async Task<AuthResponseDto> Handle(UserLoginCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             try
             {

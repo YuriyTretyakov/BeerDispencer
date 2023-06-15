@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
+using BeerDispencer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.WebApi.ViewModels.Request;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ namespace BeerDispencer.WebApi.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> logoutAsync()
         {
-            var result = await _mediator.Send(new UserLoginCommand());
+            var result = await _mediator.Send(new LogoutCommand());
             return NoContent();
         }
 
