@@ -8,7 +8,6 @@ using MediatR;
 using System.Reflection;
 using FluentValidation;
 using Beerdispancer.Domain.Implementations;
-using Beerdispancer.Domain.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.WebApi;
@@ -24,6 +23,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using BeerDispencer.Infrastructure.Authorization;
+using BeerDispencer.Domain.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 

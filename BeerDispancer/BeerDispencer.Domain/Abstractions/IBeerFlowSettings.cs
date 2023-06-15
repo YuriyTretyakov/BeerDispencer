@@ -1,4 +1,4 @@
-﻿namespace Beerdispancer.Domain.Abstractions
+﻿namespace BeerDispencer.Domain.Abstractions
 {
     public interface IBeerFlowSettings
     {
