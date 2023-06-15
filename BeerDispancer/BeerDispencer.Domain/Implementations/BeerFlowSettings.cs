@@ -1,7 +1,7 @@
 ﻿using System;
-using Beerdispancer.Domain.Abstractions;
+using BeerDispencer.Domain.Abstractions;
 
-namespace Beerdispancer.Domain.Implementations
+namespace BeerDispencer.Domain.Implementations
 {
     public class BeerFlowSettings : IBeerFlowSettings
     {

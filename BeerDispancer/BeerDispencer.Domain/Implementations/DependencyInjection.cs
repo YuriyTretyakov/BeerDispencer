@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime;
-using Beerdispancer.Domain.Abstractions;
+using BeerDispencer.Domain.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Beerdispancer.Domain.Implementations
+namespace BeerDispencer.Domain.Implementations
 {
 	public static class DependencyInjection
     {
