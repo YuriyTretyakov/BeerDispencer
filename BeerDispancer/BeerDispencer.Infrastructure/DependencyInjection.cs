@@ -5,6 +5,7 @@ using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Authorization;
+using BeerDispencer.Infrastructure.Middleware;
 using BeerDispencer.Infrastructure.Migrations;
 using BeerDispencer.Infrastructure.Persistence;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
@@ -30,9 +31,12 @@ namespace BeerDispancer.Infrastructure
             collection.AddTransient<IDispencerUof, BeerDispancerUof>();
             collection.AddMigrations(configuration);
 
+            collection.AddTransient<ILoginDbContext>(c => c.GetRequiredService<LoginDbContext>());
             collection.AddDbContext<LoginDbContext>();
             collection.AddIdentity();
 
+            collection.AddTransient<ITokenManager, TokenManager>();
+            collection.AddTransient<TokenManagerMiddleware>();
         }
 
         public static void AddMigrations(this IServiceCollection collection, ConfigurationManager configuration)

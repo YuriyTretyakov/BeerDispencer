@@ -24,6 +24,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using BeerDispencer.Infrastructure.Authorization;
 using BeerDispencer.Domain.Implementations;
+using BeerDispencer.Infrastructure.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<TokenManagerMiddleware>();
 
 app.Run();
 

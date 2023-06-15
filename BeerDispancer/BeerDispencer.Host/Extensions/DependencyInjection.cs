@@ -3,6 +3,7 @@ using System.Text;
 using BeerDispancer.Application.Implementation;
 using BeerDispencer.Application;
 using BeerDispencer.Application.Abstractions;
+using BeerDispencer.Infrastructure.Authorization;
 using BeerDispencer.Infrastructure.Migrations;
 using BeerDispencer.Infrastructure.Settings;
 using FluentMigrator.Runner;
