@@ -24,6 +24,9 @@ jobs:
       run: dotnet restore ./BeerDispancer/BeerDispencer.sln
     - name: Build
       run: dotnet build ./BeerDispancer/BeerDispencer.sln --no-restore
-    
+  
+  test:  
+    runs-on: ubuntu-latest
+    steps:
     - name: Unit Tests
       run: dotnet test ./BeerDispancer/BeerDispencer.UnitTests/BeerDispencer.UnitTests.csproj
