@@ -26,8 +26,8 @@ namespace BeerDispancer.Infrastructure
         {
 
             collection.AddDbContext<BeerDispencerDbContext>();
-            collection.AddTransient<IBeerDispancerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
-            collection.AddTransient<IDispencerUof, BeerDispancerUof>();
+            collection.AddTransient<IBeerDispencerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
+            collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
 
             collection.AddDbContext<LoginDbContext>();

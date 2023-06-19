@@ -29,10 +29,12 @@ namespace BeerDispancer.Application.Implementation.Handlers
             var dispencerUpdate = new DispencerUpdateDto { Id = request.Id, Status = request.Status, UpdatedAt = request.UpdatedAt };
             var updateCommandResult =  new DispencerUpdateResponse { Result = false };
 
+            _dispencerUof.StartTransaction();
+
             var dispencerDto = await _dispencerUof.DispencerRepo.GetByIdAsync(request.Id);
 
 
-            if (dispencerDto.Status == request.Status)
+            if (dispencerDto == null||dispencerDto.Status == request.Status)
             {
                 return updateCommandResult;
             }
@@ -60,6 +62,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
             }
 
             await _dispencerUof.Complete();
+            _dispencerUof.CommitTransaction();
             updateCommandResult.Result = true;
             return updateCommandResult;
         }

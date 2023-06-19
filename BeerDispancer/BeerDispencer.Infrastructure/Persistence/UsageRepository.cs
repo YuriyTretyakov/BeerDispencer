@@ -11,9 +11,9 @@ namespace BeerDispencer.Infrastructure.Persistence
 {
     public class UsageRepository : IUsageRepository
     {
-        private readonly IBeerDispancerDbContext _dbcontext;
+        private readonly IBeerDispencerDbContext _dbcontext;
 
-        public UsageRepository(IBeerDispancerDbContext dbcontext)
+        public UsageRepository(IBeerDispencerDbContext dbcontext)
         {
             _dbcontext = dbcontext;
         }

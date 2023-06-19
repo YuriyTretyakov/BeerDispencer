@@ -8,7 +8,7 @@ namespace BeerDispancer.Application.Implementation.Validation
 	{
 		public DispencerCreateCommandValidator()
 		{
-			RuleFor(x => x.FlowVolume).NotNull().NotEqual(0);
+			RuleFor(x => x.FlowVolume).NotNull().GreaterThan(0);
 		}
 	}
 }

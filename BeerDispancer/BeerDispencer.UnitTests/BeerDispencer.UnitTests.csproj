@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>d1323306-fb8a-45ac-8165-6a8328bc41ed</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +16,18 @@
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="NSubstitute" Version="5.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.6.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+    <PackageReference Include="Moq.EntityFrameworkCore" Version="7.0.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />
+    <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj" />
+    <ProjectReference Include="..\BeerDispencer.Domain\BeerDispencer.Domain.csproj" />
   </ItemGroup>
 </Project>
