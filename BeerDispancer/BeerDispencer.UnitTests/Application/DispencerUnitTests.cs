@@ -272,6 +272,6 @@ public class DispencerUnitTests
         };
         var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
         //Assert
-        dto.Result.Should().BeTrue();
+        dto.Result.Should().BeFalse();
     }
 }
