@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispencer.Infrastructure.Persistence.Abstractions
 {
-    public interface IBeerDispancerDbContext
+    public interface IBeerDispencerDbContext
     {
         DbSet<Dispencer> Dispencers { get; set; }
         DbSet<Usage> Usage { get; set; }

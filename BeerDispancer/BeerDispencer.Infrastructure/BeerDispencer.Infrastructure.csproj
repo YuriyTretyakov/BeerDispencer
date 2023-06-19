@@ -13,8 +13,6 @@
     <None Remove="Persistence\Entities\" />
     <None Remove="Persistence\Abstractions\" />
     <None Remove="Extensions\" />
-    <None Remove="Authorization\" />
-    <None Remove="Middleware\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />

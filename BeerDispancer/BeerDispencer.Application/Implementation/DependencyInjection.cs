@@ -33,6 +33,7 @@ namespace BeerDispancer.Application.Implementation
             {
                 options.IncludeErrorDetails = true;
                 options.SaveToken = true;
+                
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {

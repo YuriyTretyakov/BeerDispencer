@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
 {
-    public class BeerDispencerDbContext : DbContext, IBeerDispancerDbContext
+    public class BeerDispencerDbContext : DbContext, IBeerDispencerDbContext
     {
         
         private readonly DBSettings _dbSettings;
@@ -19,9 +19,9 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         }
 
         
-        DbSet<Dispencer> IBeerDispancerDbContext.Dispencers { get ; set ; }
+        DbSet<Dispencer> IBeerDispencerDbContext.Dispencers { get ; set ; }
        
-        DbSet<Usage> IBeerDispancerDbContext.Usage { get; set; }
+        DbSet<Usage> IBeerDispencerDbContext.Usage { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

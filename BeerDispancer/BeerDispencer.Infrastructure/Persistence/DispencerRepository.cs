@@ -13,10 +13,10 @@ namespace BeerDispencer.Infrastructure.Persistence
 {
 	public class DispencerRepository: IDispencerRepository
     {
-        private IBeerDispancerDbContext _dbcontext;
+        private IBeerDispencerDbContext _dbcontext;
 
 
-        public DispencerRepository(IBeerDispancerDbContext dbcontext)
+        public DispencerRepository(IBeerDispencerDbContext dbcontext)
         {
             _dbcontext = dbcontext;
         }

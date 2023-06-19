@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Transactions;
 using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Application.DTO;
@@ -11,7 +12,8 @@ namespace BeerDispancer.Application.Abstractions
         IDispencerRepository DispencerRepo { get; set; }
 		IUsageRepository UsageRepo { get; set; }
 		Task Complete();
-		//Task<bool> UpdateDispencerStateAsync(DispencerUpdateDto dispencerUpdate);
-	}
+        public void StartTransaction();
+        public void CommitTransaction();
+    }
 }
 

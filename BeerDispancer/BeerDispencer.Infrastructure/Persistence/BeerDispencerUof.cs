@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
-	public class BeerDispancerUof: IDispencerUof
+	public class BeerDispencerUof: IDispencerUof
     {
-        private readonly IBeerDispancerDbContext _dbcontext;
+        private readonly IBeerDispencerDbContext _dbcontext;
         private CancellationToken _cancellationToken = new CancellationToken();
 
-        public BeerDispancerUof(IBeerDispancerDbContext dbcontext)
+        public BeerDispencerUof(IBeerDispencerDbContext dbcontext)
 		{
             
             DispencerRepo = new DispencerRepository(dbcontext);
@@ -33,8 +33,22 @@ namespace BeerDispencer.Infrastructure.Persistence
             await _dbcontext.SaveChangesAsync(_cancellationToken); 
         }
 
+        private TransactionScope _transaction;
+
+        public void StartTransaction()
+        {
+            _transaction = new TransactionScope(TransactionScopeOption.Required,
+           new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted });
+        }
+
+        public void CommitTransaction()
+        {
+            _transaction.Complete();
+        }
+
         public void Dispose()
         {
+            _transaction.Dispose();
             _dbcontext.Dispose();
         }
     }
