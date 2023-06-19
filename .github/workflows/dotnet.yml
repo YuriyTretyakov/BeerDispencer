@@ -28,5 +28,21 @@ jobs:
   test:  
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
     - name: Unit Tests
       run: dotnet test ./BeerDispancer/BeerDispencer.UnitTests/BeerDispencer.UnitTests.csproj
+      
+    - name: Update coverage report
+      uses: ncruces/go-coverage-report@v0
+      with:
+        report: 'true'
+        chart: 'true'
+        amend: 'false'
+        if: |
+          matrix.os == 'ubuntu-latest' &&
+          github.event_name == 'push'  
+        continue-on-error: true
