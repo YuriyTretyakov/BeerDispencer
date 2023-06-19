@@ -13,7 +13,8 @@
     <None Remove="Persistence\Entities\" />
     <None Remove="Persistence\Abstractions\" />
     <None Remove="Extensions\" />
-    <None Remove="Persistence\Authorization\" />
+    <None Remove="Authorization\" />
+    <None Remove="Middleware\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />
@@ -22,7 +23,8 @@
     <Folder Include="Persistence\Entities\" />
     <Folder Include="Persistence\Abstractions\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Persistence\Authorization\" />
+    <Folder Include="Authorization\" />
+    <Folder Include="Middleware\" />
   </ItemGroup>
   <ItemGroup>
      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
