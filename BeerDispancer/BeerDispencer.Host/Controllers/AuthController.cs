@@ -20,6 +20,7 @@ namespace BeerDispencer.WebApi.Controllers
     public class AuthController : Controller
     {
         private readonly IMediator _mediator;
+       
 
         public AuthController(IMediator mediator)
         {
@@ -40,7 +41,7 @@ namespace BeerDispencer.WebApi.Controllers
         public async Task<IActionResult> logoutAsync()
         {
             var result = await _mediator.Send(new LogoutCommand());
-            return NoContent();
+            return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails); 
         }
 
         [Authorize(Roles = UserRoles.Admin)]
