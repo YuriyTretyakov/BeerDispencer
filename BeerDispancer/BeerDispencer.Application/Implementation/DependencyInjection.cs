@@ -42,7 +42,8 @@ namespace BeerDispancer.Application.Implementation
                     ValidAudience = jwtSettings.Audience,
                     ValidIssuer = jwtSettings.Issuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                    ValidateLifetime = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(15),
                     ValidateIssuerSigningKey = true
                 };
             });

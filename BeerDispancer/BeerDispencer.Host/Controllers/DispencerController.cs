@@ -21,10 +21,12 @@ namespace BeerDispancer.Controllers
     public class DispencerController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<DispencerController> _logger;
 
-        public DispencerController(IMediator mediator)
+        public DispencerController(IMediator mediator, ILogger<DispencerController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [Authorize(Roles = UserRoles.Service)]
@@ -48,6 +50,7 @@ namespace BeerDispancer.Controllers
         [HttpGet("{id}/spending")]
         public async Task<IActionResult> GetSpendingAsync(Guid id)
         {
+            _logger.LogInformation(nameof(GetSpendingAsync), id);
             var query = new GetSpendingsQuery { DispencerId = id };
             var result = await _mediator.Send(query);
             return Ok(result);
