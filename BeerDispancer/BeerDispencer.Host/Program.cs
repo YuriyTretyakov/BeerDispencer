@@ -25,8 +25,14 @@ using Microsoft.AspNetCore.Mvc;
 using BeerDispencer.Infrastructure.Authorization;
 using BeerDispencer.Domain.Implementations;
 using BeerDispencer.Infrastructure.Middleware;
+using Serilog;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
+
 
 builder.Services.AddEntityFrameworkNpgsql();
 
@@ -74,6 +80,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<TokenManagerMiddleware>();
-
+app.UseSerilogRequestLogging();
 app.Run();
 

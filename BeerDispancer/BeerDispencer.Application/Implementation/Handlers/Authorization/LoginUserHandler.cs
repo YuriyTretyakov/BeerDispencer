@@ -60,8 +60,6 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
             };
 
 
-
-
             var isAdmin = userClaims.Contains(UserRoles.Admin);
 
             var token = new JwtSecurityToken(_jwtSettings.Audience,
