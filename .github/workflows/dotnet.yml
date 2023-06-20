@@ -34,7 +34,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Unit Tests
-      run: dotnet test ./BeerDispancer/BeerDispencer.UnitTests/BeerDispencer.UnitTests.csproj
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura ./BeerDispancer/BeerDispencer.UnitTests/BeerDispencer.UnitTests.csproj
       
     - name: Update coverage report
       uses: ncruces/go-coverage-report@v0
