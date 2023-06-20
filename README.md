@@ -1,6 +1,6 @@
 # BeerDispencer
 
-[![Go Coverage](https://github.com/YuriyTretyakov/BeerDispencer/wiki/coverage.svg)](https://raw.githack.com/wiki/USER/REPO/coverage.html)
+[![Go Coverage](https://github.com/YuriyTretyakov/BeerDispencer/wiki/coverage.svg)](https://raw.githack.com/wiki/YuriyTretyakov/BeerDispencer/coverage.html)
 
 ## Create a new dispenser
 
