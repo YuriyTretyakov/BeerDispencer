@@ -24,10 +24,19 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
     <PackageReference Include="Moq.EntityFrameworkCore" Version="7.0.0.2" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />
     <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj" />
     <ProjectReference Include="..\BeerDispencer.Domain\BeerDispencer.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="coverage.cobertura.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
