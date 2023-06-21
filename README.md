@@ -1,5 +1,23 @@
 # BeerDispencer
 
+## What is it?
+
+This service was intended for educational purpose and can be used as a portfolio
+of skills and knowledge obtaiined. Original challenge task was taken [here](https://rviewer.stoplight.io/docs/beer-tap-dispenser/juus8uwnzzal5-beer-tap-dispenser)
+
+This product demonstrates author's understanding of:
+- ASP.Net
+- CLean Architecture approach
+- MediatR pipeline
+- Entity Framework
+- Identity Server with Roles-based authorization
+- Using Healthchecks
+- Using MemoryCache
+- Unit Test coverage with using Moq library
+- Using FluentValidation to validate http requests
+- Using FluentMigrator to allow deployment with less downtime
+
+
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-18%25-critical?style=flat)
 
 ## Create a new dispenser
