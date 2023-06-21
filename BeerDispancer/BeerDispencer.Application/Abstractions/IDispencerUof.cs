@@ -12,7 +12,7 @@ namespace BeerDispancer.Application.Abstractions
         IDispencerRepository DispencerRepo { get; set; }
 		IUsageRepository UsageRepo { get; set; }
 		Task Complete();
-        public void StartTransaction();
+        public TransactionScope StartTransaction();
         public void CommitTransaction();
     }
 }

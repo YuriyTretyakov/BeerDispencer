@@ -50,7 +50,6 @@ namespace BeerDispancer.Controllers
         [HttpGet("{id}/spending")]
         public async Task<IActionResult> GetSpendingAsync(Guid id)
         {
-            _logger.LogInformation(nameof(GetSpendingAsync), id);
             var query = new GetSpendingsQuery { DispencerId = id };
             var result = await _mediator.Send(query);
             return Ok(result);
