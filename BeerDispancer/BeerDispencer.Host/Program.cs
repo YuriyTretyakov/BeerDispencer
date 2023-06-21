@@ -34,7 +34,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
 
 
-builder.Services.AddEntityFrameworkNpgsql();
+//builder.Services.AddEntityFrameworkNpgsql();
 
 builder.Services.AddSettings(builder.Configuration);
 

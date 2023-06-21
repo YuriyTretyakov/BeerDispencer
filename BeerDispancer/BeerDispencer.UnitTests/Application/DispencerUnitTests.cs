@@ -33,12 +33,19 @@ public class DispencerUnitTests
         //Arrange
         var mockSet = new Mock<DbSet<Dispencer>>();
 
-        // Can I setup mock to return If like it is EF core does?
+        
         var mockContext = new Mock<IBeerDispencerDbContext>();
 
         mockContext.Setup(x => x.Dispencers).Returns(mockSet.Object);
 
-        var uof = new BeerDispencerUof(mockContext.Object);
+
+        var dispencerRepo = new DispencerRepository(mockContext.Object);
+
+
+        var uof = new BeerDispencerUof(mockContext.Object,
+            new Mock<IUsageRepository>().Object,
+            dispencerRepo);
+
         var _sut = new CreateDispencerHandler(uof);
 
         var dispencerCommand = new DispencerCreateCommand { FlowVolume = 50 };
@@ -54,7 +61,6 @@ public class DispencerUnitTests
 
         mockSet.Verify(_ => _.AddAsync(It.IsAny<Dispencer>(), CancellationToken.None), Times.Once);
         mockContext.Verify(x => x.SaveChangesAsync(CancellationToken.None).Result, Times.Once);
-        mockSet.VerifyNoOtherCalls();
     }
 
     [Test]

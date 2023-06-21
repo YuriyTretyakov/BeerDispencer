@@ -28,6 +28,11 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddDbContext<BeerDispencerDbContext>();
             collection.AddTransient<IBeerDispencerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
+
+            collection.AddScoped<UsageRepository>();
+            collection.AddScoped<IUsageRepository, CachedUsageRepository>();
+            collection.AddScoped<IDispencerRepository, DispencerRepository>();
+
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
 
@@ -37,6 +42,7 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddTransient<ITokenManager, TokenManager>();
             collection.AddTransient<TokenManagerMiddleware>();
+            collection.AddMemoryCache();
         }
 
         public static void AddMigrations(this IServiceCollection collection, ConfigurationManager configuration)

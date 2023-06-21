@@ -29,40 +29,42 @@ namespace BeerDispancer.Application.Implementation.Handlers
             var dispencerUpdate = new DispencerUpdateDto { Id = request.Id, Status = request.Status, UpdatedAt = request.UpdatedAt };
             var updateCommandResult =  new DispencerUpdateResponse { Result = false };
 
-            _dispencerUof.StartTransaction();
-
-            var dispencerDto = await _dispencerUof.DispencerRepo.GetByIdAsync(request.Id);
-
-
-            if (dispencerDto == null||dispencerDto.Status == request.Status)
+            using (var transaction = _dispencerUof.StartTransaction())
             {
-                return updateCommandResult;
+
+                var dispencerDto = await _dispencerUof.DispencerRepo.GetByIdAsync(request.Id);
+
+
+                if (dispencerDto == null || dispencerDto.Status == request.Status)
+                {
+                    return updateCommandResult;
+                }
+
+                await _dispencerUof.DispencerRepo.UpdateAsync(dispencerUpdate);
+
+
+                if (dispencerUpdate.Status == DispencerStatusDto.Open)
+                {
+                    await _dispencerUof.UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerUpdate.Id, OpenAt = dispencerUpdate.UpdatedAt });
+                }
+
+                else if (dispencerUpdate.Status == DispencerStatusDto.Close)
+                {
+                    var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(dispencerUpdate.Id);
+
+                    var activeUsage = usagesFound.SingleOrDefault(x => x.ClosedAt == null);
+
+                    activeUsage.ClosedAt = dispencerUpdate.UpdatedAt;
+                    activeUsage.FlowVolume = _calculator.GetFlowVolume(activeUsage.ClosedAt, activeUsage.OpenAt);
+                    activeUsage.TotalSpent = _calculator.GetTotalSpent(activeUsage.FlowVolume);
+
+                    await _dispencerUof.UsageRepo.UpdateAsync(activeUsage);
+
+                }
+
+                await _dispencerUof.Complete();
+                _dispencerUof.CommitTransaction();
             }
-
-            await _dispencerUof.DispencerRepo.UpdateAsync(dispencerUpdate);
-
-
-            if (dispencerUpdate.Status == DispencerStatusDto.Open)
-            {
-                await _dispencerUof.UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerUpdate.Id, OpenAt = dispencerUpdate.UpdatedAt });
-            }
-
-            else if (dispencerUpdate.Status == DispencerStatusDto.Close)
-            {
-                var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(dispencerUpdate.Id);
-
-                var activeUsage = usagesFound.SingleOrDefault(x => x.ClosedAt == null);
-
-                activeUsage.ClosedAt = dispencerUpdate.UpdatedAt;
-                activeUsage.FlowVolume = _calculator.GetFlowVolume(activeUsage.ClosedAt, activeUsage.OpenAt);
-                activeUsage.TotalSpent = _calculator.GetTotalSpent(activeUsage.FlowVolume);
-
-                await _dispencerUof.UsageRepo.UpdateAsync(activeUsage);
-
-            }
-
-            await _dispencerUof.Complete();
-            _dispencerUof.CommitTransaction();
             updateCommandResult.Result = true;
             return updateCommandResult;
         }
