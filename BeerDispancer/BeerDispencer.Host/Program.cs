@@ -27,6 +27,8 @@ using BeerDispencer.Domain.Implementations;
 using BeerDispencer.Infrastructure.Middleware;
 using Serilog;
 using Microsoft.Extensions.Configuration;
+using BeerDispencer.WebApi.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,9 +44,6 @@ builder.Services.AddDomain(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-
-
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -58,6 +57,14 @@ builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddJWTAuthentication(builder.Configuration);
+
+builder.Services.AddHealthChecks()
+    .AddCheck<ReadyHealthCheck>(nameof(ReadyHealthCheck),
+        tags: new[] { "ready" })
+    .AddCheck<LiveHealthCheck>(nameof(LiveHealthCheck),
+        tags: new[] { "live" });
+
+
 var app = builder.Build();
 
 
@@ -73,7 +80,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 app.MapControllers();
-app.UseHealthChecks("/health");
+app.UseHealthChecks("/health",new HealthCheckOptions { Predicate= healthCheck => healthCheck.Tags.Contains("health") });
 
 app.UseRouting();
 app.UseAuthentication();
@@ -81,5 +88,16 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<TokenManagerMiddleware>();
 app.UseSerilogRequestLogging();
+
+app.MapHealthChecks("/ready", new HealthCheckOptions
+{
+    Predicate = healthCheck => healthCheck.Tags.Contains("ready")
+});
+
+app.MapHealthChecks("/live", new HealthCheckOptions
+{
+    Predicate = healthCheck => healthCheck.Tags.Contains("live")
+});
+
 app.Run();
 
