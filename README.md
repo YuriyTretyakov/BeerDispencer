@@ -18,8 +18,7 @@ This product demonstrates author's understanding of:
 - Using FluentMigrator to allow deployment with less downtime
 
 
-![Code Coverage](https://img.shields.io/badge/Code%20Coverage-18%25-critical?style=flat)
-
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-18%25-critical?style=flat) [![.NET Build And UnitTests](https://github.com/YuriyTretyakov/BeerDispencer/actions/workflows/dotnet.yml/badge.svg?event=workflow_run)](https://github.com/YuriyTretyakov/BeerDispencer/actions/workflows/dotnet.yml)
 ## Create a new dispenser
 
 ```
