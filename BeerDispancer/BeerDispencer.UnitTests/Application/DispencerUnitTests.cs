@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Beerdispancer.Domain.Implementations;
+﻿using Beerdispancer.Domain.Implementations;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
@@ -12,42 +11,31 @@ using BeerDispencer.Infrastructure.Persistence;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Moq;
 using NUnit.Framework;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BeerDispencer.UnitTests;
 
 [TestFixture]
 public class DispencerUnitTests
 {
-    public DispencerUnitTests()
-    {
-    }
-
-
+   
     [Test]
-    public async Task CreateDispencer_ReturnsValid_DispencerObject_WithStatisAndVolume()
+    public async Task CreateDispencer_ReturnsValid_DispencerObject_WithStateAndVolume()
     {
         //Arrange
-        var mockSet = new Mock<DbSet<Dispencer>>();
-
-        
+        var mockSet = new Mock<IMongoCollection<Dispencer>>();
         var mockContext = new Mock<IBeerDispencerDbContext>();
-
         mockContext.Setup(x => x.Dispencers).Returns(mockSet.Object);
 
-
         var dispencerRepo = new DispencerRepository(mockContext.Object);
-
 
         var uof = new BeerDispencerUof(mockContext.Object,
             new Mock<IUsageRepository>().Object,
             dispencerRepo);
 
         var _sut = new CreateDispencerHandler(uof);
-
         var dispencerCommand = new DispencerCreateCommand { FlowVolume = 50 };
 
         //Act
@@ -56,18 +44,16 @@ public class DispencerUnitTests
         //Assert
         dto.Should().NotBeNull();
         dto.Volume.Should().Be(50);
-        dto.Status.Should().Be(BeerDispancer.Application.DTO.DispencerStatusDto.Close);
+        dto.Status.Should().Be(DispencerStatusDto.Close);
 
-
-        mockSet.Verify(_ => _.AddAsync(It.IsAny<Dispencer>(), CancellationToken.None), Times.Once);
-        mockContext.Verify(x => x.SaveChangesAsync(CancellationToken.None).Result, Times.Once);
+        mockSet.Verify(_ => _.InsertOneAsync(It.IsAny<Dispencer>(), null, CancellationToken.None), Times.Once);
     }
 
     [Test]
     public async Task UpdateDispencerCommand_SetProperState_When_DispencerOpenCommandReceived()
     {
         //Arrange
-        var dispencerId = Guid.NewGuid();
+        var dispencerId = Guid.NewGuid().ToString();
 
         var dispencer = new DispencerDto
         {
@@ -76,9 +62,8 @@ public class DispencerUnitTests
             Volume = 30
         };
 
-
         var dispencerRepoMock = new Mock<IDispencerRepository>();
-        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(dispencer);
+        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()).Result).Returns(dispencer);
         dispencerRepoMock.Setup(x => x.UpdateAsync(It.IsAny<DispencerDto>()));
 
         var usagesMock = new Mock<IUsageRepository>();
@@ -88,7 +73,6 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
         var _sut = new DispencerUpdateHandler(mockUof.Object, new Mock<IBeerFlowCalculator>().Object);
-
         var dispencerUpdateCommand = new DispencerUpdateCommand { Id = dispencerId, Status = DispencerStatusDto.Open, UpdatedAt = DateTime.UtcNow };
 
         //Act
@@ -97,10 +81,9 @@ public class DispencerUnitTests
         //Assert
         dto.Result.Should().BeTrue();
 
-        mockUof.Verify(x => x.StartTransaction(), Times.Once);
         dispencerRepoMock
             .Verify(x => x.GetByIdAsync(
-                It.Is<Guid>(x => x == dispencerId)).Result,
+                It.Is<string>(x => x == dispencerId)).Result,
             Times.Once);
 
         dispencerRepoMock
@@ -116,16 +99,13 @@ public class DispencerUnitTests
                     x => x.DispencerId == dispencerId &&
                     x.OpenAt == dispencerUpdateCommand.UpdatedAt)));
 
-        mockUof.Verify(x => x.Complete(), Times.Once);
-        mockUof.Verify(x => x.CommitTransaction(), Times.Once);
-
     }
 
     [Test]
     public async Task UpdateDispencerCommand_SetProperState_When_DispencerCloseCommandReceived()
     {
         //Arrange
-        var dispencerId = Guid.NewGuid();
+        var dispencerId = Guid.NewGuid().ToString();
 
         var dispencer = new DispencerDto
         {
@@ -134,9 +114,8 @@ public class DispencerUnitTests
             Volume = 30
         };
 
-
         var dispencerRepoMock = new Mock<IDispencerRepository>();
-        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(dispencer);
+        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()).Result).Returns(dispencer);
         dispencerRepoMock.Setup(x => x.UpdateAsync(It.IsAny<DispencerDto>()));
 
         var usagesMock = new Mock<IUsageRepository>();
@@ -144,7 +123,7 @@ public class DispencerUnitTests
         usagesMock
             .Setup(x =>
             x.GetByDispencerIdAsync(
-                It.Is<Guid>(x => x == dispencerId)))
+                It.Is<string>(x => x == dispencerId)))
             .ReturnsAsync(new[] {new UsageDto {
                 DispencerId = dispencerId,
                 FlowVolume=dispencer.Volume,
@@ -159,7 +138,6 @@ public class DispencerUnitTests
         var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
 
         var _sut = new DispencerUpdateHandler(mockUof.Object, calculator);
-
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {
             Id = dispencerId,
@@ -173,10 +151,10 @@ public class DispencerUnitTests
         //Assert
         dto.Result.Should().BeTrue();
 
-        mockUof.Verify(x => x.StartTransaction(), Times.Once);
+      
         dispencerRepoMock
             .Verify(x => x.GetByIdAsync(
-                It.Is<Guid>(x => x == dispencerId)).Result,
+                It.Is<string>(x => x == dispencerId)).Result,
             Times.Once);
 
 
@@ -188,7 +166,7 @@ public class DispencerUnitTests
             Times.Once);
 
         usagesMock
-            .Verify(x => x.GetByDispencerIdAsync(It.Is<Guid>(x => x == dispencerId)).Result);
+            .Verify(x => x.GetByDispencerIdAsync(It.Is<string>(x => x == dispencerId)).Result);
 
 
         usagesMock.Verify(x => x
@@ -198,11 +176,6 @@ public class DispencerUnitTests
             x.OpenAt == openedAt &&
             x.FlowVolume == x.ClosedAt.Value.Subtract(x.OpenAt.Value).TotalSeconds * 0.1 &&
             x.TotalSpent == x.FlowVolume * 6)));
-
-
-        mockUof.Verify(x => x.Complete(), Times.Once);
-        mockUof.Verify(x => x.CommitTransaction(), Times.Once);
-
     }
 
 
@@ -211,7 +184,7 @@ public class DispencerUnitTests
     public async Task UpdateDispencerCommand_Status_Is_False_If_Operation_CannotBePErformed(DispencerStatusDto initialstate, DispencerStatusDto updateTo)
     {
         //Arrange
-        var dispencerId = Guid.NewGuid();
+        var dispencerId = Guid.NewGuid().ToString();
 
         var dispencer = new DispencerDto
         {
@@ -222,7 +195,7 @@ public class DispencerUnitTests
 
 
         var dispencerRepoMock = new Mock<IDispencerRepository>();
-        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(dispencer);
+        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()).Result).Returns(dispencer);
         dispencerRepoMock.Setup(x => x.UpdateAsync(It.IsAny<DispencerDto>()));
 
         var usagesMock = new Mock<IUsageRepository>();
@@ -230,7 +203,7 @@ public class DispencerUnitTests
         usagesMock
             .Setup(x =>
             x.GetByDispencerIdAsync(
-                It.Is<Guid>(x => x == dispencerId)))
+                It.Is<string>(x => x == dispencerId)))
             .ReturnsAsync(new[] {new UsageDto {
                 DispencerId = dispencerId,
                 FlowVolume=dispencer.Volume,
@@ -242,7 +215,6 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
         var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
-
         var _sut = new DispencerUpdateHandler(mockUof.Object, calculator);
 
         //Act
@@ -263,7 +235,7 @@ public class DispencerUnitTests
     {
         //Arrange
         var dispencerRepoMock = new Mock<IDispencerRepository>();
-        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(default(DispencerDto));
+        dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()).Result).Returns(default(DispencerDto));
       
         var mockUof = new Mock<IDispencerUof>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
@@ -272,7 +244,7 @@ public class DispencerUnitTests
         //Act
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Status = DispencerStatusDto.Open,
             UpdatedAt = DateTime.UtcNow
         };

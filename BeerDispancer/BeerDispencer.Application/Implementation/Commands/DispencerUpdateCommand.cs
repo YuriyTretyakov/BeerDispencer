@@ -9,7 +9,7 @@ namespace BeerDispancer.Application.Implementation.Commands
 {
     public class DispencerUpdateCommand : IRequest<DispencerUpdateResponse>
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public DispencerStatusDto Status { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

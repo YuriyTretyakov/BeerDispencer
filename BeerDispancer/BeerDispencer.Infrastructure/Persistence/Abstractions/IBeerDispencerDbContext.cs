@@ -1,14 +1,12 @@
-﻿using System.Threading;
-using BeerDispencer.Infrastructure.Persistence.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using BeerDispencer.Infrastructure.Persistence.Entities;
+using MongoDB.Driver;
 
 namespace BeerDispencer.Infrastructure.Persistence.Abstractions
 {
     public interface IBeerDispencerDbContext
     {
-        DbSet<Dispencer> Dispencers { get; set; }
-        DbSet<Usage> Usage { get; set; }
-        void Dispose();
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        IMongoCollection<Dispencer> Dispencers { get; }
+        IMongoCollection<Usage> Usage { get; }
+        MongoClient Client { get;   }
     }
 }

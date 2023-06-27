@@ -1,14 +1,13 @@
-﻿using System;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
+﻿using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispencer.Infrastructure.Settings;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
 {
-    public class BeerDispencerDbContext : DbContext, IBeerDispencerDbContext
+    public class BeerDispencerDbContext : IBeerDispencerDbContext
     {
         
         private readonly DBSettings _dbSettings;
@@ -16,27 +15,22 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         public BeerDispencerDbContext(IServiceProvider service, IOptions<DBSettings> dbSettings)
         {
             _dbSettings = dbSettings.Value;
+            BsonDefaults.GuidRepresentation = GuidRepresentation.Standard;
+            Client = new MongoClient(_dbSettings.ConnectionString);
         }
 
-        
-        DbSet<Dispencer> IBeerDispencerDbContext.Dispencers { get ; set ; }
-       
-        DbSet<Usage> IBeerDispencerDbContext.Usage { get; set; }
+        public MongoClient Client { get; private set; }
 
+        IMongoCollection<Dispencer> IBeerDispencerDbContext.Dispencers =>
+            Client
+            .GetDatabase(_dbSettings.DbName)
+            .GetCollection<Dispencer>(nameof(Dispencer));
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connectionStr = _dbSettings.ConnectionString;
-            optionsBuilder.UseNpgsql(connectionStr);
+        IMongoCollection<Usage> IBeerDispencerDbContext.Usage=>
+            Client
+            .GetDatabase(_dbSettings.DbName)
+            .GetCollection<Usage>(nameof(Usage));
 
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Dispencer>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
-            modelBuilder.Entity<Usage>(x=>x.ToTable("Usage").HasKey(x => x.Id));
-            
-        }
 
     }
 }
