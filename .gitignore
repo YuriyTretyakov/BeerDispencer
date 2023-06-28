@@ -134,3 +134,4 @@ $RECYCLE.BIN/
 _NCrunch*
 questions.pages
 coverage.cobertura.xml
+compose/db

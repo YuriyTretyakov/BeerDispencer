@@ -1,0 +1,15 @@
+services:
+# first, we define the three mongo servers that will act as replicas
+# here, we steup the hostname ports, and startup command
+# which is the same as discussed in the previous section
+  mongodb:
+    hostname: mongo
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 27888:27017 
+    restart: always
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=secret

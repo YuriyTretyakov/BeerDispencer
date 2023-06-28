@@ -2,7 +2,6 @@
 using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispencer.Infrastructure.Settings;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BeerDispencer.Infrastructure.Persistence.Models
@@ -15,7 +14,6 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         public BeerDispencerDbContext(IServiceProvider service, IOptions<DBSettings> dbSettings)
         {
             _dbSettings = dbSettings.Value;
-            BsonDefaults.GuidRepresentation = GuidRepresentation.Standard;
             Client = new MongoClient(_dbSettings.ConnectionString);
         }
 
