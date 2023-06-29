@@ -1,32 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FluentMigrator.Runner;
-using FluentMigrator.Runner.Initialization;
-using BeerDispencer.Infrastructure.Settings;
-using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.WebApi.Extensions;
+﻿using BeerDispencer.WebApi.Extensions;
 using MediatR;
-using System.Reflection;
 using FluentValidation;
-using Beerdispancer.Domain.Implementations;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.WebApi;
 using BeerDispancer.Application.Implementation.PipelineBehavior;
 using BeerDispancer.Application.Implementation.Validation;
-using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence;
 using BeerDispancer.Application.Implementation;
 using BeerDispancer.Infrastructure;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using BeerDispencer.Infrastructure.Authorization;
 using BeerDispencer.Domain.Implementations;
 using BeerDispencer.Infrastructure.Middleware;
 using Serilog;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +35,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DispencerCreateCommandValidator).Assembly));
 builder.Services.AddValidatorsFromAssembly(typeof(DispencerCreateCommandValidator).Assembly);
-builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
+//builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddJWTAuthentication(builder.Configuration);
@@ -73,7 +54,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 app.MapControllers();
-app.UseHealthChecks("/health");
+//app.UseHealthChecks("/health");
 
 app.UseRouting();
 app.UseAuthentication();

@@ -4,8 +4,8 @@ namespace BeerDispancer.Application.DTO
 {
 	public class UsageDto
 	{
-        public int Id { get; set; }
-        public Guid DispencerId { get; set; }
+        public string Id { get; set; }
+        public string DispencerId { get; set; }
         public DateTime? OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public double? FlowVolume { get; set; }

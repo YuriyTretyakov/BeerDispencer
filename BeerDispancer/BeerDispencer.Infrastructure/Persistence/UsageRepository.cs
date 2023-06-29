@@ -1,11 +1,10 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
+﻿using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Extensions;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
@@ -24,61 +23,85 @@ namespace BeerDispencer.Infrastructure.Persistence
             var entity = dto.ToDbEntity();
              await _dbcontext
                 .Usage
-                .AddAsync(entity);
+                .InsertOneAsync(entity);
             return entity.ToDto();
         }
 
         public async Task<IEnumerable<UsageDto>> GetAllAsync()
         {
-            var entityList = await _dbcontext.Usage.ToListAsync();
-
+            var entityList = await (await _dbcontext.Usage.FindAsync(_=>true)).ToListAsync();
             return entityList.Cast<UsageDto>();
         }
 
-        public async Task<UsageDto> GetByIdAsync(int id)
+        public async Task<UsageDto> GetByIdAsync(string id)
         {
-            var entity = await _dbcontext
+
+            var entity =await (await _dbcontext
                         .Usage
-                       .SingleOrDefaultAsync(x => x.Id == id);
+                       .FindAsync(x => x.Id == new ObjectId(id))).SingleOrDefaultAsync();
 
             return entity==null?null:entity.ToDto();
                
         }
 
        
-        public Task UpdateAsync(UsageDto dto)
+        public async Task UpdateAsync(UsageDto dto)
         {
-            var entity = _dbcontext.Usage.SingleOrDefault(x => x.Id.Equals(dto.Id));
+            var updateBuilder = Builders<Usage>.Update;
+            var updateDefinitions = new List<UpdateDefinition<Usage>>();
 
-            if (entity != null)
+            if (dto.ClosedAt is not null)
             {
-                entity.ClosedAt = dto.ClosedAt ?? entity.ClosedAt;
-                entity.FlowVolume = dto.FlowVolume ?? entity.FlowVolume;
-                entity.TotalSpent = dto.TotalSpent ?? entity.TotalSpent;
+                updateDefinitions.Add(updateBuilder.Set(x => x.ClosedAt, dto.ClosedAt));
             }
-            return Task.CompletedTask;
+
+            if (dto.FlowVolume is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.FlowVolume, dto.FlowVolume));
+            }
+
+            if (dto.TotalSpent is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.TotalSpent, dto.TotalSpent));
+            }
+
+            if (dto.DispencerId is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.DispencerId, ObjectId.Parse(dto.DispencerId)));
+            }
+
+            if (dto.OpenAt is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.OpenAt, dto.OpenAt));
+            }
+
+            await _dbcontext.Usage.UpdateOneAsync(x => x.Id == ObjectId.Parse(dto.Id), updateBuilder.Combine(updateDefinitions));
+        
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
-            return Task.FromResult(_dbcontext
-               .Usage.Remove(new Usage { Id = id }));
+           await _dbcontext
+               .Usage.DeleteOneAsync(x=>x.Id==new ObjectId(id));
         }
 
-        public async Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId)
+        public async Task<UsageDto[]> GetByDispencerIdAsync(string dispencerId)
         {
-            var entitiesList = await _dbcontext
-               .Usage.Where(x => x.DispencerId == dispencerId).ToListAsync();
+            
+            var entitiesList =  await (await _dbcontext
+               .Usage.FindAsync(Builders<Usage>.Filter.Eq(x=> x.DispencerId, new ObjectId(dispencerId)))).ToListAsync();
+
+
             return entitiesList
                 .Select(x =>
                 new UsageDto
                 {
                     ClosedAt = x.ClosedAt,
-                    Id=x.Id,
+                    Id=x.Id.ToString(),
                     OpenAt = x.OpenAt,
                     FlowVolume = x.FlowVolume,
                     TotalSpent=x.TotalSpent,
-                    DispencerId =x.DispencerId
+                    DispencerId =x.DispencerId.ToString()
                 }).ToArray() ;
         }
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime;
-using Beerdispancer.Domain.Implementations;
-using BeerDispancer.Application.Abstractions;
+﻿using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Authorization;
@@ -15,7 +12,6 @@ using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,8 +22,7 @@ namespace BeerDispancer.Infrastructure
         public static void AddInfrastructure(this IServiceCollection collection, ConfigurationManager configuration)
         {
 
-            collection.AddDbContext<BeerDispencerDbContext>();
-            collection.AddTransient<IBeerDispencerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
+            collection.AddSingleton<IBeerDispencerDbContext, BeerDispencerDbContext>();
 
             collection.AddScoped<UsageRepository>();
             collection.AddScoped<IUsageRepository, CachedUsageRepository>();
@@ -52,12 +47,12 @@ namespace BeerDispancer.Infrastructure
             collection
            .AddFluentMigratorCore()
            .ConfigureRunner(x => x.AddPostgres().WithGlobalConnectionString(dbSettings.ConnectionString)
-           .ScanIn(typeof(BeerDispencer.Infrastructure.Migrations.M0001_CreateInitial).Assembly)
+           .ScanIn(typeof(M0001_CreateInitial).Assembly)
            .For
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());
 
-            collection.AddHostedService<MigratorJob>();
+          //  collection.AddHostedService<MigratorJob>();
         }
 
         public static async Task SeedLoginDbAsync(this WebApplication webapp)

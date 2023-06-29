@@ -39,7 +39,7 @@ namespace BeerDispancer.Controllers
 
        
         [HttpPut("{id}/status")]
-        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel update, Guid id)
+        public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel update, string id)
         {
             var command = update.ToCommand(id);
             var result = await _mediator.Send(command);
@@ -48,7 +48,7 @@ namespace BeerDispancer.Controllers
        
      
         [HttpGet("{id}/spending")]
-        public async Task<IActionResult> GetSpendingAsync(Guid id)
+        public async Task<IActionResult> GetSpendingAsync(string id)
         {
             var query = new GetSpendingsQuery { DispencerId = id };
             var result = await _mediator.Send(query);

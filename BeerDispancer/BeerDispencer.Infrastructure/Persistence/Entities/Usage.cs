@@ -1,16 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BeerDispencer.Infrastructure.Persistence.Entities
 {
-    [Table("Usage")]
     public class Usage
     {
-        [Key]
-        public int Id { get; set; }
-        [ForeignKey("Dispencer.Id")]
-        public Guid DispencerId { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
+        public ObjectId DispencerId { get; set; }
         public DateTime? OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public double? FlowVolume { get; set; }

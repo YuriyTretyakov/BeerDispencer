@@ -21,7 +21,6 @@ namespace BeerDispancer.Application.Implementation.Handlers
         {
             var dispencerDto = new DispencerDto { Volume = request.FlowVolume, Status = DispencerStatusDto.Close };
             var dispencer = await _dispencerUof.DispencerRepo.AddAsync(dispencerDto);
-            await _dispencerUof.Complete();
             return dispencer;
         }
     }

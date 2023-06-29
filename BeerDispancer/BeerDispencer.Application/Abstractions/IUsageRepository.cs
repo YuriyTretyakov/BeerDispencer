@@ -4,9 +4,9 @@ using BeerDispencer.Application.Abstractions;
 
 namespace BeerDispencer.Application.Abstractions
 {
-    public interface IUsageRepository:IRepository<UsageDto,int>
+    public interface IUsageRepository:IRepository<UsageDto>
     {
-        Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId);
+        Task<UsageDto[]> GetByDispencerIdAsync(string dispencerId);
     }
 }
 

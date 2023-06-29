@@ -1,7 +1,5 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
+﻿using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Entities;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace BeerDispencer.Infrastructure.Persistence
@@ -21,7 +19,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return _decorated.AddAsync(dto);
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(string id)
         {
             return _decorated.DeleteAsync(id);
         }
@@ -38,7 +36,7 @@ namespace BeerDispencer.Infrastructure.Persistence
               );
         }
 
-        public Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId)
+        public Task<UsageDto[]> GetByDispencerIdAsync(string dispencerId)
         {
             return _memoryCache.GetOrCreateAsync(
                 nameof(GetByDispencerIdAsync),
@@ -50,7 +48,7 @@ namespace BeerDispencer.Infrastructure.Persistence
               );
         }
 
-        public Task<UsageDto> GetByIdAsync(int id)
+        public Task<UsageDto> GetByIdAsync(string id)
         {
             return _memoryCache.GetOrCreateAsync(
                 nameof(GetByIdAsync),

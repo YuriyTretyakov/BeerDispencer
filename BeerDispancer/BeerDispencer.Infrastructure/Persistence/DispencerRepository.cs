@@ -1,17 +1,14 @@
-﻿using System;
-using System.Net.NetworkInformation;
-using BeerDispancer.Application.DTO;
+﻿using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Extensions;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
-	public class DispencerRepository: IDispencerRepository
+    public class DispencerRepository: IDispencerRepository
     {
         private IBeerDispencerDbContext _dbcontext;
 
@@ -24,38 +21,55 @@ namespace BeerDispencer.Infrastructure.Persistence
         public async Task<DispencerDto>AddAsync(DispencerDto dispencerDto)
         {
             var entity = dispencerDto.ToDbEntity();
-            await _dbcontext.Dispencers.AddAsync(entity);
+            await _dbcontext.Dispencers.InsertOneAsync(entity);
             return entity.ToDto();
         }
 
-        public Task DeleteAsync(Guid id)
-        { 
-             _dbcontext.Dispencers.RemoveRange(new Dispencer { Id =id});
-            return Task.CompletedTask;
+        public async Task DeleteAsync(string id)
+        {
+             await _dbcontext.Dispencers.DeleteOneAsync( x=>x.Id==ObjectId.Parse(id));
         }
 
         public async Task<IEnumerable<DispencerDto>> GetAllAsync()
         {
-            var dbResult = await _dbcontext.Dispencers.ToListAsync();
-
-            return dbResult.Cast<DispencerDto>();
+            var dbResult = await _dbcontext.Dispencers.FindAsync(_ => true);
+            return (await dbResult.ToListAsync()).Cast<DispencerDto>();
         }
 
-        public async Task<DispencerDto> GetByIdAsync(Guid id)
+        public async Task<DispencerDto> GetByIdAsync(string id)
         {
-            var entity = await _dbcontext.Dispencers.SingleOrDefaultAsync(x => x.Id == id);
-            return entity==null?null:entity.ToDto(); 
+     
+            var entity = await _dbcontext
+                .Dispencers
+                .Find(Builders<Dispencer>.Filter.Eq("_id", ObjectId.Parse(id)))
+                .FirstOrDefaultAsync();
+
+            return entity==null?null: entity.ToDto(); 
         }
 
         public async Task UpdateAsync(DispencerDto dispencerDto)
         {
-            var dispencerEntity = await _dbcontext.Dispencers.SingleOrDefaultAsync(x => x.Id == dispencerDto.Id);
 
-            dispencerEntity.Status = DispencerExtensions.ToDbEntity(dispencerDto.Status) ?? dispencerEntity.Status;
-            dispencerEntity.Volume = dispencerDto.Volume ?? dispencerEntity.Volume;
-        }
+            var updateBuilder = Builders<Dispencer>.Update;
+            var updateDefinitions = new List<UpdateDefinition<Dispencer>>();
 
-        
+            if (dispencerDto.Status is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.Status, DispencerExtensions.ToDbEntity(dispencerDto.Status)));  
+            }
+
+            if (dispencerDto.Volume is not null)
+            {
+                updateDefinitions.Add(updateBuilder.Set(x => x.Volume, dispencerDto.Volume));
+            }
+
+
+            await _dbcontext
+                .Dispencers
+                .UpdateOneAsync(x => x.Id == ObjectId.Parse(dispencerDto.Id),
+                updateBuilder.Combine(updateDefinitions));
+
+        }        
     }
 }
 
