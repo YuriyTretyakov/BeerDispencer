@@ -31,7 +31,7 @@ public class DispencerUnitTests
 
         var dispencerRepo = new DispencerRepository(mockContext.Object);
 
-        var uof = new BeerDispencerUof(mockContext.Object,
+        var uof = new BeerDispencerUof(
             new Mock<IUsageRepository>().Object,
             dispencerRepo);
 
