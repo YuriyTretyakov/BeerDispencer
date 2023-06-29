@@ -36,12 +36,14 @@
     <None Remove="Extensions\" />
     <None Remove="ViewModels\" />
     <None Remove="ViewModels\Response\" />
+    <None Remove="HealthChecks\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Extensions\" />
     <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Response\" />
+    <Folder Include="HealthChecks\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">
