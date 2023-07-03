@@ -1,0 +1,29 @@
+﻿
+
+
+@page "/"
+@inject BeerDispencer.WebUi.Implementation.TimeZoneService TimeZoneService
+<PageTitle>Index</PageTitle>
+
+@if (mainLayout.UserName != null)
+{
+    <h2>Welcome back, @mainLayout.UserName</h2>
+}
+<p>Now (UTC): @DateTimeOffset.UtcNow.ToString()</p>
+<p>Now (local): @now.ToString()</p>
+
+
+
+
+@code {
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
+
+    DateTimeOffset now;
+
+    protected override async Task OnInitializedAsync()
+    {
+       
+        now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
+    }
+}

@@ -8,20 +8,18 @@ using MediatR;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
-	public class GetSpendingsHandler : IRequestHandler<GetSpendingsQuery, UsageResponse>
+	public class GetSpendingsHandler : IRequestHandler<GetAllSpendingsQuery, UsageResponse>
 	{
         private readonly IDispencerUof _dispencerUof;
-        private readonly IBeerFlowSettings _beerFlowSettings;
         private readonly IBeerFlowCalculator _calculator;
 
         public GetSpendingsHandler(IDispencerUof dispencerUof, IBeerFlowSettings beerFlowSettings,IBeerFlowCalculator calculator)
 		{
             _dispencerUof = dispencerUof;
-            _beerFlowSettings = beerFlowSettings;
             _calculator = calculator;
         }
 
-        public async Task<UsageResponse> Handle(GetSpendingsQuery request, CancellationToken cancellationToken)
+        public async Task<UsageResponse> Handle(GetAllSpendingsQuery request, CancellationToken cancellationToken)
         {
             var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(request.DispencerId);
             double total = 0;

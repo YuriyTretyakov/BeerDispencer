@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Beerdispancer.Domain.Implementations;
+﻿using Beerdispancer.Domain.Implementations;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
@@ -13,9 +12,9 @@ using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BeerDispencer.UnitTests;
 
@@ -87,7 +86,11 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
-        var _sut = new DispencerUpdateHandler(mockUof.Object, new Mock<IBeerFlowCalculator>().Object);
+       
+
+        var _sut = new DispencerUpdateHandler(mockUof.Object,
+            new Mock<IBeerFlowCalculator>().Object,
+            new Mock<ILogger<DispencerUpdateHandler>>().Object);
 
         var dispencerUpdateCommand = new DispencerUpdateCommand { Id = dispencerId, Status = DispencerStatusDto.Open, UpdatedAt = DateTime.UtcNow };
 
@@ -158,7 +161,10 @@ public class DispencerUnitTests
 
         var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
 
-        var _sut = new DispencerUpdateHandler(mockUof.Object, calculator);
+        var _sut = new DispencerUpdateHandler(
+            mockUof.Object,
+            calculator,
+            new Mock<ILogger<DispencerUpdateHandler>>().Object);
 
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {
@@ -243,7 +249,9 @@ public class DispencerUnitTests
 
         var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
 
-        var _sut = new DispencerUpdateHandler(mockUof.Object, calculator);
+        var _sut = new DispencerUpdateHandler(mockUof.Object,
+            calculator,
+            new Mock<ILogger<DispencerUpdateHandler>>().Object);
 
         //Act
         var dispencerUpdateCommand = new DispencerUpdateCommand
@@ -268,7 +276,9 @@ public class DispencerUnitTests
         var mockUof = new Mock<IDispencerUof>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
        
-        var _sut = new DispencerUpdateHandler(mockUof.Object, new Mock<IBeerFlowCalculator>().Object);
+        var _sut = new DispencerUpdateHandler(mockUof.Object,
+            new Mock<IBeerFlowCalculator>().Object,
+            new Mock<ILogger<DispencerUpdateHandler>>().Object);
         //Act
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {

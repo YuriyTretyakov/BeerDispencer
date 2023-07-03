@@ -44,7 +44,7 @@ namespace BeerDispencer.Infrastructure.Persistence
                 nameof(GetByDispencerIdAsync),
                 x =>
                 {
-                    x.SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+                    x.SetAbsoluteExpiration(TimeSpan.FromMilliseconds(1));
                     return _decorated.GetByDispencerIdAsync(dispencerId);
                 }
               );

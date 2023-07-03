@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
+﻿using BeerDispancer.Application.Implementation.Commands.Authorization;
+using BeerDispancer.Application.Implementation.Queries;
 using BeerDispencer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.WebApi.ViewModels.Request;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BeerDispencer.WebApi.Controllers
 {
@@ -31,7 +22,7 @@ namespace BeerDispencer.WebApi.Controllers
         public async Task<IActionResult> LoginAsync([FromBody] UserLoginCommand loginCommand)
         {
             var result = await _mediator.Send(loginCommand);
-            return Ok(result.Data);
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
         }
 
       
@@ -50,6 +41,14 @@ namespace BeerDispencer.WebApi.Controllers
         {
             var result = await _mediator.Send(createUser);
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("getallusers")]
+        public async Task<IActionResult> GetAllUsersAsycn()
+        {
+            var result = await _mediator.Send(new GetAllUsersQuery());
+            return Ok(result);
         }
     }
 }

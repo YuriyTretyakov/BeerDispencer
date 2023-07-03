@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using BeerDispancer.Application.Implementation.Commands;
+﻿using BeerDispancer.Application.Implementation.Commands;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispancer.Application.Implementation.Queries;
 using BeerDispencer.WebApi.Extensions;
@@ -50,7 +44,15 @@ namespace BeerDispancer.Controllers
         [HttpGet("{id}/spending")]
         public async Task<IActionResult> GetSpendingAsync(Guid id)
         {
-            var query = new GetSpendingsQuery { DispencerId = id };
+            var query = new GetAllSpendingsQuery { DispencerId = id };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("getall")]
+        public async Task<IActionResult> GetAllDispencers()
+        {
+            var query = new GetAllDispencersQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
         }
