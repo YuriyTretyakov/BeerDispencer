@@ -1,0 +1,54 @@
+﻿@page "/administartion"
+<h1>Administration</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>UserName</th>
+            <th>Roles</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.UserName </td>
+                <td>@getRolesAsString(@user.Role)</td>
+                <td>
+                    <a href="/edituser/@user.UserName">Edit</a>
+                </td>
+                <td>
+                    <a onclick="DeleteUser(@user.UserName)">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+        [CascadingParameter]
+        public MainLayout mainLayout { get; set; }
+
+    
+
+
+        BeerDispencer.WebUi.ViewModels.Response.User[]? users;
+
+        protected override async Task OnInitializedAsync()
+        {
+            var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
+            Console.WriteLine($"Bearer {mainLayout.Token}");
+            httpclient.DefaultRequestHeaders.Add("Authorization", $"Bearer {mainLayout.Token}");
+
+            users = (await httpclient.GetFromJsonAsync<BeerDispencer.WebUi.ViewModels.Response.User[]>("api/auth/getallusers"));
+        }
+
+        private string getRolesAsString(string[] roles)
+        {
+            return string.Join(',', roles);
+        }
+
+    }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Transactions;
+﻿using System.Transactions;
 
 using BeerDispancer.Application.Abstractions;
-using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Application.DTO;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
@@ -53,7 +48,7 @@ namespace BeerDispencer.Infrastructure.Persistence
         {
             var transactionOptions = new TransactionOptions
             {
-                IsolationLevel = IsolationLevel.ReadUncommitted,
+                IsolationLevel = IsolationLevel.ReadCommitted,
                 Timeout = TransactionManager.MaximumTimeout
             };
             _transaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1705.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.Host", "BeerDispencer.Host\BeerDispencer.WebApi.csproj", "{0EFC082C-BFF4-4D2A-B267-C33D9F266ECF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.WebApi", "BeerDispencer.Host\BeerDispencer.WebApi.csproj", "{0EFC082C-BFF4-4D2A-B267-C33D9F266ECF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.Infrastructure", "BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj", "{BD59878C-688B-438A-8550-FF871A1DCBE3}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.Domain", "BeerDispencer.Domain\BeerDispencer.Domain.csproj", "{51464169-3497-4BCB-BF73-B50E97267543}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.UnitTests", "BeerDispencer.UnitTests\BeerDispencer.UnitTests.csproj", "{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.WebUi", "BeerDispencer.WebUi\BeerDispencer.WebUi.csproj", "{70831137-2495-4358-A5BF-AA63F5DBFE37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70831137-2495-4358-A5BF-AA63F5DBFE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70831137-2495-4358-A5BF-AA63F5DBFE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70831137-2495-4358-A5BF-AA63F5DBFE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70831137-2495-4358-A5BF-AA63F5DBFE37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

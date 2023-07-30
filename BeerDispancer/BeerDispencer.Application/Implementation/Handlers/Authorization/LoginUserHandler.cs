@@ -31,22 +31,36 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
 
         public async Task<AuthResponseDto> Handle(UserLoginCommand request, CancellationToken cancellationToken)
         {
-            var response = new AuthResponseDto { IsSuccess = true };
+           
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
-                return response;
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    ProblemDetails = new List<AuthDetails> { new AuthDetails { Description = "Failed to login" } }.ToArray()
+                };
+            }
 
             var roles = await _userManager.GetRolesAsync(user);
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, true, false);
 
             if (!result.Succeeded)
-                return response;
+            {
+                return new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    ProblemDetails = new List<AuthDetails> { new AuthDetails { Description = "Failed to login" } }.ToArray()
+                };  
+            }
 
-            response.Data = GenerateToken(user, roles);
-
-            return response;
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Data = GenerateToken(user, roles)
+            };
         }
 
         private string GenerateToken(IdentityUser user, IList<string> userClaims)
