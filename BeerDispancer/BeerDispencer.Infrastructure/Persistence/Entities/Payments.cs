@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BeerDispencer.Infrastructure.Persistence.Entities
 {
-    [Table("Usage")]
-    public class Usage
-    {
+	[Table("Payments")]
+	public class Payments
+	{
         [Key]
         public int Id { get; set; }
         [ForeignKey(nameof(Dispencer.Id))]
         public Guid DispencerId { get; set; }
-        public DateTime? OpenAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public double Amount { get; set; }
+        public PaymentStatus Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BeerDispancer.Application.Implementation.Commands;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispancer.Application.Implementation.Queries;
+using BeerDispencer.Application.Implementation.Commands;
 using BeerDispencer.WebApi.Extensions;
 using BeerDispencer.WebApi.ViewModels.Request;
 using MediatR;
@@ -52,6 +53,13 @@ namespace BeerDispancer.Controllers
         {
             var query = new GetSpendingsQuery { DispencerId = id };
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/processPayment")]
+        public async Task<IActionResult> ProcessPaymentAsync([FromBody] CreatePaymentCommand createPayment, Guid id)
+        {
+            var result = await _mediator.Send(createPayment);
             return Ok(result);
         }
     }

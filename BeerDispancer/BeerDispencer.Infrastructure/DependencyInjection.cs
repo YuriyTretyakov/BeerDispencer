@@ -7,6 +7,7 @@ using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Authorization;
 using BeerDispencer.Infrastructure.Middleware;
 using BeerDispencer.Infrastructure.Migrations;
+using BeerDispencer.Infrastructure.Payment;
 using BeerDispencer.Infrastructure.Persistence;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Models;
@@ -43,6 +44,7 @@ namespace BeerDispancer.Infrastructure
             collection.AddTransient<ITokenManager, TokenManager>();
             collection.AddTransient<TokenManagerMiddleware>();
             collection.AddMemoryCache();
+           
         }
 
         public static void AddMigrations(this IServiceCollection collection, ConfigurationManager configuration)

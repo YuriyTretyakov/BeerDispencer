@@ -29,6 +29,7 @@ using Serilog;
 using Microsoft.Extensions.Configuration;
 using BeerDispencer.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using BeerDispencer.Infrastructure.Payment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +65,7 @@ builder.Services.AddHealthChecks()
     .AddCheck<LiveHealthCheck>(nameof(LiveHealthCheck),
         tags: new[] { "live" });
 
-
+builder.Services.AddHostedService<PaymentJob>();
 var app = builder.Build();
 
 
@@ -98,6 +99,7 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
+
 
 app.Run();
 

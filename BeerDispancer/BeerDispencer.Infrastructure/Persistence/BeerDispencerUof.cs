@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Transactions;
 
@@ -7,7 +8,9 @@ using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Application.DTO;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
+using BeerDispencer.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
@@ -38,16 +41,7 @@ namespace BeerDispencer.Infrastructure.Persistence
 
         private TransactionScope _transaction;
 
-        //public void StartTransaction()
-        //{
-        //    var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted };
-        //    new TransactionScope(transactionOptions,TimeSpan.MaxValue)
-
-        //    _transaction = new TransactionScope(
-        //        new TransactionScopeOption { }
-        //            IsolationLevel =  },TransactionScopeAsyncFlowOption.Enabled
-        //   );
-        //}
+        
 
         public TransactionScope StartTransaction()
         {
@@ -60,6 +54,21 @@ namespace BeerDispencer.Infrastructure.Persistence
             return _transaction;
         }
 
+        public async Task ProcessPaymentAsync(Guid dispencerId, double amount)
+        {
+            var outbox = new Outbox
+            {
+                Data = JsonConvert.SerializeObject(new { Id = dispencerId, Amount = amount }),
+                CreatedAt = DateTime.UtcNow,
+                Status = OperationStatus.Created
+            };
+
+            using var transaction = StartTransaction();
+            await _dbcontext.Outbox.AddAsync(outbox);
+            await _dbcontext.SaveChangesAsync(CancellationToken.None);
+
+        }
+
         public void CommitTransaction()
         {
             _transaction.Complete();
@@ -70,6 +79,8 @@ namespace BeerDispencer.Infrastructure.Persistence
             _transaction?.Dispose();
             _dbcontext?.Dispose();
         }
+
+
     }
 }
 
