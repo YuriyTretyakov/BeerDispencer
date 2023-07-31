@@ -19,8 +19,7 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
         public async Task<CreatePaymentResponse> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            using (var transaction = _dispencerUof.StartTransaction())
-            {
+          
                 var dispencerDto = await _dispencerUof.DispencerRepo.GetByIdAsync(request.DispencerId);
 
 
@@ -31,8 +30,6 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
                await _dispencerUof.ProcessPaymentAsync(request.DispencerId, request.Amount);
                 return new CreatePaymentResponse { IsSuccess = true, Data = $"Payment initiated for dispenceer {request.DispencerId}" };
-
-            }
         }
     }
 }

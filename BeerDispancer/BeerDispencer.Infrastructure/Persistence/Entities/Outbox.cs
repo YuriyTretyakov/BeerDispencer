@@ -9,6 +9,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Entities
         [Key]
         public int Id { get; set; }
         public string Data { get; set; }
+        public string MessageType { get; set; }
         public OperationStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

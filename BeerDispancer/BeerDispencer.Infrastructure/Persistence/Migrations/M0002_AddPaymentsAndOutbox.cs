@@ -16,15 +16,16 @@ public class M0002_AddPaymentsAndOutbox : Migration
     public override void Up()
     {
         Create.Table("Outbox")
-            .WithColumn("Id").AsInt32().Indexed().NotNullable().PrimaryKey()
+             .WithColumn("Id").AsInt32().Indexed().NotNullable().Identity()
             .WithColumn("Data").AsString()
+            .WithColumn("MessageType").AsString()
             .WithColumn("Status").AsInt16()
             .WithColumn("CreatedAt").AsCustom("timestamp with time zone").NotNullable()
             .WithColumn("UpdatedAt").AsCustom("timestamp with time zone").Nullable();
 
 
         Create.Table("Payments")
-            .WithColumn("Id").AsInt32().Indexed().NotNullable().Identity()
+              .WithColumn("Id").AsInt32().Indexed().NotNullable().Identity()
             .WithColumn("DispencerId").AsGuid().ForeignKey("Dispencer", "Id")
             .WithColumn("Status").AsInt32().NotNullable()
             .WithColumn("Amount").AsDouble().NotNullable()

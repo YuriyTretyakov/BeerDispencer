@@ -38,7 +38,7 @@ namespace BeerDispencer.Infrastructure.Persistence
         {
             var dbResult = await _dbcontext.Dispencers.ToListAsync();
 
-            return dbResult.Cast<DispencerDto>();
+            return dbResult.Select(x => x.ToDto());
         }
 
         public async Task<DispencerDto> GetByIdAsync(Guid id)

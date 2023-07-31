@@ -1,0 +1,231 @@
+﻿@inherits LayoutComponentBase
+
+@inject Abstractions.ILocalStorage LocalStorage
+@inject NavigationManager NavManager
+@inject BeerDispencer.WebUi.Implementation.TimeZoneService TimeZoneService
+
+
+<style>
+    .avatar img {
+        border-radius: 50%;
+        width: 20px;
+        display: block;
+    }
+
+    .avatar {
+        text-align: justify;
+        width: 50px;
+        margin: 0 auto;
+    }
+</style>
+
+<CascadingValue Value="this">
+
+
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <main>
+            <div class="top-row px-4">
+
+
+
+                <div style="width:200px;text-align:right;">
+                    @if (loggedIn)
+                    {
+
+                        <div style="display:inline-block">
+
+                            <img class="avatar" src="/images/no-avatar.png" @onclick=@(()=>NavManager.NavigateTo("/account")) />
+                            <a style="margin-left:0" href="account"><b>@UserName</b></a>
+
+                        </div>
+
+                        <button style="margin-left:50px" class="btn btn-sm btn-danger" title="Logout" @onclick="Logout"><span class="oi oi-account-logout"></span></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
+                    }
+                </div>
+
+
+
+            </div>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+
+
+</CascadingValue>
+
+<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
+
+<div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="userName" placeholder="Enter user name..." autocomplete="off" required @bind-value="username" />
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required @bind-value="password" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" @onclick="(async () =>await Login())">Login</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    private bool show, display, loggedIn;
+
+    private string? password;
+
+    public string? Token;
+
+    private string? username;
+    public string? UserName { get; set; }
+    public string? Role { get; set; }
+
+    public DateTime? ValidUntil { get; set; }
+
+    DateTimeOffset now;
+
+    public string? GetUserName()
+    {
+        return loggedIn ? UserName : null;
+    }
+
+    public async Task OpenLogin()
+    {
+        display = true;
+        await Task.Delay(100);
+        show = true;
+    }
+
+    public async Task Logout()
+    {
+        UserName = null;
+        password = null;
+        loggedIn = false;
+        Role = null;
+        Token = null;
+        await LocalStorage.RemoveAsync("user");
+    }
+
+    private async Task Close()
+    {
+        show = false;
+        await Task.Delay(500);
+        display = false;
+    }
+
+    private async Task Login()
+    {
+        if (!string.IsNullOrEmpty(username))
+        {
+            var loginModel = new BeerDispencer.WebUi.ViewModels.Request.UserLoginModel
+            {
+                UserName = username,
+                Password = password
+            };
+
+            var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
+            var response = await httpclient.PostAsJsonAsync<BeerDispencer.WebUi.ViewModels.Request.UserLoginModel>("/api/Auth/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Token = await response.Content.ReadAsStringAsync();
+                loggedIn = true;
+                UserName = username;
+                await LocalStorage.SaveStringAsync("user", Token);
+
+                if (!string.IsNullOrEmpty(Token))
+                {
+                    InitClaimsByFromJwt(Token);
+                }
+
+                await Close();
+                return;
+            }
+
+            UserName = null;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
+        Token = await LocalStorage.GetStringAsync("user");
+
+        if (!string.IsNullOrEmpty(Token))
+        {
+            InitClaimsByFromJwt(Token);
+        }
+        loggedIn = !string.IsNullOrEmpty(Token);
+    }
+
+    private void InitClaimsByFromJwt(string jwt)
+    {
+        var claims = new List<string>();
+        var payload = jwt.Split('.')[1];
+        var jsonBytes = ParseBase64WithoutPadding(payload);
+
+        var jsonText = System.Text.Encoding.UTF8.GetString(jsonBytes);
+        var keyValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonText);
+
+        foreach (var kv in keyValuePairs)
+        {
+            if (kv.Key.EndsWith("role"))
+            {
+                Role = kv.Value.ToString();
+            }
+
+            if (kv.Key.EndsWith("nameidentifier"))
+            {
+                UserName = kv.Value.ToString();
+            }
+
+            if (kv.Key.EndsWith("exp"))
+            {
+                var validUtc= DateTime.UnixEpoch.AddSeconds((long)kv.Value);
+                ValidUntil = GetValidUntil(validUtc);
+            }
+        }
+    }
+
+    private byte[] ParseBase64WithoutPadding(string base64)
+    {
+        switch (base64.Length % 4)
+        {
+            case 2: base64 += "=="; break;
+            case 3: base64 += "="; break;
+        }
+        return Convert.FromBase64String(base64);
+    }
+
+    private DateTime? GetValidUntil(DateTime? dt)
+    {
+        return dt.Value.Add(TimeZoneService.UserOffset.Value);
+    }
+
+}

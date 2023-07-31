@@ -56,17 +56,31 @@ namespace BeerDispencer.Infrastructure.Persistence
 
         public async Task ProcessPaymentAsync(Guid dispencerId, double amount)
         {
+
+            using var transaction = StartTransaction();
+
+            var payment = new Payments
+            {
+                DispencerId = dispencerId,
+                Amount = amount,
+                Status = PaymentStatus.Completed,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
             var outbox = new Outbox
             {
-                Data = JsonConvert.SerializeObject(new { Id = dispencerId, Amount = amount }),
+                Data = JsonConvert.SerializeObject(payment),
+                MessageType =nameof(Payments),
                 CreatedAt = DateTime.UtcNow,
                 Status = OperationStatus.Created
             };
 
-            using var transaction = StartTransaction();
-            await _dbcontext.Outbox.AddAsync(outbox);
-            await _dbcontext.SaveChangesAsync(CancellationToken.None);
+            await _dbcontext.Payments.AddAsync(payment);
 
+            await _dbcontext.Outbox.AddAsync(outbox);
+            await _dbcontext.SaveChangesAsync(_cancellationToken);
+            CommitTransaction();
         }
 
         public void CommitTransaction()

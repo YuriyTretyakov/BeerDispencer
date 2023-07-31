@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using MediatR;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 namespace BeerDispencer.WebApi.ViewModels.Request
 
 {

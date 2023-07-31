@@ -11,7 +11,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         
         private readonly DBSettings _dbSettings;
 
-        public BeerDispencerDbContext(IServiceProvider service, IOptions<DBSettings> dbSettings)
+        public BeerDispencerDbContext(IOptions<DBSettings> dbSettings)
         {
             _dbSettings = dbSettings.Value;
         }
@@ -36,7 +36,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
             modelBuilder.Entity<Usage>(x=>x.ToTable("Usage").HasKey(x => x.Id));
             modelBuilder.Entity<Outbox>(x => x.ToTable("Outbox").HasKey(x => x.Id));
             modelBuilder.Entity<Payments>(x => x.ToTable("Payments").HasKey(x => x.Id));
-
+           
         }
 
     }
