@@ -47,7 +47,7 @@ builder.Services.AddHealthChecks()
     .AddCheck<LiveHealthCheck>(nameof(LiveHealthCheck),
         tags: new[] { "live" });
 
-builder.Services.AddHostedService<PaymentJob>();
+builder.Services.AddHostedService<PaymentProcessorJob>();
 var app = builder.Build();
 
 

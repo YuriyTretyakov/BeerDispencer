@@ -10,9 +10,9 @@ namespace BeerDispencer.Application.Implementation.Handlers
 {
     public class ProcessPaymentHandler : IRequestHandler<CreatePaymentCommand, CreatePaymentResponse>
     {
-        private readonly IDispencerUof _dispencerUof;
+        private readonly IDispencerUOW _dispencerUof;
 
-        public ProcessPaymentHandler(IDispencerUof dispencerUof)
+        public ProcessPaymentHandler(IDispencerUOW dispencerUof)
 		{
             _dispencerUof = dispencerUof;
         }

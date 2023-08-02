@@ -41,7 +41,7 @@ public class DispencerUnitTests
         var dispencerRepo = new DispencerRepository(mockContext.Object);
 
 
-        var uof = new BeerDispencerUof(mockContext.Object,
+        var uof = new BeerDispencerUOW(mockContext.Object,
             new Mock<IUsageRepository>().Object,
             dispencerRepo);
 
@@ -82,7 +82,7 @@ public class DispencerUnitTests
 
         var usagesMock = new Mock<IUsageRepository>();
 
-        var mockUof = new Mock<IDispencerUof>();
+        var mockUof = new Mock<IDispencerUOW>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
@@ -154,7 +154,7 @@ public class DispencerUnitTests
                 OpenAt = openedAt} });
 
 
-        var mockUof = new Mock<IDispencerUof>();
+        var mockUof = new Mock<IDispencerUOW>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
@@ -243,7 +243,7 @@ public class DispencerUnitTests
                 OpenAt = openedAt} });
 
 
-        var mockUof = new Mock<IDispencerUof>();
+        var mockUof = new Mock<IDispencerUOW>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
@@ -273,7 +273,7 @@ public class DispencerUnitTests
         var dispencerRepoMock = new Mock<IDispencerRepository>();
         dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(default(DispencerDto));
       
-        var mockUof = new Mock<IDispencerUof>();
+        var mockUof = new Mock<IDispencerUOW>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
        
         var _sut = new DispencerUpdateHandler(mockUof.Object,

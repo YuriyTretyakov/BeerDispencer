@@ -10,12 +10,12 @@ namespace BeerDispancer.Application.Implementation.Handlers
 {
     public class DispencerUpdateHandler: IRequestHandler<DispencerUpdateCommand, DispencerUpdateResponse>
 	{
-        private readonly IDispencerUof _dispencerUof;
+        private readonly IDispencerUOW _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
         private readonly ILogger<DispencerUpdateHandler> _logger;
 
         public DispencerUpdateHandler(
-            IDispencerUof dispencerUof,
+            IDispencerUOW dispencerUof,
         IBeerFlowCalculator calculator,
         ILogger<DispencerUpdateHandler> logger)
 		{

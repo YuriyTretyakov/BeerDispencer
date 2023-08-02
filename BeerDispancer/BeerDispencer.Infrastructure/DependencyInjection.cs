@@ -34,7 +34,7 @@ namespace BeerDispancer.Infrastructure
             collection.AddScoped<IUsageRepository, CachedUsageRepository>();
             collection.AddScoped<IDispencerRepository, DispencerRepository>();
 
-            collection.AddTransient<IDispencerUof, BeerDispencerUof>();
+            collection.AddTransient<IDispencerUOW, BeerDispencerUOW>();
             collection.AddMigrations(configuration);
 
             collection.AddDbContext<LoginDbContext>();

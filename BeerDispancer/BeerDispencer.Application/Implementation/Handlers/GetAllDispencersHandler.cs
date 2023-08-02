@@ -7,9 +7,9 @@ namespace BeerDispencer.Application.Implementation.Handlers
 {
     public class GetAllDispencersHandler : IRequestHandler<GetAllDispencersQuery, DispencerDto[]>
     {
-        private readonly IDispencerUof _dispencerUof;
+        private readonly IDispencerUOW _dispencerUof;
 
-        public GetAllDispencersHandler(IDispencerUof dispencerUof)
+        public GetAllDispencersHandler(IDispencerUOW dispencerUof)
 		{
             _dispencerUof = dispencerUof;
         }

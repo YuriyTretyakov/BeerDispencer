@@ -1,7 +1,5 @@
 ﻿using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
-using BeerDispencer.Infrastructure.Persistence.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

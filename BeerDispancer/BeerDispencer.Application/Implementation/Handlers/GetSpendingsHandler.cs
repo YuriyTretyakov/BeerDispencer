@@ -10,10 +10,10 @@ namespace BeerDispancer.Application.Implementation.Handlers
 {
 	public class GetSpendingsHandler : IRequestHandler<GetAllSpendingsQuery, UsageResponse>
 	{
-        private readonly IDispencerUof _dispencerUof;
+        private readonly IDispencerUOW _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
 
-        public GetSpendingsHandler(IDispencerUof dispencerUof, IBeerFlowSettings beerFlowSettings,IBeerFlowCalculator calculator)
+        public GetSpendingsHandler(IDispencerUOW dispencerUof, IBeerFlowSettings beerFlowSettings,IBeerFlowCalculator calculator)
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;

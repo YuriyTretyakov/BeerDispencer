@@ -10,9 +10,9 @@ namespace BeerDispancer.Application.Implementation.Handlers
 {
 	public class CreateDispencerHandler: IRequestHandler<DispencerCreateCommand, DispencerDto>
     {
-        private readonly IDispencerUof _dispencerUof;
+        private readonly IDispencerUOW _dispencerUof;
        
-        public CreateDispencerHandler(IDispencerUof dispencerUof)
+        public CreateDispencerHandler(IDispencerUOW dispencerUof)
 		{
             _dispencerUof = dispencerUof;
         }

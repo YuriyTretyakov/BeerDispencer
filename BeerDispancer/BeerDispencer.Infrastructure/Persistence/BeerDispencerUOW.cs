@@ -14,12 +14,12 @@ using Newtonsoft.Json;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
-    public class BeerDispencerUof : IDispencerUof
+    public class BeerDispencerUOW : IDispencerUOW
     {
         private readonly IBeerDispencerDbContext _dbcontext;
         private CancellationToken _cancellationToken = new CancellationToken();
 
-        public BeerDispencerUof(
+        public BeerDispencerUOW(
             IBeerDispencerDbContext dbcontext,
             IUsageRepository usageRepository,
             IDispencerRepository dispencerRepository)
@@ -47,7 +47,7 @@ namespace BeerDispencer.Infrastructure.Persistence
         {
             var transactionOptions = new TransactionOptions
             {
-                IsolationLevel = IsolationLevel.ReadUncommitted,
+                IsolationLevel = IsolationLevel.ReadCommitted,
                 Timeout = TransactionManager.MaximumTimeout
             };
             _transaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
