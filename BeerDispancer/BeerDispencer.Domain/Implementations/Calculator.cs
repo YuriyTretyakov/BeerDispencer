@@ -1,9 +1,8 @@
-﻿using System;
-using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispencer.Domain.Abstractions;
 
-namespace Beerdispancer.Domain.Implementations
+namespace BeerDispencer.Domain.Implementations
 {
-	public  class Calculator :IBeerFlowCalculator
+    public  class Calculator :IBeerFlowCalculator
 	{
         private readonly IBeerFlowSettings _settings;
 

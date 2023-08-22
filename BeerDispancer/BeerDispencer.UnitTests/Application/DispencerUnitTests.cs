@@ -1,5 +1,4 @@
-﻿using Beerdispancer.Domain.Implementations;
-using BeerDispancer.Application.Abstractions;
+﻿using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
 using BeerDispancer.Application.Implementation.Handlers;
