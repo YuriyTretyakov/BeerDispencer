@@ -3,6 +3,7 @@ using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
 using BeerDispencer.Application.Implementation.Response;
 using BeerDispencer.Domain.Abstractions;
+using BeerDispencer.Shared;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -42,12 +43,12 @@ namespace BeerDispancer.Application.Implementation.Handlers
                 await _dispencerUof.DispencerRepo.UpdateAsync(dispencerDto);
 
 
-                if (dispencerDto.Status == DispencerStatusDto.Open)
+                if (dispencerDto.Status == DispencerStatus.Open)
                 {
                     await _dispencerUof.UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerDto.Id, OpenAt = request.UpdatedAt });
                 }
 
-                else if (dispencerDto.Status == DispencerStatusDto.Close)
+                else if (dispencerDto.Status == DispencerStatus.Close)
                 {
                     var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(dispencerDto.Id);
 

@@ -1,4 +1,6 @@
-﻿namespace BeerDispencer.Domain.Entity
+﻿using System;
+
+namespace BeerDispencer.Shared
 {
     public enum DispencerStatus
     {

@@ -51,7 +51,7 @@ namespace BeerDispencer.Infrastructure.Persistence
         {
             var dispencerEntity = await _dbcontext.Dispencers.SingleOrDefaultAsync(x => x.Id == dispencerDto.Id);
 
-            dispencerEntity.Status = DispencerExtensions.ToDbEntity(dispencerDto.Status) ?? dispencerEntity.Status;
+            dispencerEntity.Status = dispencerDto.Status ?? dispencerEntity.Status;
             dispencerEntity.Volume = dispencerDto.Volume ?? dispencerEntity.Volume;
         }
 

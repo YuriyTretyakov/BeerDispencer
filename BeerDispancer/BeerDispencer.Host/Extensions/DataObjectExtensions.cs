@@ -28,7 +28,7 @@ namespace BeerDispencer.WebApi.Extensions
         public static DispencerUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
         {
             return  new DispencerUpdateCommand { Id = id,
-                Status = Enum.Parse<BeerDispancer.Application.DTO.DispencerStatusDto>( model.Status.ToString()),
+                Status =  model.Status,
                 UpdatedAt = model.UpdatedAt };
         }
 

@@ -8,29 +8,17 @@ namespace BeerDispencer.Infrastructure.Extensions
 	{
 		public static Dispencer ToDbEntity(this DispencerDto dto)
 		{
-			return new Dispencer { Id = dto.Id, Status = ToDbEntity(dto.Status), Volume = dto.Volume };
+			return new Dispencer { Id = dto.Id, Status = dto.Status, Volume = dto.Volume };
 		}
 
-		public static DispencerStatus? ToDbEntity(DispencerStatusDto? dto)
-		{
-			if (dto == null)
-				return null;
-
-			return (DispencerStatus)Enum.Parse(typeof(DispencerStatus), dto.ToString());
-		}
+	
 
 		public static DispencerDto ToDto(this Dispencer entity)
 		{
-			return new DispencerDto { Id = entity.Id, Status = ToDto(entity.Status), Volume = entity.Volume };
+			return new DispencerDto { Id = entity.Id, Status = entity.Status, Volume = entity.Volume };
 		}
 
-        public static DispencerStatusDto? ToDto(DispencerStatus? entity)
-        {
-            if (entity == null)
-                return null;
-
-            return (DispencerStatusDto)Enum.Parse(typeof(DispencerStatusDto), entity.ToString());
-        }
+        
 
     }
 }

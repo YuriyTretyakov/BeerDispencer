@@ -9,6 +9,7 @@ using BeerDispencer.Domain.Implementations;
 using BeerDispencer.Infrastructure.Persistence;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
+using BeerDispencer.Shared;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -54,7 +55,7 @@ public class DispencerUnitTests
         //Assert
         dto.Should().NotBeNull();
         dto.Volume.Should().Be(50);
-        dto.Status.Should().Be(BeerDispancer.Application.DTO.DispencerStatusDto.Close);
+        dto.Status.Should().Be(DispencerStatus.Close);
 
 
         mockSet.Verify(_ => _.AddAsync(It.IsAny<Dispencer>(), CancellationToken.None), Times.Once);
@@ -70,7 +71,7 @@ public class DispencerUnitTests
         var dispencer = new DispencerDto
         {
             Id = dispencerId,
-            Status = DispencerStatusDto.Close,
+            Status = DispencerStatus.Close,
             Volume = 30
         };
 
@@ -91,7 +92,7 @@ public class DispencerUnitTests
             new Mock<IBeerFlowCalculator>().Object,
             new Mock<ILogger<DispencerUpdateHandler>>().Object);
 
-        var dispencerUpdateCommand = new DispencerUpdateCommand { Id = dispencerId, Status = DispencerStatusDto.Open, UpdatedAt = DateTime.UtcNow };
+        var dispencerUpdateCommand = new DispencerUpdateCommand { Id = dispencerId, Status = DispencerStatus.Open, UpdatedAt = DateTime.UtcNow };
 
         //Act
         var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
@@ -109,7 +110,7 @@ public class DispencerUnitTests
             .Verify(x => x
             .UpdateAsync(It.Is<DispencerUpdateDto>(
                 x => x.Id == dispencerId &&
-            x.Status == DispencerStatusDto.Open)),
+            x.Status == DispencerStatus.Open)),
             Times.Once);
 
         usagesMock
@@ -132,7 +133,7 @@ public class DispencerUnitTests
         var dispencer = new DispencerDto
         {
             Id = dispencerId,
-            Status = DispencerStatusDto.Open,
+            Status = DispencerStatus.Open,
             Volume = 30
         };
 
@@ -168,7 +169,7 @@ public class DispencerUnitTests
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {
             Id = dispencerId,
-            Status = DispencerStatusDto.Close,
+            Status = DispencerStatus.Close,
             UpdatedAt = DateTime.UtcNow
         };
 
@@ -189,7 +190,7 @@ public class DispencerUnitTests
             .Verify(x => x
             .UpdateAsync(It.Is<DispencerUpdateDto>(
                 x => x.Id == dispencerId &&
-            x.Status == DispencerStatusDto.Close)),
+            x.Status == DispencerStatus.Close)),
             Times.Once);
 
         usagesMock
@@ -211,9 +212,9 @@ public class DispencerUnitTests
     }
 
 
-    [TestCase(DispencerStatusDto.Open, DispencerStatusDto.Open)]
-    [TestCase(DispencerStatusDto.Close, DispencerStatusDto.Close)]
-    public async Task UpdateDispencerCommand_Status_Is_False_If_Operation_CannotBePErformed(DispencerStatusDto initialstate, DispencerStatusDto updateTo)
+    [TestCase(DispencerStatus.Open, DispencerStatus.Open)]
+    [TestCase(DispencerStatus.Close, DispencerStatus.Close)]
+    public async Task UpdateDispencerCommand_Status_Is_False_If_Operation_CannotBePErformed(DispencerStatus initialstate, DispencerStatus updateTo)
     {
         //Arrange
         var dispencerId = Guid.NewGuid();
@@ -282,7 +283,7 @@ public class DispencerUnitTests
         var dispencerUpdateCommand = new DispencerUpdateCommand
         {
             Id = Guid.NewGuid(),
-            Status = DispencerStatusDto.Open,
+            Status = DispencerStatus.Open,
             UpdatedAt = DateTime.UtcNow
         };
         var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);

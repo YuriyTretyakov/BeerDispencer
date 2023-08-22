@@ -1,4 +1,5 @@
 ﻿using BeerDispencer.Domain.Abstractions;
+using BeerDispencer.Shared;
 
 namespace BeerDispencer.Domain.Entity
 {
