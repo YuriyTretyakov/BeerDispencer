@@ -202,7 +202,7 @@ public class DispencerUnitTests
             x => x.DispencerId == dispencerId &&
             x.ClosedAt == dispencerUpdateCommand.UpdatedAt &&
             x.OpenAt == openedAt &&
-            x.FlowVolume == x.ClosedAt.Value.Subtract(x.OpenAt.Value).TotalSeconds * 0.1 &&
+            x.FlowVolume == x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * 0.1 &&
             x.TotalSpent == x.FlowVolume * 6)));
 
 

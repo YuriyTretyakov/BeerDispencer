@@ -2,7 +2,7 @@
 {
     public interface IBeerFlowSettings
     {
-        double LitersPerSecond { get; set; }
-        double PricePerLiter { get; set; }
+        decimal LitersPerSecond { get; set; }
+        decimal PricePerLiter { get; set; }
     }
 }

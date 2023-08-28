@@ -4,14 +4,14 @@ namespace BeerDispencer.Domain.Entity
 {
     public class Usage
     {
-        public int? Id { get; set; }
-        public Guid DispencerId { get; set; }
-        public DateTime OpenAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public int? Id { get; private set; }
+        public Guid DispencerId { get; private set; }
+        public DateTime OpenAt { get; private set; }
+        public DateTime? ClosedAt { get; private set; }
+        public decimal? FlowVolume { get; private set; }
+        public decimal? TotalSpent { get; private set; }
 
-        internal Usage(
+        private Usage(
             int? id,
         Guid dispencerId,
          DateTime openAt,
@@ -39,6 +39,17 @@ namespace BeerDispencer.Domain.Entity
         public static Usage CreateNew(Guid dispencerId)
         {
             return new Usage(null, dispencerId, DateTime.UtcNow, null, null, null);
+        }
+
+        public static Usage Create(
+            int? id,
+        Guid dispencerId,
+         DateTime openAt,
+         DateTime? closedAt,
+         double? flowVolume,
+         double? totalSpent)
+        {
+            return new Usage(id, dispencerId, openAt, closedAt, flowVolume, totalSpent);
         }
 
     }

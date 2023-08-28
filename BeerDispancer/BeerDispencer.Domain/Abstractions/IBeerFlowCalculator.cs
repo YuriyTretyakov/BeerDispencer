@@ -3,8 +3,8 @@ namespace BeerDispencer.Domain.Abstractions
 {
 	public interface IBeerFlowCalculator
 	{
-        public double? GetFlowVolume(DateTime? closedAt, DateTime? openAt);
-        public double? GetTotalSpent(double? volume);     
+        public decimal? GetFlowVolume(DateTime? closedAt, DateTime? openAt);
+        public decimal? GetTotalSpent(double? volume);     
     }
 }
 

@@ -13,8 +13,8 @@ namespace BeerDispancer.Application.Implementation.Response
     {
         public DateTime? OpenedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public decimal? FlowVolume { get; set; }
+        public decimal? TotalSpent { get; set; }
 
     }
 }

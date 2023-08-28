@@ -7,16 +7,16 @@ namespace BeerDispencer.Domain.Entity
     {
         public IReadOnlyCollection<Usage> Usages => _usages;
 
-        public Guid Id { get; private set; }
-        public double Volume { get; private set; }
+        public Guid? Id { get; private set; }
+        public decimal Volume { get; private set; }
         public DispencerStatus Status { get; private set; }
 
 
         private List<Usage> _usages = new List<Usage>();
 
         private Dispencer(
-            Guid id,
-            double volume,
+            Guid? id,
+            decimal volume,
             DispencerStatus status)
         {
             Id = id;
@@ -25,7 +25,7 @@ namespace BeerDispencer.Domain.Entity
         }
 
 
-        public void Open()
+        public Usage Open()
         {
             if (Status == DispencerStatus.Open | Status == DispencerStatus.OutOfService)
             {
@@ -34,11 +34,12 @@ namespace BeerDispencer.Domain.Entity
 
             Status = DispencerStatus.Open;
 
-            var usage = Usage.CreateNew(Id);
+            var usage = Usage.CreateNew(Id.Value);
             _usages.Add(usage);
+            return usage;
         }
 
-        public void Close(IBeerFlowCalculator calculator)
+        public Usage Close(IBeerFlowCalculator calculator)
         {
             if (Status == DispencerStatus.Close | Status == DispencerStatus.OutOfService)
             {
@@ -49,6 +50,7 @@ namespace BeerDispencer.Domain.Entity
 
             var currentUsage = _usages.First(x => x.ClosedAt == null);
             currentUsage.SetClose(calculator);
+            return currentUsage;
         }
 
         internal void SetUsages(IList<Usage> usages)
@@ -59,11 +61,11 @@ namespace BeerDispencer.Domain.Entity
 
         public static Dispencer CreateNewDispencer(double volume)
         {
-            return new Dispencer(Guid.NewGuid(), volume, DispencerStatus.Close);
+            return new Dispencer(null, volume, DispencerStatus.Close);
         }
 
 
-        public static Dispencer CreateDispencer(
+        public static Dispencer Create(
             Guid id,
             double volume,
             DispencerStatus status,
@@ -73,7 +75,6 @@ namespace BeerDispencer.Domain.Entity
             dispencer.SetUsages(usages);
             return dispencer;
         }
-
     }
 }
 

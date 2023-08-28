@@ -1,14 +1,13 @@
-﻿using System;
-using BeerDispancer.Application.Abstractions;
+﻿using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
-using BeerDispancer.Application.Implementation.Response;
-using BeerDispencer.Shared;
+using BeerDispencer.Application;
+using BeerDispencer.Domain.Entity;
 using MediatR;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
-	public class CreateDispencerHandler: IRequestHandler<DispencerCreateCommand, DispencerDto>
+    public class CreateDispencerHandler: IRequestHandler<DispencerCreateCommand, DispencerDto>
     {
         private readonly IDispencerUof _dispencerUof;
        
@@ -19,10 +18,17 @@ namespace BeerDispancer.Application.Implementation.Handlers
 
         public async Task<DispencerDto> Handle(DispencerCreateCommand request, CancellationToken cancellationToken)
         {
-            var dispencerDto = new DispencerDto { Volume = request.FlowVolume, Status = DispencerStatus.Close };
-            var dispencer = await _dispencerUof.DispencerRepo.AddAsync(dispencerDto);
+
+            var dispencer = Dispencer
+                .CreateNewDispencer(request.FlowVolume);
+
+
+            DispencerDto dispencerDto = dispencer.ToDto();
+
+
+            dispencerDto = await _dispencerUof.DispencerRepo.AddAsync(dispencerDto);
             await _dispencerUof.Complete();
-            return dispencer;
+            return dispencerDto;
         }
     }
 }
