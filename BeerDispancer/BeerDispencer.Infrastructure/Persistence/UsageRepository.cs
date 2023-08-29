@@ -1,11 +1,9 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
+﻿using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Extensions;
 using BeerDispencer.Infrastructure.Persistence.Abstractions;
 using BeerDispencer.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BeerDispencer.Infrastructure.Persistence
 {
@@ -35,7 +33,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return entityList.Cast<UsageDto>();
         }
 
-        public async Task<UsageDto> GetByIdAsync(int id)
+        public async Task<UsageDto> GetByIdAsync(Guid id)
         {
             var entity = await _dbcontext
                         .Usage
@@ -59,7 +57,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(Guid id)
         {
             return Task.FromResult(_dbcontext
                .Usage.Remove(new Usage { Id = id }));

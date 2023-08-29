@@ -22,7 +22,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
         public async Task<UsageResponse> Handle(GetAllSpendingsQuery request, CancellationToken cancellationToken)
         {
             var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(request.DispencerId);
-            double total = 0;
+            decimal total = 0;
 
             var spendings = usagesFound.Select(x =>
             {

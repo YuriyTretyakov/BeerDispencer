@@ -5,7 +5,7 @@ using BeerDispencer.Application.Abstractions;
 
 namespace BeerDispencer.Application.Abstractions
 { 
-    public interface IDispencerRepository: IRepository<DispencerDto,Guid>
+    public interface IDispencerRepository: IRepository<DispencerDto>
 	{
 	}
 }

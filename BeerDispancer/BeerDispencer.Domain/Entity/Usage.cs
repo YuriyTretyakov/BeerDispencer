@@ -2,22 +2,22 @@
 
 namespace BeerDispencer.Domain.Entity
 {
-    public class Usage
+    public sealed class Usage
     {
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
         public Guid DispencerId { get; set; }
         public DateTime OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public decimal? FlowVolume { get; set; }
+        public decimal? TotalSpent { get; set; }
 
         internal Usage(
-            int? id,
+            Guid? id,
         Guid dispencerId,
          DateTime openAt,
          DateTime? closedAt,
-         double? flowVolume,
-         double? totalSpent
+         decimal? flowVolume,
+         decimal? totalSpent
          )
         {
             Id = id;
@@ -36,7 +36,7 @@ namespace BeerDispencer.Domain.Entity
             return this;
         }
 
-        public static Usage CreateNew(Guid dispencerId)
+        public static Usage Create(Guid dispencerId)
         {
             return new Usage(null, dispencerId, DateTime.UtcNow, null, null, null);
         }

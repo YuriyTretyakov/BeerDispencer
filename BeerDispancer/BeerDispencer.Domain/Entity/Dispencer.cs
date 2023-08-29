@@ -3,12 +3,12 @@ using BeerDispencer.Shared;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public class Dispencer
+    public sealed class Dispencer
     {
         public IReadOnlyCollection<Usage> Usages => _usages;
 
         public Guid Id { get; private set; }
-        public double Volume { get; private set; }
+        public decimal Volume { get; private set; }
         public DispencerStatus Status { get; private set; }
 
 
@@ -16,7 +16,7 @@ namespace BeerDispencer.Domain.Entity
 
         private Dispencer(
             Guid id,
-            double volume,
+            decimal volume,
             DispencerStatus status)
         {
             Id = id;
@@ -27,20 +27,20 @@ namespace BeerDispencer.Domain.Entity
 
         public void Open()
         {
-            if (Status == DispencerStatus.Open | Status == DispencerStatus.OutOfService)
+            if (Status == DispencerStatus.Open || Status == DispencerStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
 
             Status = DispencerStatus.Open;
 
-            var usage = Usage.CreateNew(Id);
+            var usage = Usage.Create(Id);
             _usages.Add(usage);
         }
 
         public void Close(IBeerFlowCalculator calculator)
         {
-            if (Status == DispencerStatus.Close | Status == DispencerStatus.OutOfService)
+            if (Status == DispencerStatus.Close || Status == DispencerStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
@@ -57,7 +57,7 @@ namespace BeerDispencer.Domain.Entity
         }
 
 
-        public static Dispencer CreateNewDispencer(double volume)
+        public static Dispencer CreateNewDispencer(decimal volume)
         {
             return new Dispencer(Guid.NewGuid(), volume, DispencerStatus.Close);
         }
@@ -65,7 +65,7 @@ namespace BeerDispencer.Domain.Entity
 
         public static Dispencer CreateDispencer(
             Guid id,
-            double volume,
+            decimal volume,
             DispencerStatus status,
             IList<Usage> usages)
         {
