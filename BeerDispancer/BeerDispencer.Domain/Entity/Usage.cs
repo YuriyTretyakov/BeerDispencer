@@ -42,12 +42,12 @@ namespace BeerDispencer.Domain.Entity
         }
 
         public static Usage Create(
-            int? id,
+            Guid? id,
         Guid dispencerId,
          DateTime openAt,
          DateTime? closedAt,
-         double? flowVolume,
-         double? totalSpent)
+         decimal? flowVolume,
+         decimal? totalSpent)
         {
             return new Usage(id, dispencerId, openAt, closedAt, flowVolume, totalSpent);
         }

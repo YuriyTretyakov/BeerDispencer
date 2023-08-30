@@ -34,7 +34,7 @@ namespace BeerDispencer.Domain.Entity
 
             Status = DispencerStatus.Open;
 
-            var usage = Usage.Create(Id);
+            var usage = Usage.Create(Id.Value);
             _usages.Add(usage);
             return usage;
         }

@@ -48,7 +48,7 @@ namespace BeerDispencer.Application
 
             return new UsageDto
             {
-                Id = usage.Id,
+                Id = usage.Id.Value,
                 DispencerId = usage.DispencerId,
                 OpenAt = usage.OpenAt,
                 ClosedAt = usage.ClosedAt,
