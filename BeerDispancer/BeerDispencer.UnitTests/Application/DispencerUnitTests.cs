@@ -159,7 +159,7 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
 
-        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
+        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 });
 
         var _sut = new DispencerUpdateHandler(
             mockUof.Object,
@@ -202,7 +202,7 @@ public class DispencerUnitTests
             x => x.DispencerId == dispencerId &&
             x.ClosedAt == dispencerUpdateCommand.UpdatedAt &&
             x.OpenAt == openedAt &&
-            x.FlowVolume == x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * 0.1 &&
+            x.FlowVolume == (decimal)x.ClosedAt.Value.Subtract(x.OpenAt.Value).TotalSeconds * 0.1M &&
             x.TotalSpent == x.FlowVolume * 6)));
 
 
@@ -247,7 +247,7 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
-        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1, PricePerLiter = 6 });
+        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 });
 
         var _sut = new DispencerUpdateHandler(mockUof.Object,
             calculator,

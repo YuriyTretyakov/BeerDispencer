@@ -9,7 +9,7 @@ namespace BeerDispancer.Application.Implementation.Commands
     public class DispencerCreateCommand:IRequest<DispencerDto>
     {
         [JsonProperty("flow_volume")]
-        public double FlowVolume { get; set; }
+        public decimal FlowVolume { get; set; }
     }
 }
 

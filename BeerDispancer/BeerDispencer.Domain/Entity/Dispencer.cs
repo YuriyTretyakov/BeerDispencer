@@ -3,7 +3,7 @@ using BeerDispencer.Shared;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public class Dispencer
+    public sealed class Dispencer
     {
         public IReadOnlyCollection<Usage> Usages => _usages;
 
@@ -27,21 +27,21 @@ namespace BeerDispencer.Domain.Entity
 
         public Usage Open()
         {
-            if (Status == DispencerStatus.Open | Status == DispencerStatus.OutOfService)
+            if (Status == DispencerStatus.Open || Status == DispencerStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
 
             Status = DispencerStatus.Open;
 
-            var usage = Usage.CreateNew(Id.Value);
+            var usage = Usage.Create(Id);
             _usages.Add(usage);
             return usage;
         }
 
         public Usage Close(IBeerFlowCalculator calculator)
         {
-            if (Status == DispencerStatus.Close | Status == DispencerStatus.OutOfService)
+            if (Status == DispencerStatus.Close || Status == DispencerStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
@@ -59,7 +59,7 @@ namespace BeerDispencer.Domain.Entity
         }
 
 
-        public static Dispencer CreateNewDispencer(double volume)
+        public static Dispencer CreateNewDispencer(decimal volume)
         {
             return new Dispencer(null, volume, DispencerStatus.Close);
         }
@@ -67,7 +67,7 @@ namespace BeerDispencer.Domain.Entity
 
         public static Dispencer Create(
             Guid id,
-            double volume,
+            decimal volume,
             DispencerStatus status,
             IList<Usage> usages)
         {

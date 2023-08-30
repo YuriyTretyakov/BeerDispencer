@@ -14,7 +14,7 @@ namespace BeerDispencer.WebApi.Extensions
                 Id = dispencerDto.Id.Value,
                 FlowVolume =
                 dispencerDto.Volume==null?
-                default:
+                default(decimal):
                 dispencerDto.Volume.Value };
         }
 

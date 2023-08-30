@@ -5,7 +5,7 @@ namespace BeerDispancer.Application.Implementation.Response
 {
     public class UsageResponse
     {
-        public double Amount { get; set; } 
+        public decimal Amount { get; set; } 
         public UsageEntry[] Usages { get; set; }
     }
 
