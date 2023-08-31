@@ -14,7 +14,6 @@ namespace BeerDispancer.Application.Implementation.Handlers
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
-        private readonly ILogger<DispencerUpdateHandler> _logger;
 
         public DispencerUpdateHandler(
             IDispencerUof dispencerUof,
@@ -23,7 +22,6 @@ namespace BeerDispancer.Application.Implementation.Handlers
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;
-            _logger = logger;
         }
 
         public async Task<DispencerUpdateResponse> Handle(DispencerUpdateCommand request, CancellationToken cancellationToken)
@@ -60,14 +58,13 @@ namespace BeerDispancer.Application.Implementation.Handlers
                     await _dispencerUof.UsageRepo.AddAsync(usageDto);
                 }
 
-
                 else if (request.Status == DispencerStatus.Close)
                 {
                     var usageDto = dispencer.Close(_calculator).ToDto();
                     await _dispencerUof.UsageRepo.UpdateAsync(usageDto);
                 }
                 
-                await _dispencerUof.DispencerRepo.UpdateAsync(dispencerDto);
+                await _dispencerUof.DispencerRepo.UpdateAsync(dispencer.ToDto());
 
                 await _dispencerUof.Complete();
                 _dispencerUof.CommitTransaction();

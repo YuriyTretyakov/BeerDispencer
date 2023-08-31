@@ -22,9 +22,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
             var dispencer = Dispencer
                 .CreateNewDispencer(request.FlowVolume);
 
-
-            DispencerDto dispencerDto = dispencer.ToDto();
-
+            var dispencerDto = dispencer.ToDto();
 
             dispencerDto = await _dispencerUof.DispencerRepo.AddAsync(dispencerDto);
             await _dispencerUof.Complete();

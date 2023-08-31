@@ -1,19 +1,19 @@
-﻿using System;
-using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispencer.Domain.Abstractions;
 using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Queries;
-using BeerDispancer.Application.Implementation.Response;
-using BeerDispencer.Application.Abstractions;
 using MediatR;
+using BeerDispencer.Application;
+using BeerDispencer.Domain.Entity;
+using BeerDispencer.Shared;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
-	public class GetSpendingsHandler : IRequestHandler<GetAllSpendingsQuery, UsageResponse>
+    public class GetSpendingsHandler : IRequestHandler<GetAllSpendingsQuery, UsageResponse>
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
 
-        public GetSpendingsHandler(IDispencerUof dispencerUof, IBeerFlowSettings beerFlowSettings,IBeerFlowCalculator calculator)
+        public GetSpendingsHandler(IDispencerUof dispencerUof,IBeerFlowCalculator calculator)
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;
@@ -21,24 +21,28 @@ namespace BeerDispancer.Application.Implementation.Handlers
 
         public async Task<UsageResponse> Handle(GetAllSpendingsQuery request, CancellationToken cancellationToken)
         {
-            var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(request.DispencerId);
-            decimal total = 0;
+            var dispencerDto = await _dispencerUof
+                    .DispencerRepo
+                    .GetByIdAsync(request.DispencerId);
 
-            var spendings = usagesFound.Select(x =>
+            if (dispencerDto is null)
             {
-                var entry = new UsageEntry
-                {
-                    OpenedAt = x.OpenAt,
-                    ClosedAt = x.ClosedAt,
-                };
+                return null;
+            }
 
-                entry.FlowVolume = x.FlowVolume ?? _calculator.GetFlowVolume(DateTime.UtcNow, x.OpenAt);
-                entry.TotalSpent = x.TotalSpent ?? _calculator.GetTotalSpent(entry.FlowVolume);
-                total += entry.TotalSpent ?? 0;
-                return entry;
-            }).ToArray();
+            var usagesDto = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(request.DispencerId);
+            
 
-            return new UsageResponse { Amount = total, Usages = spendings };
+            var usages = usagesDto.ToDomain();
+
+            var dispencer = Dispencer.Create(
+            dispencerDto.Id.Value,
+                dispencerDto.Volume.Value,
+                dispencerDto.Status.Value,
+                usages.ToList());
+
+
+            return dispencer.GetSpendings(_calculator);
         }
     }
 }

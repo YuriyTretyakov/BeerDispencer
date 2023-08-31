@@ -12,7 +12,7 @@ namespace BeerDispencer.Domain.Entity
         public DispencerStatus Status { get; private set; }
 
 
-        private List<Usage> _usages = new List<Usage>();
+        private List<Usage> _usages = new();
 
         private Dispencer(
             Guid? id,
@@ -56,6 +56,28 @@ namespace BeerDispencer.Domain.Entity
         internal void SetUsages(IList<Usage> usages)
         {
             _usages = usages.ToList();
+        }
+
+
+        public UsageResponse GetSpendings(IBeerFlowCalculator calculator)
+        {
+              decimal total = 0;
+
+            var spendings = _usages.Select(x =>
+            {
+                var entry = new UsageEntry
+                {
+                    OpenedAt = x.OpenAt,
+                    ClosedAt = x.ClosedAt,
+                };
+
+                entry.FlowVolume = x.FlowVolume ?? calculator.GetFlowVolume(DateTime.UtcNow, x.OpenAt);
+                entry.TotalSpent = x.TotalSpent ?? calculator.GetTotalSpent(entry.FlowVolume);
+                total += entry.TotalSpent ?? 0;
+                return entry;
+            }).ToArray();
+
+            return new UsageResponse { Amount = total, Usages = spendings };
         }
 
 

@@ -8,7 +8,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Entities
     public class Usage
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         [ForeignKey("Dispencer.Id")]
         public Guid DispencerId { get; set; }
         public DateTime OpenAt { get; set; }
