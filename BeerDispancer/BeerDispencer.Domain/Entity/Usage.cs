@@ -1,20 +1,23 @@
 ﻿using BeerDispencer.Domain.Abstractions;
+using BeerDispencer.Domain.Implementations;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public sealed class Usage
+    public sealed class Usage: EntityBase
     {
-        public Guid? Id { get; set; }
-        public Guid DispencerId { get; set; }
+        public Guid? DispencerId { get; set; }
         public DateTime OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public decimal? FlowVolume { get; set; }
         public decimal? TotalSpent { get; set; }
 
+        private IBeerFlowSettings _beerFlowSettings;
+
         internal Usage(
-            Guid? id,
-        Guid dispencerId,
+         Guid? id,
+         Guid? dispencerId,
          DateTime openAt,
+         IBeerFlowSettings beerFlowSettings,
          DateTime? closedAt,
          decimal? flowVolume,
          decimal? totalSpent
@@ -26,19 +29,21 @@ namespace BeerDispencer.Domain.Entity
             ClosedAt = closedAt;
             FlowVolume = flowVolume;
             TotalSpent = totalSpent;
+            _beerFlowSettings = beerFlowSettings;
         }
 
-        public Usage SetClose(IBeerFlowCalculator calculator)
+        public Usage SetClose()
         {
             ClosedAt = DateTime.UtcNow;
+            var calculator = new Calculator(_beerFlowSettings);
             FlowVolume = calculator.GetFlowVolume(ClosedAt, OpenAt);
             TotalSpent = calculator.GetTotalSpent(FlowVolume);
             return this;
         }
 
-        public static Usage Create(Guid dispencerId)
+        public static Usage Create(Guid? dispencerId, IBeerFlowSettings beerFlowSettings)
         {
-            return new Usage(null, dispencerId, DateTime.UtcNow, null, null, null);
+            return new Usage(null, dispencerId, DateTime.UtcNow, beerFlowSettings,null, null, null);
         }
 
     }

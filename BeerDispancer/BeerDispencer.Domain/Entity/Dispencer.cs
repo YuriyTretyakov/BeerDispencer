@@ -3,25 +3,26 @@ using BeerDispencer.Shared;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public sealed class Dispencer
+    public sealed class Dispencer: EntityBase
     {
-        public IReadOnlyCollection<Usage> Usages => _usages;
-
-        public Guid Id { get; private set; }
         public decimal Volume { get; private set; }
         public DispencerStatus Status { get; private set; }
 
+        private IBeerFlowSettings _beerFlowSettings;
+        public IReadOnlyCollection<Usage> Usages => _usages;
 
         private List<Usage> _usages = new List<Usage>();
 
         private Dispencer(
             Guid id,
             decimal volume,
-            DispencerStatus status)
+            DispencerStatus status,
+            IBeerFlowSettings beerFlowSettings)
         {
             Id = id;
             Volume = volume;
             Status = status;
+            _beerFlowSettings = beerFlowSettings;
         }
 
 
@@ -34,11 +35,11 @@ namespace BeerDispencer.Domain.Entity
 
             Status = DispencerStatus.Open;
 
-            var usage = Usage.Create(Id);
+            var usage = Usage.Create(Id, _beerFlowSettings);
             _usages.Add(usage);
         }
 
-        public void Close(IBeerFlowCalculator calculator)
+        public void Close()
         {
             if (Status == DispencerStatus.Close || Status == DispencerStatus.OutOfService)
             {
@@ -48,7 +49,7 @@ namespace BeerDispencer.Domain.Entity
             Status = DispencerStatus.Close;
 
             var currentUsage = _usages.First(x => x.ClosedAt == null);
-            currentUsage.SetClose(calculator);
+            currentUsage.SetClose();
         }
 
         internal void SetUsages(IList<Usage> usages)
@@ -57,9 +58,9 @@ namespace BeerDispencer.Domain.Entity
         }
 
 
-        public static Dispencer CreateNewDispencer(decimal volume)
+        public static Dispencer CreateNewDispencer(decimal volume, IBeerFlowSettings beerFlowSettings)
         {
-            return new Dispencer(Guid.NewGuid(), volume, DispencerStatus.Close);
+            return new Dispencer(Guid.NewGuid(), volume, DispencerStatus.Close, beerFlowSettings);
         }
 
 
@@ -67,9 +68,10 @@ namespace BeerDispencer.Domain.Entity
             Guid id,
             decimal volume,
             DispencerStatus status,
-            IList<Usage> usages)
+            IList<Usage> usages,
+            IBeerFlowSettings beerFlowSettings)
         {
-            var dispencer = new Dispencer(id, volume, status);
+            var dispencer = new Dispencer(id, volume, status, beerFlowSettings);
             dispencer.SetUsages(usages);
             return dispencer;
         }
