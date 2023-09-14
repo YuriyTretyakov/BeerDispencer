@@ -11,6 +11,7 @@ using BeerDispencer.Infrastructure.Middleware;
 using Serilog;
 using BeerDispencer.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
 
 
-//builder.Services.AddEntityFrameworkNpgsql();
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 builder.Services.AddSettings(builder.Configuration);
 
