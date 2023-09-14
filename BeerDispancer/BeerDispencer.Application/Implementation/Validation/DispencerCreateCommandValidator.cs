@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace BeerDispancer.Application.Implementation.Validation
 {
-	public class DispencerCreateCommandValidator:AbstractValidator<DispencerCreateCommand>
+	public class DispencerCreateCommandValidator:AbstractValidator<DispenserCreateCommand>
 	{
 		public DispencerCreateCommandValidator()
 		{

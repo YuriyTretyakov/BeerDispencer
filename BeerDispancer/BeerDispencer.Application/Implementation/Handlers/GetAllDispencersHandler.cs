@@ -5,16 +5,16 @@ using MediatR;
 
 namespace BeerDispencer.Application.Implementation.Handlers
 {
-    public class GetAllDispencersHandler : IRequestHandler<GetAllDispencersQuery, DispencerDto[]>
+    public class GetAllDispensersHandler : IRequestHandler<GetAllDispensersQuery, DispenserDto[]>
     {
         private readonly IDispencerUof _dispencerUof;
 
-        public GetAllDispencersHandler(IDispencerUof dispencerUof)
+        public GetAllDispensersHandler(IDispencerUof dispencerUof)
 		{
             _dispencerUof = dispencerUof;
         }
 
-         async Task<DispencerDto[]> IRequestHandler<GetAllDispencersQuery, DispencerDto[]>.Handle(GetAllDispencersQuery request, CancellationToken cancellationToken)
+         async Task<DispenserDto[]> IRequestHandler<GetAllDispensersQuery, DispenserDto[]>.Handle(GetAllDispensersQuery request, CancellationToken cancellationToken)
         {
             var allDispencers = await _dispencerUof.DispencerRepo.GetAllAsync();
             return allDispencers.ToArray();

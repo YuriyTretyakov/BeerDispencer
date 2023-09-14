@@ -9,25 +9,25 @@ using Microsoft.Extensions.Logging;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
-    public class DispencerUpdateHandler: IRequestHandler<DispencerUpdateCommand, DispencerUpdateResponse>
+    public class DispenserUpdateHandler: IRequestHandler<DispenserUpdateCommand, DispenserUpdateResponse>
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
-        private readonly ILogger<DispencerUpdateHandler> _logger;
+        private readonly ILogger<DispenserUpdateHandler> _logger;
 
-        public DispencerUpdateHandler(
+        public DispenserUpdateHandler(
             IDispencerUof dispencerUof,
         IBeerFlowCalculator calculator,
-        ILogger<DispencerUpdateHandler> logger)
+        ILogger<DispenserUpdateHandler> logger)
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;
             _logger = logger;
         }
 
-        public async Task<DispencerUpdateResponse> Handle(DispencerUpdateCommand request, CancellationToken cancellationToken)
+        public async Task<DispenserUpdateResponse> Handle(DispenserUpdateCommand request, CancellationToken cancellationToken)
         {
-            var updateCommandResult =  new DispencerUpdateResponse { Result = false };
+            var updateCommandResult =  new DispenserUpdateResponse { Result = false };
 
             using (var transaction = _dispencerUof.StartTransaction())
             {
@@ -43,12 +43,12 @@ namespace BeerDispancer.Application.Implementation.Handlers
                 await _dispencerUof.DispencerRepo.UpdateAsync(dispencerDto);
 
 
-                if (dispencerDto.Status == DispencerStatus.Open)
+                if (dispencerDto.Status == DispenserStatus.Opened)
                 {
                     await _dispencerUof.UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerDto.Id, OpenAt = request.UpdatedAt });
                 }
 
-                else if (dispencerDto.Status == DispencerStatus.Close)
+                else if (dispencerDto.Status == DispenserStatus.Closed)
                 {
                     var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(dispencerDto.Id);
 

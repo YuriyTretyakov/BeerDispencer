@@ -25,7 +25,7 @@ namespace BeerDispancer.Controllers
 
         [Authorize(Roles = UserRoles.Service)]
         [HttpPost()]
-        public async Task<IActionResult> CreateDispencerAsync([FromBody] DispencerCreateCommand createDispencer)
+        public async Task<IActionResult> CreateDispencerAsync([FromBody] DispenserCreateCommand createDispencer)
         {
             var result = await _mediator.Send(createDispencer);
             return Ok(result.ToViewModel());
@@ -52,7 +52,7 @@ namespace BeerDispancer.Controllers
         [HttpGet("getall")]
         public async Task<IActionResult> GetAllDispencers()
         {
-            var query = new GetAllDispencersQuery();
+            var query = new GetAllDispensersQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
         }

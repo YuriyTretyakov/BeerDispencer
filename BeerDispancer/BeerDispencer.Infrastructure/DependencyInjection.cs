@@ -27,7 +27,7 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddScoped<UsageRepository>();
             collection.AddScoped<IUsageRepository, CachedUsageRepository>();
-            collection.AddScoped<IDispencerRepository, DispencerRepository>();
+            collection.AddScoped<IDispencerRepository, DispenserRepository>();
 
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
