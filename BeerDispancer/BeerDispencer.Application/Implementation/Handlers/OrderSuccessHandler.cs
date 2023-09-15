@@ -36,18 +36,8 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
                 session.Metadata.TryGetValue(nameof(OrderResponseDetails.ProductId), out var id);
                 var dispencerId = Guid.Parse(id);
-                ///////
-                ///
-                var testDtov = new DispencerDto
-                {
-                    Id = dispencerId,
-                    ReservedFor = orderDetails.Email,
-                    Status = DispencerStatus.Reserved
-                };
 
-                await _dispencerUof.DispencerRepo.UpdateAsync(testDtov);
-                ///////
-                ///
+                //This call works
                 var dispenserDto = await _dispencerUof
                 .DispencerRepo
                 .GetByIdAsync(dispencerId);
@@ -65,7 +55,7 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
 
                 dispenserDto = dispenser.ToDto();
-
+                //Here we got an error - disposed object
                 await _dispencerUof.UsageRepo.AddAsync(usageDto);
                 await _dispencerUof.DispencerRepo.UpdateAsync(dispenserDto);
 
