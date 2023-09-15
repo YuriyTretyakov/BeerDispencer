@@ -17,8 +17,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
 
         public DispencerUpdateHandler(
             IDispencerUof dispencerUof,
-        IBeerFlowCalculator calculator,
-        ILogger<DispencerUpdateHandler> logger)
+        IBeerFlowCalculator calculator)
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;
@@ -63,7 +62,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
                     var usageDto = dispencer.Close(_calculator).ToDto();
                     await _dispencerUof.UsageRepo.UpdateAsync(usageDto);
                 }
-                
+
                 await _dispencerUof.DispencerRepo.UpdateAsync(dispencer.ToDto());
 
                 await _dispencerUof.Complete();

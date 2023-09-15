@@ -13,6 +13,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.7" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.JSInterop" Version="7.0.11" />
+    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="7.0.11" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="ViewModels\" />
@@ -31,5 +33,10 @@
     <Content Update="Pages\Account.razor">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BeerDispencer.Shared\BeerDispencer.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

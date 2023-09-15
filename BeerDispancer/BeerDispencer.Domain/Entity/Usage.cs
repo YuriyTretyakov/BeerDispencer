@@ -52,6 +52,11 @@ namespace BeerDispencer.Domain.Entity
             return new Usage(id, dispencerId, openAt, closedAt, flowVolume, totalSpent);
         }
 
+        public static Usage Create(Guid dispencerId, decimal amount)
+        {
+            return new Usage(null, dispencerId, DateTime.UtcNow, DateTime.UtcNow, null, amount);
+        }
+
     }
 }
 

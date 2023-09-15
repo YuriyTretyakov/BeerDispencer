@@ -1,5 +1,12 @@
-﻿@page "/bar"
+﻿@using Microsoft.JSInterop;
+@using Newtonsoft.Json;
+@using BeerDispencer.Shared;
+@using BeerDispencer.WebUi.ViewModels.Request;
+@using BeerDispencer.WebUi.ViewModels.Response;
+
+@page "/bar"
 @inject NavigationManager navManager;
+@inject IJSRuntime jsRuntime;
 
 <PageTitle>Bar</PageTitle>
 
@@ -21,8 +28,7 @@
         height: "200px";
         width: "100px";
         position: absolute;
-        bottom:"15%";
-       
+        bottom: "15%";
         align-items: center;
     }
 
@@ -33,88 +39,111 @@
         width: inherit;
         object-fit: cover;
     }
-</style >
+</style>
 
 @if (dispencers == null)
-    {
-     <p > <em > Loading...</em > </p >
-    }
-    else
-    {
-     <table class="table" >
-    <thead >
-    <tr >
-    <th > Id</th >
-    <th > Volume</th >
-    <th > Status</th >
-    </tr >
-    </thead >
-    <tbody >
-    @foreach (var dispencer in dispencers)
+{
+    <p> <em> Loading...</em> </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Id</th>
+                <th> Volume</th>
+                <th> Status</th>
+                <th> Reservation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dispencer in dispencers)
+            {
+                <tr>
+                    <td>@dispencer.Id </td>
+                    <td>@dispencer.Volume </td>
+                    <td>@dispencer.Status </td>
+                    <td><button @onclick="@(() => onPrePayClick(@dispencer.Id))">Reserve</button></td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="container">
+        @foreach (var dispencer in dispencers)
         {
-                 <tr >
-    <td >@dispencer.Id </td >
-    <td >@dispencer.Volume </td >
-    <td >@dispencer.Status </td >
-
-    </tr >
-        }
-    </tbody >
-    </table >
-
-     <div class="container">
-             @foreach (var dispencer in dispencers)
-             {
-             @if (dispencer.Status == BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto.Close)
-                 {
-                 <div  @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
-                     <img  style="bottom:15%" class="dispencer" src="/images/kran_regular.png" alt="BeerDispencer" height="200px" width="100px" />
-                  </div>
-                 }
-            @if (dispencer.Status == BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto.Open)
-                {
+            @if (dispencer.Status == DispencerStatus.Close)
+            {
+                <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
+                    <img style="bottom:15%" class="dispencer" src="/images/kran_regular.png" alt="BeerDispencer" height="200px" width="100px" />
+                </div>
+            }
+            @if (dispencer.Status == DispencerStatus.Open)
+            {
                 <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
                     <img class="dispencer" style="bottom:15%" src="/images/kran_inuse.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
-                }
-             }
-        </div>
+            }
+        }
+    </div>
+
+}
+
+
+
+@code {
+    string DevApiBaseAddress = "http://localhost:5268";
+
+
+    private async Task onDispencerClick(Guid id, DispencerStatus status)
+    {
+        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
+
+        var update = new DispenserUpdateModel
+        {
+            Status = status == DispencerStatus.Close ?
+            DispencerStatus.Open :
+            DispencerStatus.Close,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        await httpclient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispencer/{id}/status", update);
+
+        navManager.NavigateTo("/bar", true);
 
     }
 
 
+    private DispencerWithStatus[]? dispencers;
 
-         @code {
+    protected override async Task OnInitializedAsync()
+    {
+        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
 
-             private async Task onDispencerClick(Guid id, BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto status)
-             {
-                 var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
+        dispencers = (await httpclient.GetFromJsonAsync<DispencerWithStatus[]>("api/Dispencer/getall"))
+            .OrderBy(x => x.Id)
+            .ToArray();
+    }
 
-                 var update = new BeerDispencer.WebUi.ViewModels.Request.DispenserUpdateModel
-                 {
-                     Status = status == BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto.Close ?
-                     BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto.Open :
-                     BeerDispencer.WebUi.ViewModels.Request.DispencerStatusDto.Close,
-                     UpdatedAt = DateTime.UtcNow
-                 };
+    private async Task onPrePayClick(Guid id)
+    {
+        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
 
-                 await httpclient.PutAsJsonAsync<BeerDispencer.WebUi.ViewModels.Request.DispenserUpdateModel>($"api/Dispencer/{id}/status", update);
+        var checkoutModel = new NewOrderDetails { DispencerId = id, Amount = 120, Currency = "EUR" };
 
-                 navManager.NavigateTo("/bar",true);
+        var response = await httpclient.PostAsJsonAsync($"{DevApiBaseAddress}/api/Checkout", checkoutModel);
 
-             }
+        response.EnsureSuccessStatusCode();
 
+        var responseBody = await response.Content.ReadAsStringAsync();
 
-             private BeerDispencer.WebUi.ViewModels.Response.DispencerWithStatus[]? dispencers;
+        var checkoutOrderResponse =JsonConvert
+            .DeserializeObject<CheckoutOrderResponse>(responseBody);
 
-             protected override async Task OnInitializedAsync()
-             {
-                 var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
-
-                 dispencers = (await httpclient.GetFromJsonAsync<BeerDispencer.WebUi.ViewModels.Response.DispencerWithStatus[]>("api/Dispencer/getall"))
-                     .OrderBy(x=>x.Id)
-                     .ToArray();
-             }
-
-             }
+        // Opens up Stripe.
+        
+        await jsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
+    }
+}
 

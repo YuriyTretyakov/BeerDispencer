@@ -14,6 +14,7 @@ namespace BeerDispencer.WebApi.Controllers
     public class CheckoutController : Controller
     {
         private readonly IMediator _mediator;
+        private static string _webUiBaseUrl;
 
         public CheckoutController(IMediator mediator)
         {
@@ -21,6 +22,7 @@ namespace BeerDispencer.WebApi.Controllers
         }
 
         [HttpPost]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> CheckoutOrder([FromBody] NewOrderDetails orderDetails, [FromServices] IServiceProvider sp)
         {
             var server = sp.GetRequiredService<IServer>();
@@ -34,14 +36,15 @@ namespace BeerDispencer.WebApi.Controllers
                 thisApiUrl = serverAddressesFeature.Addresses.FirstOrDefault();
             }
 
+            _webUiBaseUrl = Request.Headers.Referer[0];
+
             var dispencerPrePayCommand = new DispencerPrePayCommand
             {
                 Amount = orderDetails.Amount,
                 Currency = orderDetails.Currency,
                 DispencerId = orderDetails.DispencerId,
                 WebApiBaseUrl = thisApiUrl,
-                WebUiBaseUrl = Request.Headers.Referer[0]
-
+                WebUiBaseUrl = _webUiBaseUrl
             };
 
 
@@ -59,13 +62,13 @@ namespace BeerDispencer.WebApi.Controllers
         }
 
         [HttpGet("success")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public ActionResult CheckoutSuccess(string sessionId)
         {
             var getPaymentInfo = new GetOrderDetailsQuery { SessionId = sessionId };
 
             _mediator.Send(getPaymentInfo);
-            var webUiUrl = Request.Headers.Referer[0];
-            return Redirect(webUiUrl + "success");
+            return Redirect(_webUiBaseUrl + "bar");
         }
     }
 }

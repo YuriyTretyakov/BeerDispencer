@@ -24,7 +24,8 @@ namespace BeerDispencer.Application
             {
                 Id = domainDispencer.Id,
                 Volume = domainDispencer.Volume,
-                Status = domainDispencer.Status
+                Status = domainDispencer.Status,
+                ReservedFor = domainDispencer.ReservedFor
             };
         }
 

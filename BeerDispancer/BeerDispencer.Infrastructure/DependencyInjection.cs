@@ -25,9 +25,9 @@ namespace BeerDispancer.Infrastructure
             collection.AddDbContext<BeerDispencerDbContext>();
             collection.AddTransient<IBeerDispencerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
 
-            collection.AddScoped<UsageRepository>();
-            collection.AddScoped<IUsageRepository, CachedUsageRepository>();
-            collection.AddScoped<IDispencerRepository, DispencerRepository>();
+            collection.AddTransient<UsageRepository>();
+            collection.AddTransient<IUsageRepository, CachedUsageRepository>();
+            collection.AddTransient<IDispencerRepository, DispencerRepository>();
 
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);

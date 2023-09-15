@@ -53,6 +53,7 @@ namespace BeerDispencer.Infrastructure.Persistence
 
             dispencerEntity.Status = dispencerDto.Status ?? dispencerEntity.Status;
             dispencerEntity.Volume = dispencerDto.Volume ?? dispencerEntity.Volume;
+            dispencerEntity.ReservedFor = dispencerDto.ReservedFor;
         }
 
         

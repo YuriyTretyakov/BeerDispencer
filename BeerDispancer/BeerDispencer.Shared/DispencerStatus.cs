@@ -6,7 +6,8 @@ namespace BeerDispencer.Shared
     {
         Open = 1,
         Close = 2,
-        OutOfService = 3
+        Reserved = 3,
+        OutOfService = 4
     }
 }
 

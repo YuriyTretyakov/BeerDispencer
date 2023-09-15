@@ -41,15 +41,20 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
         public async Task<string> CheckOutAsync(DispencerPrePayCommand orderDetails, string thisApiUrl, string wasmUrl)
         {
+            var metadata = new Dictionary<string, string>
+            {
+                {nameof(OrderResponseDetails.ProductId ), orderDetails.DispencerId.ToString() }
+            };
+
             var options = new SessionCreateOptions
             {
 
                 SuccessUrl = $"{thisApiUrl}/api/checkout/success?sessionId=" + "{CHECKOUT_SESSION_ID}",
                 CancelUrl = wasmUrl + "failed",
                 PaymentMethodTypes = new List<string>
-            {
-                "card"
-            },
+                {
+                    "card"
+                },
                 LineItems = new List<SessionLineItemOptions>
             {
                 new()
@@ -62,12 +67,14 @@ namespace BeerDispencer.Application.Implementation.Handlers
                         {
                             Name = orderDetails.DispencerId.ToString(),
                             Description = $"Pre-payment for usage of dispencer {orderDetails.DispencerId}",
+                            Images = new List<string>{ "https://she.hr/wp-content/uploads/2014/09/piv.jpg" }
                         },
                     },
                     Quantity = 1,
                 },
             },
-                Mode = "payment"
+                Mode = "payment",
+                Metadata = metadata
             };
 
             var service = new SessionService();

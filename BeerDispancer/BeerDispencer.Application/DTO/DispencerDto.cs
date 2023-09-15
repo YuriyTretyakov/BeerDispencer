@@ -8,6 +8,7 @@ namespace BeerDispancer.Application.DTO
         public Guid? Id { get; set; }
         public decimal? Volume { get; set; }
         public DispencerStatus? Status { get; set; }
+        public string ReservedFor { get; set; }
     }
 }
 

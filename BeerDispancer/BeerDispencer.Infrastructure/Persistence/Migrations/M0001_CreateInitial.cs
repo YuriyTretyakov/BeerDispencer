@@ -17,7 +17,9 @@ public class M0001_CreateInitial : Migration
         Create.Table("Dispencer")
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("Volume").AsDecimal()
-            .WithColumn("Status").AsInt16();
+            .WithColumn("Status").AsInt16()
+            .WithColumn("ReservedFor").AsAnsiString().Nullable();
+
 
 
         Create.Table("Usage")

@@ -10,7 +10,7 @@ namespace BeerDispencer.Domain.Entity
         public Guid? Id { get; private set; }
         public decimal Volume { get; private set; }
         public DispencerStatus Status { get; private set; }
-
+        public string ReservedFor { get; private set; }
 
         private List<Usage> _usages = new();
 
@@ -27,7 +27,7 @@ namespace BeerDispencer.Domain.Entity
 
         public Usage Open()
         {
-            if (Status == DispencerStatus.Open || Status == DispencerStatus.OutOfService)
+            if (Status != DispencerStatus.Close || Status == DispencerStatus.Reserved)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
@@ -36,12 +36,13 @@ namespace BeerDispencer.Domain.Entity
 
             var usage = Usage.Create(Id.Value);
             _usages.Add(usage);
+
             return usage;
         }
 
         public Usage Close(IBeerFlowCalculator calculator)
         {
-            if (Status == DispencerStatus.Close || Status == DispencerStatus.OutOfService)
+            if (Status != DispencerStatus.Open)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
@@ -51,6 +52,21 @@ namespace BeerDispencer.Domain.Entity
             var currentUsage = _usages.First(x => x.ClosedAt == null);
             currentUsage.SetClose(calculator);
             return currentUsage;
+        }
+
+        public Usage Reserve(string reservedFor, decimal amount)
+        {
+            if (Status == DispencerStatus.Open || Status == DispencerStatus.OutOfService)
+            {
+                throw new InvalidOperationException($"Invalid dispencer state: {Status}");
+            }
+
+            Status = DispencerStatus.Reserved;
+            ReservedFor = reservedFor;
+
+            var usage = Usage.Create(Id.Value, amount);
+            _usages.Add(usage);
+            return usage;
         }
 
         internal void SetUsages(IList<Usage> usages)
@@ -91,10 +107,14 @@ namespace BeerDispencer.Domain.Entity
             Guid id,
             decimal volume,
             DispencerStatus status,
-            IList<Usage> usages)
+            IList<Usage> usages = null)
         {
             var dispencer = new Dispencer(id, volume, status);
-            dispencer.SetUsages(usages);
+
+            if (usages != null)
+            {
+                dispencer.SetUsages(usages);
+            }
             return dispencer;
         }
     }

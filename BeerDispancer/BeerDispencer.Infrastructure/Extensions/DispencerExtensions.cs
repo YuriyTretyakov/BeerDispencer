@@ -8,14 +8,14 @@ namespace BeerDispencer.Infrastructure.Extensions
 	{
 		public static Dispencer ToDbEntity(this DispencerDto dto)
 		{
-			return new Dispencer { Id = dto.Id, Status = dto.Status, Volume = dto.Volume };
+			return new Dispencer { Id = dto.Id, Status = dto.Status, Volume = dto.Volume,ReservedFor =dto.ReservedFor };
 		}
 
 	
 
 		public static DispencerDto ToDto(this Dispencer entity)
 		{
-			return new DispencerDto { Id = entity.Id, Status = entity.Status, Volume = entity.Volume };
+			return new DispencerDto { Id = entity.Id, Status = entity.Status, Volume = entity.Volume, ReservedFor = entity.ReservedFor };
 		}
 
         
