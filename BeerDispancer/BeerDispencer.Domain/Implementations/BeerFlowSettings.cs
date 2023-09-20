@@ -1,12 +1,11 @@
-﻿using System;
-using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispencer.Domain.Abstractions;
 
 namespace BeerDispencer.Domain.Implementations
 {
     public class BeerFlowSettings : IBeerFlowSettings
     {
-        public double LitersPerSecond { get; set; }
-        public double PricePerLiter { get; set; }
+        public decimal LitersPerSecond { get; set; }
+        public decimal PricePerLiter { get; set; }
 
     }
 }

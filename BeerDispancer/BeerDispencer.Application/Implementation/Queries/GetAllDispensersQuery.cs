@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BeerDispancer.Application.Implementation.Commands
 {
-	public class GetAllDispencersQuery : IRequest<DispencerDto[]>
+	public class GetAllDispensersQuery : IRequest<DispenserDto[]>
     {
 	}
 }

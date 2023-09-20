@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using Beerdispancer.Domain.Implementations;
 using BeerDispencer.Application;
 using BeerDispencer.Domain.Abstractions;
+using BeerDispencer.Domain.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

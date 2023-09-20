@@ -8,14 +8,20 @@
   <ItemGroup>
   <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+
   </ItemGroup>
   
   <ItemGroup>
     <None Remove="Abstractions\" />
     <None Remove="Implementations\" />
+    <None Remove="Entity\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
     <Folder Include="Implementations\" />
+    <Folder Include="Entity\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BeerDispencer.Shared\BeerDispencer.Shared.csproj" />
   </ItemGroup>
 </Project>

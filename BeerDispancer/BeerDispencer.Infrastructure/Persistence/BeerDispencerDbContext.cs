@@ -19,7 +19,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
         }
 
         
-        DbSet<Dispencer> IBeerDispencerDbContext.Dispencers { get ; set ; }
+        DbSet<Dispenser> IBeerDispencerDbContext.Dispencers { get ; set ; }
        
         DbSet<Usage> IBeerDispencerDbContext.Usage { get; set; }
 
@@ -33,7 +33,7 @@ namespace BeerDispencer.Infrastructure.Persistence.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Dispencer>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
+            modelBuilder.Entity<Dispenser>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
             modelBuilder.Entity<Usage>(x=>x.ToTable("Usage").HasKey(x => x.Id));
             
         }

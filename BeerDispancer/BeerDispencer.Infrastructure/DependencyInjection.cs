@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime;
-using Beerdispancer.Domain.Implementations;
-using BeerDispancer.Application.Abstractions;
+﻿using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Commands.Authorization;
 using BeerDispencer.Application.Abstractions;
 using BeerDispencer.Infrastructure.Authorization;
@@ -15,7 +12,6 @@ using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,7 +27,7 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddScoped<UsageRepository>();
             collection.AddScoped<IUsageRepository, CachedUsageRepository>();
-            collection.AddScoped<IDispencerRepository, DispencerRepository>();
+            collection.AddScoped<IDispencerRepository, DispenserRepository>();
 
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);

@@ -8,13 +8,13 @@ namespace BeerDispencer.Infrastructure.Persistence.Entities
     public class Usage
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [ForeignKey("Dispencer.Id")]
         public Guid DispencerId { get; set; }
-        public DateTime? OpenAt { get; set; }
+        public DateTime OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public decimal? FlowVolume { get; set; }
+        public decimal? TotalSpent { get; set; }
     }
 }
 

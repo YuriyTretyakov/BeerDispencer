@@ -3,7 +3,7 @@ using BeerDispancer.Application.DTO;
 
 namespace BeerDispencer.Application.DTO
 {
-	public class DispencerUpdateDto:DispencerDto
+	public class DispenserUpdateDto:DispenserDto
 	{
         public DateTime UpdatedAt { get; set; }
     }
