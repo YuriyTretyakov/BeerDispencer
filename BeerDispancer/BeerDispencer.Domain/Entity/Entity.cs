@@ -1,13 +1,13 @@
 ﻿using System;
 namespace BeerDispencer.Domain.Entity
 {
-	public abstract class EntityBase
-	{
-		public Guid? Id { get; protected set; }
+    public abstract class Entity
+    {
+        public Guid? Id { get; protected set; }
 
         public override bool Equals(object? obj)
         {
-            var instance = (obj as EntityBase);
+            var instance = (obj as Entity);
 
             if (instance == null)
             {

@@ -3,7 +3,7 @@ using BeerDispencer.Domain.Implementations;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public sealed class Usage: EntityBase
+    public sealed class Usage: Entity
     {
         public Guid? DispencerId { get; set; }
         public DateTime OpenAt { get; set; }
@@ -15,7 +15,7 @@ namespace BeerDispencer.Domain.Entity
 
         internal Usage(
          Guid? id,
-         Guid? dispencerId,
+         Guid dispencerId,
          DateTime openAt,
          IBeerFlowSettings beerFlowSettings,
          DateTime? closedAt,
@@ -41,7 +41,7 @@ namespace BeerDispencer.Domain.Entity
             return this;
         }
 
-        public static Usage Create(Guid? dispencerId, IBeerFlowSettings beerFlowSettings)
+        public static Usage Create(Guid dispencerId, IBeerFlowSettings beerFlowSettings)
         {
             return new Usage(null, dispencerId, DateTime.UtcNow, beerFlowSettings,null, null, null);
         }

@@ -13,16 +13,13 @@ namespace BeerDispancer.Application.Implementation.Handlers
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowCalculator _calculator;
-        private readonly ILogger<DispenserUpdateHandler> _logger;
 
         public DispenserUpdateHandler(
             IDispencerUof dispencerUof,
-        IBeerFlowCalculator calculator,
-        ILogger<DispenserUpdateHandler> logger)
+        IBeerFlowCalculator calculator)
 		{
             _dispencerUof = dispencerUof;
             _calculator = calculator;
-            _logger = logger;
         }
 
         public async Task<DispenserUpdateResponse> Handle(DispenserUpdateCommand request, CancellationToken cancellationToken)

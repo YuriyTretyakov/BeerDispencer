@@ -4,7 +4,7 @@ using BeerDispencer.Shared;
 
 namespace BeerDispenser.Domain.Entity
 {
-    public sealed class Dispenser: EntityBase
+    public sealed class Dispenser: BeerDispencer.Domain.Entity.Entity
     {
         public decimal Volume { get; private set; }
         public DispenserStatus Status { get; private set; }
@@ -36,7 +36,7 @@ namespace BeerDispenser.Domain.Entity
 
             Status = DispenserStatus.Opened;
 
-            var usage = Usage.Create(Id, _beerFlowSettings);
+            var usage = Usage.Create(Id.Value, _beerFlowSettings);
             _usages.Add(usage);
         }
 
