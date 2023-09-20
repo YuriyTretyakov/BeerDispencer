@@ -37,29 +37,31 @@ namespace BeerDispencer.Application.Implementation.Handlers
                 session.Metadata.TryGetValue(nameof(OrderResponseDetails.ProductId), out var id);
                 var dispencerId = Guid.Parse(id);
 
-                //This call works
-                var dispenserDto = await _dispencerUof
-                .DispencerRepo
-                .GetByIdAsync(dispencerId);
+                using (var transaction = _dispencerUof.StartTransaction())
+                {
 
-                var dispenser = Dispencer
-                    .Create(
-                    dispenserDto.Id.Value,
-                    dispenserDto.Volume.Value,
-                    dispenserDto.Status.Value);
+                    var dispenserDto = await _dispencerUof
+                       .DispencerRepo
+                       .GetByIdAsync(dispencerId);
 
-
-                var usageDto = dispenser
-                    .Reserve(orderDetails.Email, orderDetails.AmountTotal)
-                    .ToDto();
+                    var dispenser = Dispencer
+                        .Create(
+                        dispenserDto.Id.Value,
+                        dispenserDto.Volume.Value,
+                        dispenserDto.Status.Value);
 
 
-                dispenserDto = dispenser.ToDto();
-                //Here we got an error - disposed object
-                await _dispencerUof.UsageRepo.AddAsync(usageDto);
-                await _dispencerUof.DispencerRepo.UpdateAsync(dispenserDto);
+                    var usageDto = dispenser
+                        .Reserve(orderDetails.Email, orderDetails.AmountTotal)
+                        .ToDto();
 
-                await _dispencerUof.Complete();
+                    dispenserDto = dispenser.ToDto();
+                    
+                    await _dispencerUof.UsageRepo.AddAsync(usageDto);
+                    await _dispencerUof.DispencerRepo.UpdateAsync(dispenserDto);
+                    await _dispencerUof.Complete();
+                    _dispencerUof.CommitTransaction();
+                }
 
                 return orderDetails;
             }

@@ -63,9 +63,17 @@ else
                     <td>@dispencer.Id </td>
                     <td>@dispencer.Volume </td>
                     <td>@dispencer.Status </td>
-                    <td><button @onclick="@(() => onPrePayClick(@dispencer.Id))">Reserve</button></td>
-
-                </tr>
+                    <td>
+                        @if (dispencer.Status == DispencerStatus.Reserved)
+                        {
+                            @dispencer.ReservedFor
+                        }
+                        else
+                        {
+                            <button @onclick="@(() => onPrePayClick(@dispencer.Id))">Reserve</button>
+                        }
+                    </td>
+                    </tr>
             }
         </tbody>
     </table>
@@ -85,7 +93,13 @@ else
                     <img class="dispencer" style="bottom:15%" src="/images/kran_inuse.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
             }
-        }
+            @if (dispencer.Status == DispencerStatus.Reserved)
+            {
+                <div >
+                    <img class="dispencer" style="bottom:15%" src="/images/kran_reserved.png" alt="BeerDispencer" height="200px" width="100px" />
+                </div>
+            }
+       }
     </div>
 
 }

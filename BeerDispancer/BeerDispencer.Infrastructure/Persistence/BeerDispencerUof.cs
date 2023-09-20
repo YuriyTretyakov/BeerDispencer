@@ -51,8 +51,8 @@ namespace BeerDispencer.Infrastructure.Persistence
 
         public void Dispose()
         {
-          //  _transaction?.Dispose();
-          //  _dbcontext?.Dispose();
+            _transaction?.Dispose();
+            _dbcontext?.Dispose();
         }
     }
 }

@@ -9,6 +9,7 @@ namespace BeerDispencer.WebUi.ViewModels.Response
         public double Volume { get; set; }
         [JsonProperty("status")]
         public DispencerStatus Status { get; set; }
+        public string ReservedFor { get; set; }
     }
 }
 

@@ -63,11 +63,11 @@ namespace BeerDispencer.WebApi.Controllers
 
         [HttpGet("success")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public ActionResult CheckoutSuccess(string sessionId)
+        public async Task<ActionResult> CheckoutSuccess(string sessionId)
         {
             var getPaymentInfo = new GetOrderDetailsQuery { SessionId = sessionId };
 
-            _mediator.Send(getPaymentInfo);
+            await _mediator.Send(getPaymentInfo);
             return Redirect(_webUiBaseUrl + "bar");
         }
     }
