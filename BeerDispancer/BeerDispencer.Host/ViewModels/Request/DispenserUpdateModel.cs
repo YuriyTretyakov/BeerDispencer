@@ -9,7 +9,8 @@ namespace BeerDispencer.WebApi.ViewModels.Request
         public DateTime UpdatedAt { get; set; }
 
         [JsonProperty("status")]
-        public DispencerStatus Status { get; set; }
+        public DispenserStatus Status { get; set; }
+        
     }
 }
 

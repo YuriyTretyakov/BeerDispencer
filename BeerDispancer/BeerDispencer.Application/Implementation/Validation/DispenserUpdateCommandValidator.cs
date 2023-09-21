@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace BeerDispancer.Application.Implementation.Validation
 {
-	public class DispencerUpdateCommandValidator:AbstractValidator<DispencerUpdateCommand>
+	public class DispenserUpdateCommandValidator:AbstractValidator<DispenserUpdateCommand>
 	{
-		public DispencerUpdateCommandValidator()
+		public DispenserUpdateCommandValidator()
 		{
 			RuleFor(x => x.Id).NotNull().NotEmpty();
 			RuleFor(x=>x.Status).NotNull();//.IsInEnum<> is a enum which in Domain which cannot be referenced by Presentation level

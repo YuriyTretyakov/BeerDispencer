@@ -13,7 +13,7 @@ namespace BeerDispancer.Application.Implementation
     {
         public static void AddApplication(this IServiceCollection collection)
         {
-            collection.AddSingleton<IBeerFlowCalculator, Calculator>();
+           
         }
 
         public static void AddJWTAuthentication(this IServiceCollection collection, ConfigurationManager configuration)

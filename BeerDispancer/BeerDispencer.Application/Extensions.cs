@@ -1,7 +1,9 @@
 ﻿using System;
 using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Implementation.Response;
+using BeerDispencer.Domain.Abstractions;
 using BeerDispencer.Domain.Entity;
+using BeerDispenser.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 
 namespace BeerDispencer.Application
@@ -18,17 +20,17 @@ namespace BeerDispencer.Application
             };
         }
 
-        public static DispencerDto ToDto(this Dispencer domainDispencer)
+        public static DispenserDto ToDto(this Dispenser domainDispenser)
         {
-            return new DispencerDto
+            return new DispenserDto
             {
-                Id = domainDispencer.Id,
-                Volume = domainDispencer.Volume,
-                Status = domainDispencer.Status
+                Id = domainDispenser.Id,
+                Volume = domainDispenser.Volume,
+                Status = domainDispenser.Status
             };
         }
 
-        public static IEnumerable<Usage> ToDomain(this IEnumerable<UsageDto> dto)
+        public static IEnumerable<Usage> ToDomain(this IEnumerable<UsageDto> dto, IBeerFlowSettings beerFlowSettings)
         {
 
             return dto.Select(x =>
@@ -38,6 +40,7 @@ namespace BeerDispencer.Application
                  x.Id,
                   x.DispencerId,
                   x.OpenAt,
+                  beerFlowSettings,
                   x.ClosedAt,
                   x.TotalSpent,
                   x.FlowVolume));

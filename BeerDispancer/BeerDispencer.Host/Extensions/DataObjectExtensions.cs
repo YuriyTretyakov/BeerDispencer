@@ -7,7 +7,7 @@ namespace BeerDispencer.WebApi.Extensions
 {
     public static class DataObjectExtensions
 	{
-        public static Dispencer ToViewModel(this DispencerDto dispencerDto)
+        public static Dispencer ToViewModel(this DispenserDto dispencerDto)
         {
             return new Dispencer
             {
@@ -18,14 +18,14 @@ namespace BeerDispencer.WebApi.Extensions
                 dispencerDto.Volume.Value };
         }
 
-        public static DispencerDto ToDto(this DispencerCreateCommand dispencerCommand)
+        public static DispenserDto ToDto(this DispenserCreateCommand dispencerCommand)
         {
-            return new DispencerDto { Volume = dispencerCommand.FlowVolume };
+            return new DispenserDto { Volume = dispencerCommand.FlowVolume };
         }
 
-        public static DispencerUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
+        public static DispenserUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
         {
-            return  new DispencerUpdateCommand { Id = id,
+            return  new DispenserUpdateCommand { Id = id,
                 Status =  model.Status,
                 UpdatedAt = model.UpdatedAt };
         }

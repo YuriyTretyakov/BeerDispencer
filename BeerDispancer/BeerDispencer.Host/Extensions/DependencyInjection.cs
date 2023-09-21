@@ -1,21 +1,10 @@
-﻿using System;
-using System.Text;
-using BeerDispancer.Application.Implementation;
-using BeerDispencer.Application;
-using BeerDispencer.Application.Abstractions;
+﻿using BeerDispencer.Application;
 using BeerDispencer.Infrastructure.Authorization;
-using BeerDispencer.Infrastructure.Migrations;
 using BeerDispencer.Infrastructure.Settings;
-using FluentMigrator.Runner;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BeerDispencer.WebApi.Extensions
 {
-	public static class DependencyInjection
+    public static class DependencyInjection
     {
         public static void AddSettings(this IServiceCollection collection, ConfigurationManager configuration)
         {

@@ -33,17 +33,6 @@ namespace BeerDispencer.Infrastructure.Persistence
 
         private TransactionScope _transaction;
 
-        //public void StartTransaction()
-        //{
-        //    var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted };
-        //    new TransactionScope(transactionOptions,TimeSpan.MaxValue)
-
-        //    _transaction = new TransactionScope(
-        //        new TransactionScopeOption { }
-        //            IsolationLevel =  },TransactionScopeAsyncFlowOption.Enabled
-        //   );
-        //}
-
         public TransactionScope StartTransaction()
         {
             var transactionOptions = new TransactionOptions

@@ -3,20 +3,20 @@ using BeerDispancer.Application.Abstractions;
 using BeerDispancer.Application.Implementation.Queries;
 using MediatR;
 using BeerDispencer.Application;
-using BeerDispencer.Domain.Entity;
 using BeerDispencer.Shared;
+using BeerDispenser.Domain.Entity;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
     public class GetSpendingsHandler : IRequestHandler<GetAllSpendingsQuery, UsageResponse>
 	{
         private readonly IDispencerUof _dispencerUof;
-        private readonly IBeerFlowCalculator _calculator;
+        private readonly IBeerFlowSettings _beerFlowSettings;
 
-        public GetSpendingsHandler(IDispencerUof dispencerUof,IBeerFlowCalculator calculator)
+        public GetSpendingsHandler(IDispencerUof dispencerUof, IBeerFlowSettings beerFlowSettings)
 		{
             _dispencerUof = dispencerUof;
-            _calculator = calculator;
+            _beerFlowSettings = beerFlowSettings;
         }
 
         public async Task<UsageResponse> Handle(GetAllSpendingsQuery request, CancellationToken cancellationToken)
@@ -33,16 +33,17 @@ namespace BeerDispancer.Application.Implementation.Handlers
             var usagesDto = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(request.DispencerId);
             
 
-            var usages = usagesDto.ToDomain();
+            var usages = usagesDto.ToDomain(_beerFlowSettings);
 
-            var dispencer = Dispencer.Create(
-            dispencerDto.Id.Value,
+            var dispencer = Dispenser.CreateDispenser(
+            dispencerDto.Id,
                 dispencerDto.Volume.Value,
                 dispencerDto.Status.Value,
-                usages.ToList());
+                usages.ToList(),
+                _beerFlowSettings);
 
 
-            return dispencer.GetSpendings(_calculator);
+            return dispencer.GetSpendings();
         }
     }
 }

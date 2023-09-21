@@ -4,10 +4,10 @@ using MediatR;
 
 namespace BeerDispancer.Application.Implementation.Commands
 {
-    public class DispencerUpdateCommand : IRequest<DispencerUpdateResponse>
+    public class DispenserUpdateCommand : IRequest<DispenserUpdateResponse>
     {
         public Guid Id { get; set; }
-        public DispencerStatus Status { get; set; }
+        public DispenserStatus Status { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
 }

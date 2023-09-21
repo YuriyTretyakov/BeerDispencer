@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace BeerDispancer.Application.Implementation.Commands
 {
-    public class DispencerCreateCommand:IRequest<DispencerDto>
+    public class DispenserCreateCommand:IRequest<DispenserDto>
     {
         [JsonProperty("flow_volume")]
         public decimal FlowVolume { get; set; }
