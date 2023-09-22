@@ -204,8 +204,8 @@ public class DispencerUnitTests
             x => x.DispencerId == dispencerId &&
             x.ClosedAt == dispenserUpdateCommand.UpdatedAt &&
             x.OpenAt == openedAt &&
-            x.FlowVolume == (decimal)x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * 0.1M &&
-            x.TotalSpent == x.FlowVolume * 6)));
+            x.FlowVolume == (decimal)x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * beerSettings.LitersPerSecond &&
+            x.TotalSpent == x.FlowVolume * beerSettings.PricePerLiter)));
 
 
         mockUof.Verify(x => x.Complete(), Times.Once);

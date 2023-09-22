@@ -16,7 +16,7 @@ namespace BeerDispenser.Domain.Entity
         private List<Usage> _usages = new List<Usage>();
 
         private Dispenser(
-            Guid? id,
+            Guid id,
             decimal volume,
             DispenserStatus status,
             IBeerFlowSettings beerFlowSettings)
@@ -37,7 +37,7 @@ namespace BeerDispenser.Domain.Entity
 
             Status = DispenserStatus.Opened;
 
-            var usage = Usage.Create(Id.Value, _beerFlowSettings);
+            var usage = Usage.Create(Id, _beerFlowSettings);
             _usages.Add(usage);
             return usage;
         }
@@ -91,7 +91,7 @@ namespace BeerDispenser.Domain.Entity
 
 
         public static Dispenser CreateDispenser(
-            Guid? id,
+            Guid id,
             decimal volume,
             DispenserStatus status,
             IList<Usage> usages,

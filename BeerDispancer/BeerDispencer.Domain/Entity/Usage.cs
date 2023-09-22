@@ -14,7 +14,7 @@ namespace BeerDispencer.Domain.Entity
         private IBeerFlowSettings _beerFlowSettings;
 
         internal Usage(
-         Guid? id,
+         Guid id,
          Guid dispencerId,
          DateTime openAt,
          IBeerFlowSettings beerFlowSettings,
@@ -43,11 +43,11 @@ namespace BeerDispencer.Domain.Entity
 
         public static Usage Create(Guid dispencerId, IBeerFlowSettings beerFlowSettings)
         {
-            return new Usage(null, dispencerId, DateTime.UtcNow, beerFlowSettings, null, null, null);
+            return new Usage(Guid.NewGuid(), dispencerId, DateTime.UtcNow, beerFlowSettings, null, null, null);
         }
 
         public static Usage Create(
-            Guid? id,
+            Guid id,
         Guid dispencerId,
          DateTime openAt,
          IBeerFlowSettings beerFlowSettings,

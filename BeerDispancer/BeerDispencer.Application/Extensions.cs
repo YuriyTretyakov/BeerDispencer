@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using BeerDispancer.Application.DTO;
 using BeerDispencer.Application.Implementation.Response;
 using BeerDispencer.Domain.Abstractions;
@@ -30,7 +31,7 @@ namespace BeerDispencer.Application
             };
         }
 
-        public static IEnumerable<Usage> ToDomain(this IEnumerable<UsageDto> dto, IBeerFlowSettings beerFlowSettings)
+        public static ReadOnlyCollection<Usage> ToDomain(this IEnumerable<UsageDto> dto, IBeerFlowSettings beerFlowSettings)
         {
 
             return dto.Select(x =>
@@ -43,7 +44,7 @@ namespace BeerDispencer.Application
                   beerFlowSettings,
                   x.ClosedAt,
                   x.TotalSpent,
-                  x.FlowVolume));
+                  x.FlowVolume)).ToList().AsReadOnly();
         }
 
         public static UsageDto ToDto(this Usage usage)

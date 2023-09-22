@@ -11,10 +11,10 @@ namespace BeerDispencer.WebApi.Extensions
         {
             return new Dispencer
             {
-                Id = dispencerDto.Id.Value,
+                Id = dispencerDto.Id,
                 FlowVolume =
                 dispencerDto.Volume==null?
-                default(decimal):
+                default:
                 dispencerDto.Volume.Value };
         }
 

@@ -39,7 +39,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
 
                 var usagesDto = await _dispencerUof
                     .UsageRepo
-                    .GetByDispencerIdAsync(dispenserDto.Id.Value);
+                    .GetByDispencerIdAsync(dispenserDto.Id);
 
                 var usages = usagesDto.ToDomain(_beerFlowSettings);
 

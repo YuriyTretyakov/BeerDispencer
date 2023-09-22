@@ -36,7 +36,7 @@ namespace BeerDispancer.Application.Implementation.Handlers
             var usages = usagesDto.ToDomain(_beerFlowSettings);
 
             var dispencer = Dispenser.CreateDispenser(
-            dispencerDto.Id,
+                dispencerDto.Id,
                 dispencerDto.Volume.Value,
                 dispencerDto.Status.Value,
                 usages.ToList(),
