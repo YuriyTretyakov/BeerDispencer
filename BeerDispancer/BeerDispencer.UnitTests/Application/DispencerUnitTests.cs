@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Stripe.Tax;
 
 namespace BeerDispencer.UnitTests;
 
@@ -32,7 +33,7 @@ public class DispencerUnitTests
         //Arrange
         var mockSet = new Mock<DbSet<Dispenser>>();
 
-        
+
         var mockContext = new Mock<IBeerDispencerDbContext>();
 
         mockContext.Setup(x => x.Dispencers).Returns(mockSet.Object);
@@ -45,7 +46,9 @@ public class DispencerUnitTests
             new Mock<IUsageRepository>().Object,
             dispencerRepo);
 
-        var _sut = new CreateDispenserHandler(uof);
+        var beerSettings = new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 };
+
+        var _sut = new CreateDispenserHandler(uof, beerSettings);
 
         var dispencerCommand = new DispenserCreateCommand { FlowVolume = 50 };
 
@@ -86,16 +89,16 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
-       
+        var beerSettings = new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 };
+
 
         var _sut = new DispenserUpdateHandler(mockUof.Object,
-            new Mock<IBeerFlowCalculator>().Object,
-            new Mock<ILogger<DispenserUpdateHandler>>().Object);
+            beerSettings);
 
-        var dispencerUpdateCommand = new DispenserUpdateCommand { Id = dispencerId, Status = DispenserStatus.Opened, UpdatedAt = DateTime.UtcNow };
+        var dispenserUpdateCommand = new DispenserUpdateCommand { Id = dispencerId, Status = DispenserStatus.Opened, UpdatedAt = DateTime.UtcNow };
 
         //Act
-        var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
+        var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);
 
         //Assert
         dto.Result.Should().BeTrue();
@@ -117,7 +120,7 @@ public class DispencerUnitTests
             .Verify(x => x.AddAsync(
                 It.Is<UsageDto>(
                     x => x.DispencerId == dispencerId &&
-                    x.OpenAt == dispencerUpdateCommand.UpdatedAt)));
+                    x.OpenAt == dispenserUpdateCommand.UpdatedAt)));
 
         mockUof.Verify(x => x.Complete(), Times.Once);
         mockUof.Verify(x => x.CommitTransaction(), Times.Once);
@@ -159,14 +162,13 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
 
-        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 });
+        var beerSettings = new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 };
 
         var _sut = new DispenserUpdateHandler(
             mockUof.Object,
-            calculator,
-            new Mock<ILogger<DispenserUpdateHandler>>().Object);
+            beerSettings);
 
-        var dispencerUpdateCommand = new DispenserUpdateCommand
+        var dispenserUpdateCommand = new DispenserUpdateCommand
         {
             Id = dispencerId,
             Status = DispenserStatus.Closed,
@@ -174,7 +176,7 @@ public class DispencerUnitTests
         };
 
         //Act
-        var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
+        var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);
 
         //Assert
         dto.Result.Should().BeTrue();
@@ -200,10 +202,10 @@ public class DispencerUnitTests
         usagesMock.Verify(x => x
         .UpdateAsync(It.Is<UsageDto>(
             x => x.DispencerId == dispencerId &&
-            x.ClosedAt == dispencerUpdateCommand.UpdatedAt &&
+            x.ClosedAt == dispenserUpdateCommand.UpdatedAt &&
             x.OpenAt == openedAt &&
-            x.FlowVolume == (decimal)x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * 0.1M &&
-            x.TotalSpent == x.FlowVolume * 6)));
+            x.FlowVolume == (decimal)x.ClosedAt.Value.Subtract(x.OpenAt).TotalSeconds * beerSettings.LitersPerSecond &&
+            x.TotalSpent == x.FlowVolume * beerSettings.PricePerLiter)));
 
 
         mockUof.Verify(x => x.Complete(), Times.Once);
@@ -247,21 +249,20 @@ public class DispencerUnitTests
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
         mockUof.Setup(x => x.UsageRepo).Returns(usagesMock.Object);
 
-        var calculator = new Calculator(new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 });
+        var beerSettings = new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 };
 
         var _sut = new DispenserUpdateHandler(mockUof.Object,
-            calculator,
-            new Mock<ILogger<DispenserUpdateHandler>>().Object);
+            beerSettings);
 
         //Act
-        var dispencerUpdateCommand = new DispenserUpdateCommand
+        var dispenserUpdateCommand = new DispenserUpdateCommand
         {
             Id = dispencerId,
             Status = updateTo,
             UpdatedAt = DateTime.UtcNow
         };
 
-        var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
+        var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);
         //Assert
         dto.Result.Should().BeFalse();
     }
@@ -272,21 +273,20 @@ public class DispencerUnitTests
         //Arrange
         var dispencerRepoMock = new Mock<IDispencerRepository>();
         dispencerRepoMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()).Result).Returns(default(DispenserDto));
-      
+
         var mockUof = new Mock<IDispencerUof>();
         mockUof.Setup(x => x.DispencerRepo).Returns(dispencerRepoMock.Object);
-       
+
         var _sut = new DispenserUpdateHandler(mockUof.Object,
-            new Mock<IBeerFlowCalculator>().Object,
-            new Mock<ILogger<DispenserUpdateHandler>>().Object);
+            new Mock<IBeerFlowSettings>().Object);
         //Act
-        var dispencerUpdateCommand = new DispenserUpdateCommand
+        var dispenserUpdateCommand = new DispenserUpdateCommand
         {
             Id = Guid.NewGuid(),
             Status = DispenserStatus.Opened,
             UpdatedAt = DateTime.UtcNow
         };
-        var dto = await _sut.Handle(dispencerUpdateCommand, CancellationToken.None);
+        var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);
         //Assert
         dto.Result.Should().BeFalse();
     }

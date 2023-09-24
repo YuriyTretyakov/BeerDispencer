@@ -8,7 +8,7 @@ namespace BeerDispencer.Infrastructure.Extensions
 	{
 		public static Dispenser ToDbEntity(this DispenserDto dto)
 		{
-			return new Dispenser { Id = dto.Id, Status = dto.Status, Volume = dto.Volume };
+			return new Dispenser { Id = dto.Id, Status = dto.Status.Value, Volume = dto.Volume.Value };
 		}
 
 	

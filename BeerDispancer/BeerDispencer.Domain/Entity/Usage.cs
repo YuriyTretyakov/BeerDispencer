@@ -3,9 +3,9 @@ using BeerDispencer.Domain.Implementations;
 
 namespace BeerDispencer.Domain.Entity
 {
-    public sealed class Usage: Entity
+    public sealed class Usage : Entity
     {
-        public Guid? DispencerId { get; set; }
+        public Guid DispencerId { get; set; }
         public DateTime OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public decimal? FlowVolume { get; set; }
@@ -14,7 +14,7 @@ namespace BeerDispencer.Domain.Entity
         private IBeerFlowSettings _beerFlowSettings;
 
         internal Usage(
-         Guid? id,
+         Guid id,
          Guid dispencerId,
          DateTime openAt,
          IBeerFlowSettings beerFlowSettings,
@@ -43,9 +43,20 @@ namespace BeerDispencer.Domain.Entity
 
         public static Usage Create(Guid dispencerId, IBeerFlowSettings beerFlowSettings)
         {
-            return new Usage(null, dispencerId, DateTime.UtcNow, beerFlowSettings,null, null, null);
+            return new Usage(Guid.NewGuid(), dispencerId, DateTime.UtcNow, beerFlowSettings, null, null, null);
         }
 
+        public static Usage Create(
+            Guid id,
+        Guid dispencerId,
+         DateTime openAt,
+         IBeerFlowSettings beerFlowSettings,
+         DateTime? closedAt,
+         decimal? flowVolume,
+         decimal? totalSpent
+         )
+        {
+            return new Usage(id, dispencerId, openAt, beerFlowSettings,closedAt, flowVolume, totalSpent);
+        }
     }
 }
-

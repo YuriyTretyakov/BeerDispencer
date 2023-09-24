@@ -43,12 +43,12 @@ namespace BeerDispencer.Infrastructure.Persistence
             return entity==null?null:entity.ToDto(); 
         }
 
-        public async Task UpdateAsync(DispenserDto dispencerDto)
+        public async Task UpdateAsync(DispenserDto dispenserDto)
         {
-            var dispencerEntity = await _dbcontext.Dispencers.SingleOrDefaultAsync(x => x.Id == dispencerDto.Id);
+            var dispencerEntity = await _dbcontext.Dispencers.SingleOrDefaultAsync(x => x.Id == dispenserDto.Id);
 
-            dispencerEntity.Status = dispencerDto.Status ?? dispencerEntity.Status;
-            dispencerEntity.Volume = dispencerDto.Volume ?? dispencerEntity.Volume;
+            dispencerEntity.Status = dispenserDto.Status ?? dispencerEntity.Status;
+            dispencerEntity.Volume = dispenserDto.Volume ?? dispencerEntity.Volume;
         }
 
         

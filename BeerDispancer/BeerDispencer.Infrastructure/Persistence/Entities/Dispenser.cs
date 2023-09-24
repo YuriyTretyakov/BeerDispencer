@@ -9,8 +9,8 @@ namespace BeerDispencer.Infrastructure.Persistence.Entities
     {
         [Key]
         public Guid Id { get; set; }
-        public decimal? Volume { get; set; }
-        public DispenserStatus? Status { get; set; }
+        public decimal Volume { get; set; }
+        public DispenserStatus Status { get; set; }
     }
 }
 

@@ -10,6 +10,7 @@ namespace BeerDispencer.WebApi.ViewModels.Request
 
         [JsonProperty("status")]
         public DispenserStatus Status { get; set; }
+        
     }
 }
 

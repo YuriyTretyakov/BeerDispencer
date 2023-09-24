@@ -1,25 +1,25 @@
 ﻿using BeerDispancer.Application.Abstractions;
-using BeerDispancer.Application.DTO;
 using BeerDispancer.Application.Implementation.Commands;
+using BeerDispencer.Application;
 using BeerDispencer.Application.Implementation.Response;
 using BeerDispencer.Domain.Abstractions;
 using BeerDispencer.Shared;
+using BeerDispenser.Domain.Entity;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace BeerDispancer.Application.Implementation.Handlers
 {
     public class DispenserUpdateHandler: IRequestHandler<DispenserUpdateCommand, DispenserUpdateResponse>
 	{
         private readonly IDispencerUof _dispencerUof;
-        private readonly IBeerFlowCalculator _calculator;
+        private readonly IBeerFlowSettings _beerFlowSettings;
 
         public DispenserUpdateHandler(
             IDispencerUof dispencerUof,
-        IBeerFlowCalculator calculator)
+        IBeerFlowSettings beerFlowSettings)
 		{
             _dispencerUof = dispencerUof;
-            _calculator = calculator;
+            _beerFlowSettings = beerFlowSettings;
         }
 
         public async Task<DispenserUpdateResponse> Handle(DispenserUpdateCommand request, CancellationToken cancellationToken)
@@ -28,43 +28,42 @@ namespace BeerDispancer.Application.Implementation.Handlers
 
             using (var transaction = _dispencerUof.StartTransaction())
             {
-                var dispencerDto = await _dispencerUof.DispencerRepo.GetByIdAsync(request.Id);
+                var dispenserDto = await _dispencerUof
+                    .DispencerRepo
+                    .GetByIdAsync(request.Id);
 
-                if (dispencerDto == null || dispencerDto.Status == request.Status)
+                if (dispenserDto is null)
                 {
                     return updateCommandResult;
                 }
 
-                dispencerDto.Status = request.Status;
+                var usagesDto = await _dispencerUof
+                    .UsageRepo
+                    .GetByDispencerIdAsync(dispenserDto.Id);
+
+                var usages = usagesDto.ToDomain(_beerFlowSettings);
+
+                var dispenser = Dispenser.CreateDispenser(
+                    dispenserDto.Id,
+                    dispenserDto.Volume.Value,
+                    dispenserDto.Status.Value,
+                    usages.ToList(),
+                    _beerFlowSettings);
+
+
+                if (request.Status == DispenserStatus.Opened)
+                {
+                    var usageDto = dispenser.Open().ToDto();
+                    await _dispencerUof.UsageRepo.AddAsync(usageDto);
+                }
+
+                else if (request.Status == DispenserStatus.Closed)
+                {
+                    var usageDto = dispenser.Close().ToDto();
+                    await _dispencerUof.UsageRepo.UpdateAsync(usageDto);
+                }
                 
-                await _dispencerUof.DispencerRepo.UpdateAsync(dispencerDto);
-
-
-                if (dispencerDto.Status == DispenserStatus.Opened)
-                {
-                    await _dispencerUof.UsageRepo.AddAsync(new UsageDto { DispencerId = dispencerDto.Id, OpenAt = request.UpdatedAt });
-                }
-
-                else if (dispencerDto.Status == DispenserStatus.Closed)
-                {
-                    var usagesFound = await _dispencerUof.UsageRepo.GetByDispencerIdAsync(dispencerDto.Id);
-
-                    var activeUsage = usagesFound.SingleOrDefault(x => x.ClosedAt == null);
-
-                    if (activeUsage == null)
-                    {
-                        _logger.LogError($"No usage records with {nameof(UsageDto.ClosedAt)} ==null found for dispencer id:{dispencerDto.Id}");
-                        updateCommandResult.Result = false;
-                        return updateCommandResult;
-                    }
-
-                    activeUsage.ClosedAt = request.UpdatedAt;
-                    activeUsage.FlowVolume = _calculator.GetFlowVolume(activeUsage.ClosedAt, activeUsage.OpenAt);
-                    activeUsage.TotalSpent = _calculator.GetTotalSpent(activeUsage.FlowVolume);
-
-                    await _dispencerUof.UsageRepo.UpdateAsync(activeUsage);
-
-                }
+                await _dispencerUof.DispencerRepo.UpdateAsync(dispenser.ToDto());
 
                 await _dispencerUof.Complete();
                 _dispencerUof.CommitTransaction();
