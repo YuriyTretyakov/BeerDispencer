@@ -1,11 +1,9 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
+﻿using BeerDispenser.Application.DTO;
 
 
-namespace BeerDispencer.Application.Abstractions
-{ 
-    public interface IDispencerRepository: IRepository<DispencerDto>
+namespace BeerDispenser.Application.Abstractions
+{
+    public interface IDispencerRepository: IRepository<DispenserDto>
 	{
 	}
 }

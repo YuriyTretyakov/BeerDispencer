@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using FluentMigrator;
 
-namespace BeerDispencer.Infrastructure.Migrations;
+namespace BeerDispenser.Infrastructure.Migrations;
 
 [Migration(1)]
 public class M0001_CreateInitial : Migration

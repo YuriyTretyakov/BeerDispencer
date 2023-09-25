@@ -1,8 +1,8 @@
-﻿using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispenser.Domain.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BeerDispencer.Domain.Implementations
+namespace BeerDispenser.Domain.Implementations
 {
     public static class DependencyInjection
     {

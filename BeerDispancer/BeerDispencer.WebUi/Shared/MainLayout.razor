@@ -1,8 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using BeerDispenser.WebUi.ViewModels.Request;
+
+@inherits LayoutComponentBase
 
 @inject Abstractions.ILocalStorage LocalStorage
 @inject NavigationManager NavManager
-@inject BeerDispencer.WebUi.Implementation.TimeZoneService TimeZoneService
+@inject BeerDispenser.WebUi.Implementation.TimeZoneService TimeZoneService
 
 
 <style>
@@ -143,14 +145,14 @@
     {
         if (!string.IsNullOrEmpty(username))
         {
-            var loginModel = new BeerDispencer.WebUi.ViewModels.Request.UserLoginModel
+            var loginModel = new UserLoginModel
             {
                 UserName = username,
                 Password = password
             };
 
             var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
-            var response = await httpclient.PostAsJsonAsync<BeerDispencer.WebUi.ViewModels.Request.UserLoginModel>("/api/Auth/login", loginModel);
+            var response = await httpclient.PostAsJsonAsync<UserLoginModel>("/api/Auth/login", loginModel);
 
             if (response.IsSuccessStatusCode)
             {

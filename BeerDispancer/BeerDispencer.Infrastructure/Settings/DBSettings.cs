@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.Infrastructure.Settings
+namespace BeerDispenser.Infrastructure.Settings
 {
 	public class DBSettings
 	{

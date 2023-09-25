@@ -1,15 +1,15 @@
-﻿using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.WebApi.Extensions;
+﻿using BeerDispenser.Infrastructure.Persistence.Models;
+using BeerDispenser.WebApi.Extensions;
 using MediatR;
 using FluentValidation;
-using BeerDispancer.Application.Implementation.PipelineBehavior;
-using BeerDispancer.Application.Implementation.Validation;
-using BeerDispancer.Application.Implementation;
-using BeerDispancer.Infrastructure;
-using BeerDispencer.Domain.Implementations;
-using BeerDispencer.Infrastructure.Middleware;
+using BeerDispenser.Application.Implementation.PipelineBehavior;
+using BeerDispenser.Application.Implementation.Validation;
+using BeerDispenser.Application.Implementation;
+using BeerDispenser.Infrastructure;
+using BeerDispenser.Domain.Implementations;
+using BeerDispenser.Infrastructure.Middleware;
 using Serilog;
-using BeerDispencer.WebApi.HealthChecks;
+using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Stripe;
 

@@ -1,6 +1,6 @@
-﻿using BeerDispencer.Shared;
+﻿using BeerDispenser.Shared;
 using Newtonsoft.Json;
-namespace BeerDispencer.WebUi.ViewModels.Request
+namespace BeerDispenser.WebUi.ViewModels.Request
 
 {
     public class DispenserUpdateModel
@@ -9,7 +9,7 @@ namespace BeerDispencer.WebUi.ViewModels.Request
         public DateTime UpdatedAt { get; set; }
 
         [JsonProperty("status")]
-        public DispencerStatus Status { get; set; }
+        public DispenserStatus Status { get; set; }
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace BeerDispencer.WebApi.HealthChecks
+namespace BeerDispenser.WebApi.HealthChecks
 {
 	public class LiveHealthCheck:IHealthCheck
 	{

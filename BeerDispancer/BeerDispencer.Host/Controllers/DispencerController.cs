@@ -1,23 +1,23 @@
-﻿using BeerDispancer.Application.Implementation.Commands;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispancer.Application.Implementation.Queries;
-using BeerDispencer.WebApi.Extensions;
-using BeerDispencer.WebApi.ViewModels.Request;
+﻿using BeerDispenser.Application.Implementation.Commands;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.WebApi.Extensions;
+using BeerDispenser.WebApi.ViewModels.Request;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 
-namespace BeerDispancer.Controllers
+namespace BeerDispenser.Controllers
 {
     [Route("api/[controller]")]
-    public class DispencerController : Controller
+    public class DispenserController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<DispencerController> _logger;
+        private readonly ILogger<DispenserController> _logger;
 
-        public DispencerController(IMediator mediator, ILogger<DispencerController> logger)
+        public DispenserController(IMediator mediator, ILogger<DispenserController> logger)
         {
             _mediator = mediator;
             _logger = logger;
@@ -25,7 +25,7 @@ namespace BeerDispancer.Controllers
 
         [Authorize(Roles = UserRoles.Service)]
         [HttpPost()]
-        public async Task<IActionResult> CreateDispencerAsync([FromBody] DispencerCreateCommand createDispencer)
+        public async Task<IActionResult> CreateDispencerAsync([FromBody] DispenserCreateCommand createDispencer)
         {
             var result = await _mediator.Send(createDispencer);
             return Ok(result.ToViewModel());
@@ -52,7 +52,7 @@ namespace BeerDispancer.Controllers
         [HttpGet("getall")]
         public async Task<IActionResult> GetAllDispencers()
         {
-            var query = new GetAllDispencersQuery();
+            var query = new GetAllDispensersQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
         }

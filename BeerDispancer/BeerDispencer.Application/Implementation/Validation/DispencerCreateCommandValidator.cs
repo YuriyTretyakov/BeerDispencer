@@ -1,10 +1,10 @@
 ﻿using System;
-using BeerDispancer.Application.Implementation.Commands;
+using BeerDispenser.Application.Implementation.Commands;
 using FluentValidation;
 
-namespace BeerDispancer.Application.Implementation.Validation
+namespace BeerDispenser.Application.Implementation.Validation
 {
-	public class DispencerCreateCommandValidator:AbstractValidator<DispencerCreateCommand>
+	public class DispencerCreateCommandValidator:AbstractValidator<DispenserCreateCommand>
 	{
 		public DispencerCreateCommandValidator()
 		{

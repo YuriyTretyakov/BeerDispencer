@@ -1,10 +1,12 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Implementation.Response;
-using BeerDispencer.Domain.Entity;
+﻿using System.Collections.ObjectModel;
+using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Domain.Abstractions;
+using BeerDispenser.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
+using BeerDispenser.Domain.Entity;
 
-namespace BeerDispencer.Application
+namespace BeerDispenser.Application
 {
     public static class Extensions
     {
@@ -18,22 +20,37 @@ namespace BeerDispencer.Application
             };
         }
 
-        public static DispencerDto ToDto(this Dispencer domainDispencer)
+        public static DispenserDto ToDto(this Dispenser domainDispenser)
         {
-            return new DispencerDto
+            return new DispenserDto
             {
-                Id = domainDispencer.Id,
-                Volume = domainDispencer.Volume,
-                Status = domainDispencer.Status,
-                ReservedFor = domainDispencer.ReservedFor
+                Id = domainDispenser.Id,
+                Volume = domainDispenser.Volume,
+                Status = domainDispenser.Status,
+                ReservedFor = domainDispenser.ReservedFor
             };
+        }
+
+        public static ReadOnlyCollection<Usage> ToDomain(this IEnumerable<UsageDto> dto,
+            IBeerFlowSettings beerFlowSettings)
+        {
+
+            return dto.Select(x =>
+
+                 Usage.Create(
+
+                 x.Id,
+                  x.DispencerId,
+                  x.OpenAt,
+                  beerFlowSettings)).ToList().AsReadOnly();
+
         }
 
         public static IEnumerable<Usage> ToDomain(this IEnumerable<UsageDto> dto)
         {
 
             return dto.Select(x =>
-             
+
                  Usage.Create(
 
                  x.Id,
@@ -41,7 +58,7 @@ namespace BeerDispencer.Application
                   x.OpenAt,
                   x.ClosedAt,
                   x.TotalSpent,
-                  x.FlowVolume));
+                  x.FlowVolume)).ToList().AsReadOnly();
         }
 
         public static UsageDto ToDto(this Usage usage)

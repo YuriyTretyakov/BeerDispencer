@@ -1,19 +1,16 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Application.Implementation.Response;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Implementation.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 
-namespace BeerDispencer.Application.Implementation.Handlers.Authorization
+namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-	public class LoginUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
+    public class LoginUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
 	{
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.Application.Implementation.Response
+namespace BeerDispenser.Application.Implementation.Response
 {
 	public class AuthResponseDto
 	{

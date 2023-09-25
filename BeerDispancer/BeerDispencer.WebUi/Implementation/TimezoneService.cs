@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.JSInterop;
 
-namespace BeerDispencer.WebUi.Implementation
+namespace BeerDispenser.WebUi.Implementation
 {
     public sealed class TimeZoneService
     {

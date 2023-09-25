@@ -1,9 +1,9 @@
-﻿using BeerDispencer.WebUi.Abstractions;
+﻿using BeerDispenser.WebUi.Abstractions;
 using Microsoft.JSInterop;
 using System.IO.Compression;
 using System.Text;
 
-namespace BeerDispencer.WebUi.Implementation
+namespace BeerDispenser.WebUi.Implementation
 {
     public class LocalStorage : ILocalStorage
     {

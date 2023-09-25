@@ -1,8 +1,8 @@
 ﻿@using Microsoft.JSInterop;
 @using Newtonsoft.Json;
-@using BeerDispencer.Shared;
-@using BeerDispencer.WebUi.ViewModels.Request;
-@using BeerDispencer.WebUi.ViewModels.Response;
+@using BeerDispenser.Shared;
+@using BeerDispenser.WebUi.ViewModels.Request;
+@using BeerDispenser.WebUi.ViewModels.Response;
 
 @page "/bar"
 @inject NavigationManager navManager;
@@ -64,7 +64,7 @@ else
                     <td>@dispencer.Volume </td>
                     <td>@dispencer.Status </td>
                     <td>
-                        @if (dispencer.Status == DispencerStatus.Reserved)
+                        @if (dispencer.Status == DispenserStatus.Reserved)
                         {
                             @dispencer.ReservedFor
                         }
@@ -81,19 +81,19 @@ else
     <div class="container">
         @foreach (var dispencer in dispencers)
         {
-            @if (dispencer.Status == DispencerStatus.Close)
+            @if (dispencer.Status == DispenserStatus.Closed)
             {
                 <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
                     <img style="bottom:15%" class="dispencer" src="/images/kran_regular.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
             }
-            @if (dispencer.Status == DispencerStatus.Open)
+            @if (dispencer.Status == DispenserStatus.Opened)
             {
                 <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
                     <img class="dispencer" style="bottom:15%" src="/images/kran_inuse.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
             }
-            @if (dispencer.Status == DispencerStatus.Reserved)
+            @if (dispencer.Status == DispenserStatus.Reserved)
             {
                 <div >
                     <img class="dispencer" style="bottom:15%" src="/images/kran_reserved.png" alt="BeerDispencer" height="200px" width="100px" />
@@ -110,32 +110,32 @@ else
     string DevApiBaseAddress = "http://localhost:5268";
 
 
-    private async Task onDispencerClick(Guid id, DispencerStatus status)
+    private async Task onDispencerClick(Guid id, DispenserStatus status)
     {
         var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
 
         var update = new DispenserUpdateModel
         {
-            Status = status == DispencerStatus.Close ?
-            DispencerStatus.Open :
-            DispencerStatus.Close,
+            Status = status == DispenserStatus.Closed ?
+            DispenserStatus.Opened :
+            DispenserStatus.Closed,
             UpdatedAt = DateTime.UtcNow
         };
 
-        await httpclient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispencer/{id}/status", update);
+        await httpclient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
 
         navManager.NavigateTo("/bar", true);
 
     }
 
 
-    private DispencerWithStatus[]? dispencers;
+    private DispenserWithStatus[]? dispencers;
 
     protected override async Task OnInitializedAsync()
     {
         var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
 
-        dispencers = (await httpclient.GetFromJsonAsync<DispencerWithStatus[]>("api/Dispencer/getall"))
+        dispencers = (await httpclient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/getall"))
             .OrderBy(x => x.Id)
             .ToArray();
     }
@@ -144,7 +144,7 @@ else
     {
         var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
 
-        var checkoutModel = new NewOrderDetails { DispencerId = id, Amount = 120, Currency = "EUR" };
+        var checkoutModel = new NewOrderDetails { DispenserId = id, Amount = 120, Currency = "EUR" };
 
         var response = await httpclient.PostAsJsonAsync($"{DevApiBaseAddress}/api/Checkout", checkoutModel);
 
@@ -156,7 +156,7 @@ else
             .DeserializeObject<CheckoutOrderResponse>(responseBody);
 
         // Opens up Stripe.
-        
+
         await jsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
     }
 }

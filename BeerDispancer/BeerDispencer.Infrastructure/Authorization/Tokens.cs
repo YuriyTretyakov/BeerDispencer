@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BeerDispencer.Infrastructure.Authorization
+namespace BeerDispenser.Infrastructure.Authorization
 {
     [Table("Tokens")]
     public class Token

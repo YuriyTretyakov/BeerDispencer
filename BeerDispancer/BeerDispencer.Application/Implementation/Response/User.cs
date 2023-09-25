@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispancer.Application.Implementation.Response
+namespace BeerDispenser.Application.Implementation.Response
 {
     public class User
     {

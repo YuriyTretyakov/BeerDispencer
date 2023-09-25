@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.WebUi.ViewModels.Request
+namespace BeerDispenser.WebUi.ViewModels.Request
 {
     public class UserLoginModel
     {

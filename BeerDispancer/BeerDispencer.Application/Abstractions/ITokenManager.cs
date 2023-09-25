@@ -1,5 +1,4 @@
-﻿using System;
-namespace BeerDispencer.Application.Abstractions
+﻿namespace BeerDispenser.Application.Abstractions
 {
     public interface ITokenManager
     {

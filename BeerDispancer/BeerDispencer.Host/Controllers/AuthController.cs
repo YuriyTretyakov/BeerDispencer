@@ -1,11 +1,11 @@
-﻿using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispancer.Application.Implementation.Queries;
-using BeerDispencer.Application.Implementation.Commands.Authorization;
+﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BeerDispencer.WebApi.Controllers
+namespace BeerDispenser.WebApi.Controllers
 {
     [Route("api/[controller]")]
     public class AuthController : Controller

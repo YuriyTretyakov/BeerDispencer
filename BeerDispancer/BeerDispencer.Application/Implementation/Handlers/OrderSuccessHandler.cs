@@ -1,27 +1,24 @@
-﻿using System;
-using BeerDispancer.Application.Abstractions;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Implementation.Commands;
-using BeerDispencer.Application.Implementation.Queries;
-using BeerDispencer.Domain.Entity;
-using BeerDispencer.Shared;
+﻿using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Domain.Entity;
+using BeerDispenser.Shared;
 using MediatR;
 using Stripe.Checkout;
 
-namespace BeerDispencer.Application.Implementation.Handlers
+namespace BeerDispenser.Application.Implementation.Handlers
 {
-	public class OrderSuccessHandler: IRequestHandler<GetOrderDetailsQuery, OrderResponseDetails>
+    public class OrderSuccessHandler : IRequestHandler<GetOrderDetailsQuery, OrderResponseDetails>
     {
         private readonly IDispencerUof _dispencerUof;
 
         public OrderSuccessHandler(IDispencerUof dispencerUof)
-		{
+        {
             _dispencerUof = dispencerUof;
         }
 
         public async Task<OrderResponseDetails> Handle(GetOrderDetailsQuery request, CancellationToken cancellationToken)
         {
-          
+
             var sessionService = new SessionService();
             var session = sessionService.Get(request.SessionId);
 
@@ -44,9 +41,9 @@ namespace BeerDispencer.Application.Implementation.Handlers
                        .DispencerRepo
                        .GetByIdAsync(dispencerId);
 
-                    var dispenser = Dispencer
-                        .Create(
-                        dispenserDto.Id.Value,
+                    var dispenser = Dispenser
+                        .CreateDispenser(
+                        dispenserDto.Id,
                         dispenserDto.Volume.Value,
                         dispenserDto.Status.Value);
 
@@ -56,7 +53,7 @@ namespace BeerDispencer.Application.Implementation.Handlers
                         .ToDto();
 
                     dispenserDto = dispenser.ToDto();
-                    
+
                     await _dispencerUof.UsageRepo.AddAsync(usageDto);
                     await _dispencerUof.DispencerRepo.UpdateAsync(dispenserDto);
                     await _dispencerUof.Complete();
@@ -71,4 +68,3 @@ namespace BeerDispencer.Application.Implementation.Handlers
         }
     }
 }
-

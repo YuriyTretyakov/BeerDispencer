@@ -22,6 +22,6 @@
     <Folder Include="Entity\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BeerDispencer.Shared\BeerDispencer.Shared.csproj" />
+    <ProjectReference Include="..\BeerDispencer.Shared\BeerDispenser.Shared.csproj" />
   </ItemGroup>
 </Project>

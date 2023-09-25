@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispancer.Application.Implementation.Commands.Authorization
+namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
 	public class UserRoles
 	{

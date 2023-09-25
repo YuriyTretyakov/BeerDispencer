@@ -1,8 +1,8 @@
-﻿using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispenser.Domain.Abstractions;
 
-namespace BeerDispencer.Domain.Implementations
+namespace BeerDispenser.Domain.Implementations
 {
-    public  class Calculator :IBeerFlowCalculator
+    internal class Calculator :IBeerFlowCalculator
 	{
         private readonly IBeerFlowSettings _settings;
 

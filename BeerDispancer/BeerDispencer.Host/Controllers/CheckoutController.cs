@@ -1,6 +1,6 @@
-﻿using BeerDispencer.Application.Implementation.Commands;
-using BeerDispencer.Application.Implementation.Queries;
-using BeerDispencer.Shared;
+﻿using BeerDispenser.Application.Implementation.Commands;
+using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 
 
-namespace BeerDispencer.WebApi.Controllers
+namespace BeerDispenser.WebApi.Controllers
 {
     [Route("api/[controller]")]
     public class CheckoutController : Controller
@@ -38,17 +38,17 @@ namespace BeerDispencer.WebApi.Controllers
 
             _webUiBaseUrl = Request.Headers.Referer[0];
 
-            var dispencerPrePayCommand = new DispencerPrePayCommand
+            var DispenserPrePayCommand = new DispenserPrePayCommand
             {
                 Amount = orderDetails.Amount,
                 Currency = orderDetails.Currency,
-                DispencerId = orderDetails.DispencerId,
+                DispenserId = orderDetails.DispenserId,
                 WebApiBaseUrl = thisApiUrl,
                 WebUiBaseUrl = _webUiBaseUrl
             };
 
 
-            var checkoutOrderResponse = await _mediator.Send(dispencerPrePayCommand);
+            var checkoutOrderResponse = await _mediator.Send(DispenserPrePayCommand);
 
             if (checkoutOrderResponse is not null)
             {

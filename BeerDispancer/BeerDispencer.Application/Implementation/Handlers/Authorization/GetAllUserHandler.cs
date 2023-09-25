@@ -1,12 +1,10 @@
-﻿using System.Data;
-using BeerDispancer.Application.Implementation.Queries;
-using BeerDispancer.Application.Implementation.Response;
-using BeerDispencer.Application.Implementation.Response;
+﻿using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Application.Implementation.Response;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeerDispencer.Application.Implementation.Handlers.Authorization
+namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
     public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, User[]>
     {

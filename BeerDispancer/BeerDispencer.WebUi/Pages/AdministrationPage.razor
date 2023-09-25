@@ -29,26 +29,26 @@
 
 
 @code {
-        [CascadingParameter]
-        public MainLayout mainLayout { get; set; }
-
-    
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
 
 
-        BeerDispencer.WebUi.ViewModels.Response.User[]? users;
 
-        protected override async Task OnInitializedAsync()
-        {
-            var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
-            Console.WriteLine($"Bearer {mainLayout.Token}");
-            httpclient.DefaultRequestHeaders.Add("Authorization", $"Bearer {mainLayout.Token}");
 
-            users = (await httpclient.GetFromJsonAsync<BeerDispencer.WebUi.ViewModels.Response.User[]>("api/auth/getallusers"));
-        }
+    BeerDispenser.WebUi.ViewModels.Response.User[]? users;
 
-        private string getRolesAsString(string[] roles)
-        {
-            return string.Join(',', roles);
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
+        Console.WriteLine($"Bearer {mainLayout.Token}");
+        httpclient.DefaultRequestHeaders.Add("Authorization", $"Bearer {mainLayout.Token}");
+
+        users = (await httpclient.GetFromJsonAsync<BeerDispenser.WebUi.ViewModels.Response.User[]>("api/auth/getallusers"));
+    }
+
+    private string getRolesAsString(string[] roles)
+    {
+        return string.Join(',', roles);
+    }
 
     }

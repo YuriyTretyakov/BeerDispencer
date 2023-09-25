@@ -1,10 +1,10 @@
 ﻿using System.Transactions;
 
-using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class BeerDispencerUof : IDispencerUof
     {

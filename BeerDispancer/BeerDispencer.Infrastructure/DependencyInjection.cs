@@ -1,13 +1,13 @@
-﻿using BeerDispancer.Application.Abstractions;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Authorization;
-using BeerDispencer.Infrastructure.Middleware;
-using BeerDispencer.Infrastructure.Migrations;
-using BeerDispencer.Infrastructure.Persistence;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.Infrastructure.Settings;
+﻿using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Authorization;
+using BeerDispenser.Infrastructure.Middleware;
+using BeerDispenser.Infrastructure.Migrations;
+using BeerDispenser.Infrastructure.Persistence;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Models;
+using BeerDispenser.Infrastructure.Settings;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BeerDispancer.Infrastructure
+namespace BeerDispenser.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -27,7 +27,7 @@ namespace BeerDispancer.Infrastructure
 
             collection.AddTransient<UsageRepository>();
             collection.AddTransient<IUsageRepository, CachedUsageRepository>();
-            collection.AddTransient<IDispencerRepository, DispencerRepository>();
+            collection.AddScoped<IDispencerRepository, DispenserRepository>();
 
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
@@ -49,7 +49,7 @@ namespace BeerDispancer.Infrastructure
             collection
            .AddFluentMigratorCore()
            .ConfigureRunner(x => x.AddPostgres().WithGlobalConnectionString(dbSettings.ConnectionString)
-           .ScanIn(typeof(BeerDispencer.Infrastructure.Migrations.M0001_CreateInitial).Assembly)
+           .ScanIn(typeof(BeerDispenser.Infrastructure.Migrations.M0001_CreateInitial).Assembly)
            .For
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());

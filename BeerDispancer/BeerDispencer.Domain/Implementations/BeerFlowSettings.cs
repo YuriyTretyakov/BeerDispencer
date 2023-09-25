@@ -1,6 +1,6 @@
-﻿using BeerDispencer.Domain.Abstractions;
+﻿using BeerDispenser.Domain.Abstractions;
 
-namespace BeerDispencer.Domain.Implementations
+namespace BeerDispenser.Domain.Implementations
 {
     public class BeerFlowSettings : IBeerFlowSettings
     {

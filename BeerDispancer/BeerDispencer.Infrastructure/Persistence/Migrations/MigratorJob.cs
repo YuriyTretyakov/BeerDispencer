@@ -1,5 +1,5 @@
 ﻿using System;
-using BeerDispencer.Infrastructure.Settings;
+using BeerDispenser.Infrastructure.Settings;
 using FluentMigrator.Runner;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace BeerDispencer.Infrastructure.Migrations
+namespace BeerDispenser.Infrastructure.Migrations
 {
 	public class MigratorJob:BackgroundService
 	{

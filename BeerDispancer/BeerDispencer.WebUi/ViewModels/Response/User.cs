@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.WebUi.ViewModels.Response
+namespace BeerDispenser.WebUi.ViewModels.Response
 {
 	public class User
 	{

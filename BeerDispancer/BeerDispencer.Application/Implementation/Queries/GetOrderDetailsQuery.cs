@@ -1,8 +1,8 @@
 ﻿using System;
-using BeerDispencer.Shared;
+using BeerDispenser.Shared;
 using MediatR;
 
-namespace BeerDispencer.Application.Implementation.Queries
+namespace BeerDispenser.Application.Implementation.Queries
 {
 	public class GetOrderDetailsQuery:IRequest<OrderResponseDetails>
 	{

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace BeerDispencer.Infrastructure.Authorization
+namespace BeerDispenser.Infrastructure.Authorization
 {
     public interface ILoginDbContext
     {

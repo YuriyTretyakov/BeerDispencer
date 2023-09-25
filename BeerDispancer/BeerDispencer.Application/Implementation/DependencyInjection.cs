@@ -1,19 +1,19 @@
 ﻿using System.Text;
-using BeerDispencer.Application;
-using BeerDispencer.Domain.Abstractions;
-using BeerDispencer.Domain.Implementations;
+using BeerDispenser.Application;
+using BeerDispenser.Domain.Abstractions;
+using BeerDispenser.Domain.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BeerDispancer.Application.Implementation
+namespace BeerDispenser.Application.Implementation
 {
     public static class DependencyInjection
     {
         public static void AddApplication(this IServiceCollection collection)
         {
-            collection.AddSingleton<IBeerFlowCalculator, Calculator>();
+           
         }
 
         public static void AddJWTAuthentication(this IServiceCollection collection, ConfigurationManager configuration)

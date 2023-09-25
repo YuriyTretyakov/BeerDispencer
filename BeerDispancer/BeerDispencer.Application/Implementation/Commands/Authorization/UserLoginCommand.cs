@@ -1,10 +1,10 @@
 ﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Implementation.Response;
+using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Implementation.Response;
 using MediatR;
 using Newtonsoft.Json;
 
-namespace BeerDispancer.Application.Implementation.Commands.Authorization
+namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
 	public class UserLoginCommand: IRequest<AuthResponseDto>
     {

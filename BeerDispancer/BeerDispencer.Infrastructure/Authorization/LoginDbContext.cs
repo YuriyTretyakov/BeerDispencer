@@ -1,13 +1,13 @@
 ﻿using System;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Entities;
-using BeerDispencer.Infrastructure.Settings;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Entities;
+using BeerDispenser.Infrastructure.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace BeerDispencer.Infrastructure.Authorization
+namespace BeerDispenser.Infrastructure.Authorization
 {
     public class LoginDbContext : IdentityDbContext<IdentityUser>, ILoginDbContext
     {

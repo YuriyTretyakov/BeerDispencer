@@ -1,7 +1,7 @@
 ﻿using System;
-namespace BeerDispencer.WebUi.ViewModels.Response
+namespace BeerDispenser.WebUi.ViewModels.Response
 {
-	public class Dispencer
+	public class Dispenser
     {
         public Guid Id { get; set; }
         public double FlowVolume { get; set; }

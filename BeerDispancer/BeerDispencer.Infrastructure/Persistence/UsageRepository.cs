@@ -1,11 +1,11 @@
-﻿using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Extensions;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Entities;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Extensions;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class UsageRepository : IUsageRepository
     {

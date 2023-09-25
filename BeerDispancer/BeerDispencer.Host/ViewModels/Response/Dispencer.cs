@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.WebApi.ViewModels.Response
+namespace BeerDispenser.WebApi.ViewModels.Response
 {
 	public class Dispencer
     {

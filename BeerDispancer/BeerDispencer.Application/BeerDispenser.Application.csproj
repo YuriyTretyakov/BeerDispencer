@@ -46,6 +46,7 @@
     <PackageReference Include="Stripe.net" Version="42.4.0" />
   </ItemGroup>
    <ItemGroup>
-     <ProjectReference Include="..\BeerDispencer.Domain\BeerDispencer.Domain.csproj" />
+     <ProjectReference Include="..\BeerDispencer.Domain\BeerDispenser.Domain.csproj" />
+     <ProjectReference Include="..\BeerDispencer.Shared\BeerDispenser.Shared.csproj" />
    </ItemGroup>
 </Project>

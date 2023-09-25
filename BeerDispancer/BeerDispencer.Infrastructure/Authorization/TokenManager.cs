@@ -1,13 +1,13 @@
 ﻿using System;
-using BeerDispencer.Application;
-using BeerDispencer.Application.Abstractions;
+using BeerDispenser.Application;
+using BeerDispenser.Application.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace BeerDispencer.Infrastructure.Authorization
+namespace BeerDispenser.Infrastructure.Authorization
 {
     public class TokenManager : ITokenManager
     {

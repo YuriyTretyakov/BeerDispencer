@@ -1,31 +1,31 @@
-﻿using BeerDispancer.Application.DTO;
-using BeerDispancer.Application.Implementation.Commands;
-using BeerDispencer.WebApi.ViewModels.Request;
-using BeerDispencer.WebApi.ViewModels.Response;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Implementation.Commands;
+using BeerDispenser.WebApi.ViewModels.Request;
+using BeerDispenser.WebApi.ViewModels.Response;
 
-namespace BeerDispencer.WebApi.Extensions
+namespace BeerDispenser.WebApi.Extensions
 {
     public static class DataObjectExtensions
 	{
-        public static Dispencer ToViewModel(this DispencerDto dispencerDto)
+        public static Dispencer ToViewModel(this DispenserDto dispencerDto)
         {
             return new Dispencer
             {
-                Id = dispencerDto.Id.Value,
+                Id = dispencerDto.Id,
                 FlowVolume =
                 dispencerDto.Volume==null?
-                default(decimal):
+                default:
                 dispencerDto.Volume.Value };
         }
 
-        public static DispencerDto ToDto(this DispencerCreateCommand dispencerCommand)
+        public static DispenserDto ToDto(this DispenserCreateCommand dispencerCommand)
         {
-            return new DispencerDto { Volume = dispencerCommand.FlowVolume };
+            return new DispenserDto { Volume = dispencerCommand.FlowVolume };
         }
 
-        public static DispencerUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
+        public static DispenserUpdateCommand ToCommand(this DispenserUpdateModel model, Guid id)
         {
-            return  new DispencerUpdateCommand { Id = id,
+            return  new DispenserUpdateCommand { Id = id,
                 Status =  model.Status,
                 UpdatedAt = model.UpdatedAt };
         }

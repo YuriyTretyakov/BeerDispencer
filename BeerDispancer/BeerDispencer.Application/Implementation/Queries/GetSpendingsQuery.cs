@@ -1,7 +1,7 @@
-﻿using BeerDispencer.Shared;
+﻿using BeerDispenser.Shared;
 using MediatR;
 
-namespace BeerDispancer.Application.Implementation.Queries
+namespace BeerDispenser.Application.Implementation.Queries
 {
     public class GetAllSpendingsQuery: IRequest<UsageResponse>
 	{

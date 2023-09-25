@@ -1,22 +1,22 @@
-﻿using BeerDispencer.Application.Implementation.Commands;
-using BeerDispencer.Shared;
+﻿using BeerDispenser.Application.Implementation.Commands;
+using BeerDispenser.Shared;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Stripe.Checkout;
 
-namespace BeerDispencer.Application.Implementation.Handlers
+namespace BeerDispenser.Application.Implementation.Handlers
 {
-    public class DispencerPaymentHandler:IRequestHandler<DispencerPrePayCommand, CheckoutOrderResponse>
+    public class DispenserPaymentHandler:IRequestHandler<DispenserPrePayCommand, CheckoutOrderResponse>
     {
         private readonly IConfiguration _configuration;
 
-        public DispencerPaymentHandler(IConfiguration configuration)
+        public DispenserPaymentHandler(IConfiguration configuration)
 		{
             _configuration = configuration;
         }
 
-        public async Task<CheckoutOrderResponse> Handle(DispencerPrePayCommand request, CancellationToken cancellationToken)
+        public async Task<CheckoutOrderResponse> Handle(DispenserPrePayCommand request, CancellationToken cancellationToken)
         {
 
             var sessionId = await CheckOutAsync(request, request.WebApiBaseUrl, request.WebUiBaseUrl);
@@ -39,11 +39,11 @@ namespace BeerDispencer.Application.Implementation.Handlers
 
         }
 
-        public async Task<string> CheckOutAsync(DispencerPrePayCommand orderDetails, string thisApiUrl, string wasmUrl)
+        public async Task<string> CheckOutAsync(DispenserPrePayCommand orderDetails, string thisApiUrl, string wasmUrl)
         {
             var metadata = new Dictionary<string, string>
             {
-                {nameof(OrderResponseDetails.ProductId ), orderDetails.DispencerId.ToString() }
+                {nameof(OrderResponseDetails.ProductId ), orderDetails.DispenserId.ToString() }
             };
 
             var options = new SessionCreateOptions
@@ -65,8 +65,8 @@ namespace BeerDispencer.Application.Implementation.Handlers
                         Currency = orderDetails.Currency,
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            Name = orderDetails.DispencerId.ToString(),
-                            Description = $"Pre-payment for usage of dispencer {orderDetails.DispencerId}",
+                            Name = orderDetails.DispenserId.ToString(),
+                            Description = $"Pre-payment for usage of dispencer {orderDetails.DispenserId}",
                             Images = new List<string>{ "https://she.hr/wp-content/uploads/2014/09/piv.jpg" }
                         },
                     },

@@ -1,8 +1,8 @@
-﻿using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class CachedUsageRepository : IUsageRepository
     {

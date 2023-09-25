@@ -1,10 +1,9 @@
-﻿using System;
-using BeerDispencer.Application.Implementation.Response;
+﻿using BeerDispenser.Application.Implementation.Response;
 using MediatR;
 
-namespace BeerDispancer.Application.Implementation.Commands.Authorization
+namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
-	public class CreateUserCommand:UserLoginCommand, IRequest<AuthResponseDto>
+    public class CreateUserCommand:UserLoginCommand, IRequest<AuthResponseDto>
     {
 		public string Role { get; set; }
 	}

@@ -1,9 +1,9 @@
-﻿using BeerDispencer.Shared;
+﻿using BeerDispenser.Shared;
 using MediatR;
 
-namespace BeerDispencer.Application.Implementation.Commands
+namespace BeerDispenser.Application.Implementation.Commands
 {
-    public class DispencerPrePayCommand: NewOrderDetails,IRequest<CheckoutOrderResponse>
+    public class DispenserPrePayCommand: NewOrderDetails,IRequest<CheckoutOrderResponse>
     {
         public string WebApiBaseUrl { get; set; }
 

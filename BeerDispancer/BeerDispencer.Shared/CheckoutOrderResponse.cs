@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.Shared
+namespace BeerDispenser.Shared
 {
     public class CheckoutOrderResponse
     {

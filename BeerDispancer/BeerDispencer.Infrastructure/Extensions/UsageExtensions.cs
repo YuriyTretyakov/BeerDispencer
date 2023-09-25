@@ -1,8 +1,8 @@
 ﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Infrastructure.Persistence.Entities;
+using BeerDispenser.Application.DTO;
+using BeerDispenser.Infrastructure.Persistence.Entities;
 
-namespace BeerDispencer.Infrastructure.Extensions
+namespace BeerDispenser.Infrastructure.Extensions
 {
 	public static class UsageExtensions
 	{

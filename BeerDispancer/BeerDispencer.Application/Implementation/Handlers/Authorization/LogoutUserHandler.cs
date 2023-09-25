@@ -1,14 +1,11 @@
-﻿using System;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Implementation.Response;
+﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Application.Implementation.Response;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
-namespace BeerDispencer.Application.Implementation.Handlers.Authorization
+namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-	public class LogoutUserHandler:IRequestHandler<LogoutCommand, AuthResponseDto>
+    public class LogoutUserHandler:IRequestHandler<LogoutCommand, AuthResponseDto>
 	{
         private readonly ITokenManager _tokenManager;
 

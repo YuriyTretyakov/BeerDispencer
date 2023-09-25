@@ -1,4 +1,4 @@
-﻿namespace BeerDispencer.Shared
+﻿namespace BeerDispenser.Shared
 {
     public class UsageResponse
     {
