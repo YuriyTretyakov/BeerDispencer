@@ -124,7 +124,9 @@ else
 
         await httpclient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
 
-        navManager.NavigateTo("/bar", true);
+        dispencers = (await httpclient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/getall"))
+            .OrderBy(x => x.Id)
+            .ToArray();
 
     }
 
