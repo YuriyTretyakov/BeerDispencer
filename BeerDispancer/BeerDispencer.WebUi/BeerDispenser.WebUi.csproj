@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3b72bd7d-cfd5-4f91-8730-0c4b2449c227</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
@@ -15,6 +16,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Microsoft.JSInterop" Version="7.0.11" />
     <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="7.0.11" />
+    <PackageReference Include="Radzen.Blazor" Version="4.16.2" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="ViewModels\" />

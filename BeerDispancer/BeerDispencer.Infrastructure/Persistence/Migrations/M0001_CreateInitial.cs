@@ -18,7 +18,8 @@ public class M0001_CreateInitial : Migration
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("Volume").AsDecimal()
             .WithColumn("Status").AsInt16()
-            .WithColumn("ReservedFor").AsAnsiString().Nullable();
+            .WithColumn("ReservedFor").AsAnsiString().Nullable()
+            .WithColumn("IsActive").AsBoolean().NotNullable();
 
 
 

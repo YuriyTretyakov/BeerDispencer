@@ -1,0 +1,103 @@
+﻿@using BeerDispenser.Shared;
+@using BeerDispenser.WebUi.ViewModels.Request;
+@using BeerDispenser.WebUi.ViewModels.Response;
+@using System.Globalization;
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+@page "/analytics"
+
+<RadzenText TextStyle="TextStyle.H3">Analytics</RadzenText>
+
+<RadzenText TextStyle="TextStyle.H5">Total incomes for this dispenser @usageResponse.Amount</RadzenText>
+
+<div class="rz-p-12 rz-text-align-center">
+    <RadzenRadioButtonList Value=@currentDisplayMode TValue="int" Change=@(args =>OnChangeDisplaySettings(args)) class="mb-5">
+        <Items>
+            <RadzenRadioButtonListItem Text="All" Value="1" />
+            <RadzenRadioButtonListItem Text="Only Active" Value="2" />
+        </Items>
+    </RadzenRadioButtonList>
+    <RadzenDropDown @bind-Value="selectedDispenserId" Data="@DispenserIds" Width="150" />
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="assessment" class="mt-2 mb-4" Text="Build Chart" Click="@GetSpendingsForDispenser" Disabled=@(selectedDispenserId == null) />
+
+</div>
+
+<RadzenChart>
+    <RadzenAreaSeries Smooth="true" Data="@usageEntries" CategoryProperty="ClosedAt" Title="2019" ValueProperty="TotalSpent" RenderingOrder="1">
+        <RadzenSeriesDataLabels Visible="true" />
+    </RadzenAreaSeries>
+    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
+    <RadzenValueAxis Formatter="@FormatAsUSD">
+        <RadzenGridLines Visible="true" />
+        <RadzenAxisTitle Text="Revenue in USD" />
+    </RadzenValueAxis>
+</RadzenChart>
+
+
+
+@code {
+    private bool all;
+    private bool activeonly;
+
+    private DispenserWithStatus[]? dispencers;
+    private int currentDisplayMode = 2;
+    private Guid? selectedDispenserId;
+
+    UsageEntry[]? usageEntries=> usageResponse?.Usages;
+
+
+    UsageResponse? usageResponse;
+
+    private IEnumerable<Guid> DispenserIds => dispencers?.Select(x => x.Id);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+        await OnChangeDisplaySettings(currentDisplayMode);
+
+
+    }
+
+    private async Task OnChangeDisplaySettings(int value)
+    {
+        currentDisplayMode = value;
+
+        if (value == 2)
+        {
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+                .OrderBy(x => x.Id)
+                .ToArray();
+        }
+
+        else if (value == 1)
+        {
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/all"))
+                .OrderBy(x => x.Id)
+                .ToArray();
+        }
+
+        selectedDispenserId = dispencers.FirstOrDefault()?.Id;
+    }
+
+    private async Task GetSpendingsForDispenser()
+    {
+        usageResponse = await _httpClient.GetFromJsonAsync<UsageResponse>($"/api/Dispenser/{selectedDispenserId}/spending");
+
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+    string FormatAsMonth(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDateTime(value).ToString("MMM");
+        }
+
+        return string.Empty;
+    }
+}
+

@@ -8,6 +8,7 @@ namespace BeerDispenser.Application.DTO
         public decimal? Volume { get; set; }
         public DispenserStatus? Status { get; set; }
         public string ReservedFor { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
 

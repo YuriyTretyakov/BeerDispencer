@@ -45,7 +45,8 @@ namespace BeerDispenser.Application.Implementation.Handlers
                         .CreateDispenser(
                         dispenserDto.Id,
                         dispenserDto.Volume.Value,
-                        dispenserDto.Status.Value);
+                        dispenserDto.Status.Value,
+                        dispenserDto.IsActive.Value);
 
 
                     var usageDto = dispenser

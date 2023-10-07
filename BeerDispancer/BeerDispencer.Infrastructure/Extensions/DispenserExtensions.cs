@@ -8,18 +8,21 @@ namespace BeerDispenser.Infrastructure.Extensions
 	{
 		public static Dispenser ToDbEntity(this DispenserDto dto)
 		{
-			return new Dispenser { Id = dto.Id, Status = dto.Status.Value, Volume = dto.Volume.Value };
+			return new Dispenser { Id = dto.Id, Status = dto.Status.Value, Volume = dto.Volume.Value, IsActive =dto.IsActive.Value };
 		}
 
 	
 
 		public static DispenserDto ToDto(this Dispenser entity)
 		{
-			return new DispenserDto { Id = entity.Id, Status = entity.Status, Volume = entity.Volume };
+			return new DispenserDto {
+				Id = entity.Id,
+				Status = entity.Status,
+				Volume = entity.Volume,
+				ReservedFor = entity.ReservedFor,
+				IsActive = entity.IsActive
+			};
 		}
-
-        
-
     }
 }
 

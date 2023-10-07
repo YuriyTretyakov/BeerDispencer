@@ -3,14 +3,19 @@
 @using BeerDispenser.Shared;
 @using BeerDispenser.WebUi.ViewModels.Request;
 @using BeerDispenser.WebUi.ViewModels.Response;
+@using Radzen.Blazor;
 
 @page "/bar"
-@inject NavigationManager navManager;
+
 @inject IJSRuntime jsRuntime;
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
 
 <PageTitle>Bar</PageTitle>
 
-<h1>Beer Dispencers</h1>
+<h1>Bar "The Ugly Coyot"</h1>
 
 <style>
     .container {
@@ -47,36 +52,27 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th> Id</th>
-                <th> Volume</th>
-                <th> Status</th>
-                <th> Reservation</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var dispencer in dispencers)
-            {
-                <tr>
-                    <td>@dispencer.Id </td>
-                    <td>@dispencer.Volume </td>
-                    <td>@dispencer.Status </td>
-                    <td>
-                        @if (dispencer.Status == DispenserStatus.Reserved)
-                        {
-                            @dispencer.ReservedFor
-                        }
-                        else
-                        {
-                            <button @onclick="@(() => onPrePayClick(@dispencer.Id))">Reserve</button>
-                        }
-                    </td>
-                    </tr>
-            }
-        </tbody>
-    </table>
+    <RadzenDataGrid Data="@dispencers" TItem="DispenserWithStatus" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
+                    AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
+        <Columns>
+
+            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Id" Title="Id" Width="150px" />
+
+            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Volume" Title="Volume" Width="150px" />
+
+            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Status" Title="Status" Width="100px" />
+            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="ReservedFor" Title="Reservation" Width="150px" />
+            <RadzenDataGridColumn TItem="DispenserWithStatus" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
+                <Template Context="DispenserWithStatus">
+                    <RadzenButton Text="Reserve" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onPrePayClick(DispenserWithStatus.Id))"
+                                  @onclick:stopPropagation="true" Visible="DispenserWithStatus.AllowReservation" Size="ButtonSize.Small">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+
+    </RadzenDataGrid>
+
 
     <div class="container">
         @foreach (var dispencer in dispencers)
@@ -95,11 +91,11 @@ else
             }
             @if (dispencer.Status == DispenserStatus.Reserved)
             {
-                <div >
+                <div>
                     <img class="dispencer" style="bottom:15%" src="/images/kran_reserved.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
             }
-       }
+        }
     </div>
 
 }
@@ -107,59 +103,53 @@ else
 
 
 @code {
-    string DevApiBaseAddress = "http://localhost:5268";
 
+            private async Task onDispencerClick(Guid id, DispenserStatus status)
+            {
+                var update = new DispenserUpdateModel
+                {
+                    Status = status == DispenserStatus.Closed ?
+                    DispenserStatus.Opened :
+                    DispenserStatus.Closed,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
-    private async Task onDispencerClick(Guid id, DispenserStatus status)
-    {
-        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
+                await _httpClient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
 
-        var update = new DispenserUpdateModel
-        {
-            Status = status == DispenserStatus.Closed ?
-            DispenserStatus.Opened :
-            DispenserStatus.Closed,
-            UpdatedAt = DateTime.UtcNow
-        };
+                dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+                        .OrderBy(x => x.Id)
+                        .ToArray();
 
-        await httpclient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
-
-        dispencers = (await httpclient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/getall"))
-            .OrderBy(x => x.Id)
-            .ToArray();
-
-    }
+            }
 
 
     private DispenserWithStatus[]? dispencers;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
+        protected override async Task OnInitializedAsync()
+        {
+            _httpClient = _httpClientFactory.CreateClient("ServerAPI");
 
-        dispencers = (await httpclient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/getall"))
-            .OrderBy(x => x.Id)
-            .ToArray();
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+                .OrderBy(x => x.Id)
+                .ToArray();
+        }
+
+        private async Task onPrePayClick(Guid id)
+        {
+
+            var checkoutModel = new NewOrderDetails { DispenserId = id, Amount = 120, Currency = "EUR" };
+            var response = await _httpClient.PostAsJsonAsync($"/api/Checkout", checkoutModel);
+
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            var checkoutOrderResponse = JsonConvert
+                .DeserializeObject<CheckoutOrderResponse>(responseBody);
+
+            // Opens up Stripe.
+
+            await jsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
+        }
     }
-
-    private async Task onPrePayClick(Guid id)
-    {
-        var httpclient = new HttpClient { BaseAddress = new Uri(DevApiBaseAddress) };
-
-        var checkoutModel = new NewOrderDetails { DispenserId = id, Amount = 120, Currency = "EUR" };
-
-        var response = await httpclient.PostAsJsonAsync($"{DevApiBaseAddress}/api/Checkout", checkoutModel);
-
-        response.EnsureSuccessStatusCode();
-
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        var checkoutOrderResponse =JsonConvert
-            .DeserializeObject<CheckoutOrderResponse>(responseBody);
-
-        // Opens up Stripe.
-
-        await jsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
-    }
-}
 

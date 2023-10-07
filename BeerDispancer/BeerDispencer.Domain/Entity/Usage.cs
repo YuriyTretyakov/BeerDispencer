@@ -49,9 +49,10 @@ namespace BeerDispenser.Domain.Entity
          DateTime openAt,
          DateTime? closedAt,
          decimal? flowVolume,
-         decimal? totalSpent)
+         decimal? totalSpent,
+         IBeerFlowSettings beerFlowSettings)
         {
-            return new Usage(id, dispencerId, openAt, closedAt, flowVolume, totalSpent);
+            return new Usage(id, dispencerId, openAt, closedAt, flowVolume, totalSpent, beerFlowSettings);
         }
 
         public static Usage CreateReserved(Guid dispencerId, decimal amount)

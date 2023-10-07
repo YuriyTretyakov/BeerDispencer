@@ -50,6 +50,7 @@ namespace BeerDispenser.Infrastructure.Persistence
             dispencerEntity.Status = dispenserDto.Status ?? dispencerEntity.Status;
             dispencerEntity.Volume = dispenserDto.Volume ?? dispencerEntity.Volume;
             dispencerEntity.ReservedFor = dispenserDto.ReservedFor;
+            dispencerEntity.IsActive = dispenserDto.IsActive ?? dispencerEntity.IsActive;
         }
 
         

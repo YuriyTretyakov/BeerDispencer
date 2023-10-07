@@ -21,9 +21,12 @@
 
     DateTimeOffset now;
 
+
     protected override async Task OnInitializedAsync()
     {
-       
+
+
         now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
+       
     }
 }

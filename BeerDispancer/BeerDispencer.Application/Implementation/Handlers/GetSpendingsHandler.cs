@@ -38,6 +38,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
                 dispencerDto.Id,
                 dispencerDto.Volume.Value,
                 dispencerDto.Status.Value,
+                dispencerDto.IsActive.Value,
                 usages.ToList(),
                 _beerFlowSettings);
 

@@ -5,6 +5,7 @@ using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 using BeerDispenser.Domain.Entity;
+using BeerDispenser.Domain.Implementations;
 
 namespace BeerDispenser.Application
 {
@@ -27,7 +28,8 @@ namespace BeerDispenser.Application
                 Id = domainDispenser.Id,
                 Volume = domainDispenser.Volume,
                 Status = domainDispenser.Status,
-                ReservedFor = domainDispenser.ReservedFor
+                ReservedFor = domainDispenser.ReservedFor,
+                IsActive = domainDispenser.IsActive
             };
         }
 
@@ -42,23 +44,10 @@ namespace BeerDispenser.Application
                  x.Id,
                   x.DispencerId,
                   x.OpenAt,
-                  beerFlowSettings)).ToList().AsReadOnly();
-
-        }
-
-        public static IEnumerable<Usage> ToDomain(this IEnumerable<UsageDto> dto)
-        {
-
-            return dto.Select(x =>
-
-                 Usage.Create(
-
-                 x.Id,
-                  x.DispencerId,
-                  x.OpenAt,
                   x.ClosedAt,
+                  x.FlowVolume,
                   x.TotalSpent,
-                  x.FlowVolume)).ToList().AsReadOnly();
+                  beerFlowSettings)).ToList().AsReadOnly();
         }
 
         public static UsageDto ToDto(this Usage usage)

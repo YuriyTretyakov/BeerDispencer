@@ -49,12 +49,30 @@ namespace BeerDispenser.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getall")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetAllDispencers()
         {
             var query = new GetAllDispensersQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveDispencers()
+        {
+            var query = new GetActiveDispensersQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = UserRoles.Service)]
+        [HttpPost("/api/Dispenser/{id}/setinactive")]
+        public async Task<IActionResult> DeactivateDispenser(Guid id)
+        {
+            var command = new DeactivateDispenserCommand { Id = id };
+            var result = await _mediator.Send(command);
+
+            return result.Result == true ? Ok(result) : BadRequest(result.Details);
         }
     }
 }

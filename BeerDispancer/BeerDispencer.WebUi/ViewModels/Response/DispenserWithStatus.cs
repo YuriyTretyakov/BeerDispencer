@@ -11,6 +11,10 @@ namespace BeerDispenser.WebUi.ViewModels.Response
         [JsonProperty("status")]
         public DispenserStatus Status { get; set; }
         public string ReservedFor { get; set; }
+
+        public bool IsActive { get; set; }
+        public bool AllowReservation =>
+            (string.IsNullOrEmpty(ReservedFor) && Status == DispenserStatus.Closed);
     }
 }
 

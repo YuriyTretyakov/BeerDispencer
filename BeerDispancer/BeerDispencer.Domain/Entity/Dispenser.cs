@@ -1,15 +1,15 @@
 ﻿using BeerDispenser.Domain.Abstractions;
-using BeerDispenser.Domain.Entity;
 using BeerDispenser.Domain.Implementations;
 using BeerDispenser.Shared;
 
 namespace BeerDispenser.Domain.Entity
 {
-    public sealed class Dispenser : BeerDispenser.Domain.Entity.Entity
+    public sealed class Dispenser : Entity
     {
         public decimal Volume { get; private set; }
         public DispenserStatus Status { get; private set; }
-        public string ReservedFor { get; set; }
+        public string ReservedFor { get; private set; }
+        public bool IsActive { get; private set; }
 
         private IBeerFlowSettings _beerFlowSettings;
         public IReadOnlyCollection<Usage> Usages => _usages;
@@ -20,6 +20,7 @@ namespace BeerDispenser.Domain.Entity
             Guid id,
             decimal volume,
             DispenserStatus status,
+            bool isActive,
             IBeerFlowSettings beerFlowSettings = null,
             string reservedFor = null)
         {
@@ -28,6 +29,7 @@ namespace BeerDispenser.Domain.Entity
             Status = status;
             _beerFlowSettings = beerFlowSettings;
             ReservedFor = reservedFor;
+            IsActive = isActive;
         }
 
 
@@ -36,6 +38,11 @@ namespace BeerDispenser.Domain.Entity
             if (Status == DispenserStatus.Opened || Status == DispenserStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid Dispenser state: {Status}");
+            }
+
+            if (!IsActive)
+            {
+                throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
             }
 
             Status = DispenserStatus.Opened;
@@ -50,6 +57,11 @@ namespace BeerDispenser.Domain.Entity
             if (Status == DispenserStatus.Closed || Status == DispenserStatus.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid Dispenser state: {Status}");
+            }
+
+            if (!IsActive)
+            {
+                throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
             }
 
             Status = DispenserStatus.Closed;
@@ -96,6 +108,11 @@ namespace BeerDispenser.Domain.Entity
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
 
+            if (!IsActive)
+            {
+                throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
+            }
+
             Status = DispenserStatus.Reserved;
             ReservedFor = reservedFor;
 
@@ -107,7 +124,7 @@ namespace BeerDispenser.Domain.Entity
 
         public static Dispenser CreateNewDispenser(decimal volume, IBeerFlowSettings beerFlowSettings)
         {
-            return new Dispenser(Guid.NewGuid(), volume, DispenserStatus.Closed, beerFlowSettings);
+            return new Dispenser(Guid.NewGuid(), volume, DispenserStatus.Closed, true, beerFlowSettings);
         }
 
 
@@ -115,10 +132,11 @@ namespace BeerDispenser.Domain.Entity
             Guid id,
             decimal volume,
             DispenserStatus status,
+            bool isActive,
             IList<Usage> usages = null,
             IBeerFlowSettings beerFlowSettings = null)
         {
-            var Dispenser = new Dispenser(id, volume, status, beerFlowSettings);
+            var Dispenser = new Dispenser(id, volume, status, isActive, beerFlowSettings);
             Dispenser.SetUsages(usages);
             return Dispenser;
         }
