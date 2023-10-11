@@ -10,9 +10,11 @@
     @if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
         {
 
-        <RadzenText>Account Information</RadzenText>
-        <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Left">
-            <RadzenColumn Size="12" SizeSM="6">
+        <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H3" TagName="TagName.H3" TextAlign="TextAlign.Center">Account Information</RadzenText>
+
+
+        <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Left" >
+            <RadzenColumn Size="12" SizeSM="6" Sty>
                 <RadzenStack>
                     <RadzenLabel>Username</RadzenLabel>
                     <RadzenText>@mainLayout.GetUserName()</RadzenText>

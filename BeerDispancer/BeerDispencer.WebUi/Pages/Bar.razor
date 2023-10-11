@@ -106,55 +106,39 @@ else
 
 @code {
 
-    private async Task onDispencerClick(Guid id, DispenserStatus status)
-    {
-        var update = new DispenserUpdateModel
-        {
-            Status = status == DispenserStatus.Closed ?
-            DispenserStatus.Opened :
-            DispenserStatus.Closed,
-            UpdatedAt = DateTime.UtcNow
-        };
+            private async Task onDispencerClick(Guid id, DispenserStatus status)
+            {
+                var update = new DispenserUpdateModel
+                {
+                    Status = status == DispenserStatus.Closed ?
+                    DispenserStatus.Opened :
+                    DispenserStatus.Closed,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
-        await _httpClient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
+                await _httpClient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
 
-        dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
-                .OrderBy(x => x.Id)
-                .ToArray();
+                dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+                        .OrderBy(x => x.Id)
+                        .ToArray();
 
-    }
+            }
 
 
     private DispenserWithStatus[]? dispencers;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+        protected override async Task OnInitializedAsync()
+        {
+            _httpClient = _httpClientFactory.CreateClient("ServerAPI");
 
-        dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
-            .OrderBy(x => x.Id)
-            .ToArray();
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+                .OrderBy(x => x.Id)
+                .ToArray();
+        }
+
+        private async Task onPrePayClick(Guid id)
+        {
+            NavManager.NavigateTo("AddPayment");
+        }
     }
-
-    private async Task onPrePayClick(Guid id)
-    {
-
-
-        NavManager.NavigateTo("CreateNewToken");
-
-    //var checkoutModel = new NewOrderDetails { DispenserId = id, Amount = 120, Currency = "EUR" };
-    //var response = await _httpClient.PostAsJsonAsync($"/api/Checkout", checkoutModel);
-
-        //response.EnsureSuccessStatusCode();
-
-        //var responseBody = await response.Content.ReadAsStringAsync();
-
-        //var checkoutOrderResponse = JsonConvert
-        //    .DeserializeObject<CheckoutOrderResponse>(responseBody);
-
-        //// Opens up Stripe.
-
-        //await jsRuntime.InvokeVoidAsync("checkout", checkoutOrderResponse.PubKey, checkoutOrderResponse.SessionId);
-}
-}
 

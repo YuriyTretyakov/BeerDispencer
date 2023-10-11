@@ -9,15 +9,17 @@
 
 
 
+<title>Manage Dispensers</title>
 
-<h1>Manage Dispencers</h1>
+    @if (_dispensers == null)
+    {
+        <p> <em> Loading...</em> </p>
+    }
+    else
+    {
+<RadzenCard>
+    <RadzenText TextStyle="TextStyle.H3"  TextAlign ="TextAlign .Center">Manage Dispensers</RadzenText>
 
-@if (_dispensers == null)
-{
-    <p> <em> Loading...</em> </p>
-}
-else
-{
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Dispenser" Click="@InsertRow" Disabled=@(dispenserToCreate != null || dispenserToUpdate != null) />
 
     <RadzenDataGrid @ref="_dispensersGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
@@ -62,107 +64,108 @@ else
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
-}
-
-
-
-@code {
-
-    IEnumerable<DispenserStatus> dispenserStatuses = Enum.GetNames(typeof(DispenserStatus)).Cast<DispenserStatus>();
-    RadzenDataGrid<DispenserWithStatus> _dispensersGrid;
-    IEnumerable<DispenserWithStatus> _dispensers;
-
-    DispenserWithStatus dispenserToCreate;
-    DispenserWithStatus dispenserToUpdate;
-
-
-    async Task GetData()
-    {
-        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
-
-        _dispensers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/all"))
-                .OrderBy(x => x.Id)
-                .ToArray();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await GetData();
+</RadzenCard>
     }
 
 
-    async Task InsertRow()
-    {
-        dispenserToCreate = new DispenserWithStatus
+
+    @code {
+
+        IEnumerable<DispenserStatus> dispenserStatuses = Enum.GetNames(typeof(DispenserStatus)).Cast<DispenserStatus>();
+        RadzenDataGrid<DispenserWithStatus> _dispensersGrid;
+        IEnumerable<DispenserWithStatus> _dispensers;
+
+        DispenserWithStatus dispenserToCreate;
+        DispenserWithStatus dispenserToUpdate;
+
+
+        async Task GetData()
         {
-            Status = BeerDispenser.Shared.DispenserStatus.Closed
-        };
-        await _dispensersGrid.InsertRow(dispenserToCreate);
-    }
+            _httpClient = _httpClientFactory.CreateClient("ServerAPI");
 
-    async Task DeleteRow(DispenserWithStatus dispenser)
-    {
-        Reset();
-        await _httpClient.PostAsync($"/api/Dispenser/{dispenser.Id}/setinactive", null);
-        await GetData();
-    }
-
-
-    async Task OnCreateRow(DispenserWithStatus dispenser)
-    {
-        var dispenserModel = new Dispenser { FlowVolume = dispenser.Volume };
-
-        await _httpClient.PostAsJsonAsync("/api/Dispenser", dispenserModel);
-        dispenserToCreate = null;
-        await GetData();
-    }
-
-    async Task SaveRow(DispenserWithStatus dispenser)
-    {
-        Console.WriteLine(nameof(SaveRow) + "is called");
-        await _dispensersGrid.UpdateRow(dispenser);
-        var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
-        await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);
-        await GetData();
-        Reset();
-    }
-
-    async Task EditRow(DispenserWithStatus dispenser)
-    {
-        Console.WriteLine(nameof(EditRow) + "is called");
-        await _dispensersGrid.EditRow(dispenser);
-    }
-
-    void CancelEdit(DispenserWithStatus dispenser)
-    {
-        Reset();
-        _dispensersGrid.CancelEditRow(dispenser);
-    }
-
-    async Task OnDeleteClick(DispenserWithStatus dispenser)
-    {
-        var result = await DialogService
-            .OpenAsync("Are you sure you want to delete this dispenser?", ds =>
-        @<RadzenStack Gap="1.5rem">
-            <p>Confirm Delete <b>@dispenser.Id</b>?</p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="width: 80px;" />
-                    <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                </RadzenStack>
-            </RadzenStack>
-        </RadzenStack>);
-
-        if (result == true)
-        {
-            await DeleteRow(dispenser);
+            _dispensers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/all"))
+                    .OrderBy(x => x.Id)
+                    .ToArray();
         }
-    }
 
-    void Reset()
-    {
-        dispenserToCreate = null;
-        dispenserToUpdate = null;
-    }
+        protected override async Task OnInitializedAsync()
+        {
+            await GetData();
+        }
 
+
+        async Task InsertRow()
+        {
+            dispenserToCreate = new DispenserWithStatus
+            {
+                Status = BeerDispenser.Shared.DispenserStatus.Closed
+            };
+            await _dispensersGrid.InsertRow(dispenserToCreate);
+        }
+
+        async Task DeleteRow(DispenserWithStatus dispenser)
+        {
+            Reset();
+            await _httpClient.PostAsync($"/api/Dispenser/{dispenser.Id}/setinactive", null);
+            await GetData();
+        }
+
+
+        async Task OnCreateRow(DispenserWithStatus dispenser)
+        {
+            var dispenserModel = new Dispenser { FlowVolume = dispenser.Volume };
+
+            await _httpClient.PostAsJsonAsync("/api/Dispenser", dispenserModel);
+            dispenserToCreate = null;
+            await GetData();
+        }
+
+        async Task SaveRow(DispenserWithStatus dispenser)
+        {
+            Console.WriteLine(nameof(SaveRow) + "is called");
+            await _dispensersGrid.UpdateRow(dispenser);
+            var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
+            await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);
+            await GetData();
+            Reset();
+        }
+
+        async Task EditRow(DispenserWithStatus dispenser)
+        {
+            Console.WriteLine(nameof(EditRow) + "is called");
+            await _dispensersGrid.EditRow(dispenser);
+        }
+
+        void CancelEdit(DispenserWithStatus dispenser)
+        {
+            Reset();
+            _dispensersGrid.CancelEditRow(dispenser);
+        }
+
+        async Task OnDeleteClick(DispenserWithStatus dispenser)
+        {
+            var result = await DialogService
+                .OpenAsync("Are you sure you want to delete this dispenser?", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p>Confirm Delete <b>@dispenser.Id</b>?</p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="width: 80px;" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>);
+
+if (result == true)
+{
+  await DeleteRow(dispenser);
 }
+}
+
+void Reset()
+{
+dispenserToCreate = null;
+dispenserToUpdate = null;
+}
+
+    }
