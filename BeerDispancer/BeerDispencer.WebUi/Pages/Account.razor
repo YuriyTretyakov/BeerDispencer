@@ -1,59 +1,56 @@
 ﻿@page "/account"
+@using Radzen.Blazor;
 @inject BeerDispenser.WebUi.Implementation.TimeZoneService TimeZoneService
 
 <PageTitle>Account</PageTitle>
 
-<style>
-    .column {
-        vertical-align: top;
-        word-break: break-all;
-        max-width: 500px;
-        padding-left: 50px;
-    }
 
-    tr {
-        padding-top: 50px;
-    }
-</style>
+<RadzenCard>
+
+    @if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+        {
+
+        <RadzenText>Account Information</RadzenText>
+        <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Left">
+            <RadzenColumn Size="12" SizeSM="6">
+                <RadzenStack>
+                    <RadzenLabel>Username</RadzenLabel>
+                    <RadzenText>@mainLayout.GetUserName()</RadzenText>
+                </RadzenStack>
+
+                <RadzenStack>
+                    <RadzenLabel>Token</RadzenLabel>
+                    <RadzenText>@mainLayout.Token</RadzenText>
+                </RadzenStack>
+
+                <RadzenStack>
+                    <RadzenLabel>Role</RadzenLabel>
+                    <RadzenText>@mainLayout.Role</RadzenText> 
+                </RadzenStack>
+
+                <RadzenStack>
+                    <RadzenLabel>ValidUntil</RadzenLabel>
+                    <RadzenText>@mainLayout.ValidUntil</RadzenText>
+                </RadzenStack>
+
+                <RadzenStack>
+                    <RadzenLabel>LocalTime</RadzenLabel>
+                    <RadzenText>@now.ToString()</RadzenText>
+                </RadzenStack>
+                    </RadzenColumn>
+                </RadzenRow>
 
 
-@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
-{
-    <div>
-        <h3 class="my-4"> Your Account</h3>
 
-        <table style="max-width:700px;">
-            <tr>
-                <td> Username:</td>
-                <td class="column">@mainLayout.GetUserName() </td>
-            </tr>
-            <tr>
-                <td> Token:</td>
-                <td class="column">@mainLayout.Token </td>
-            </tr>
-            <tr>
-                <td> Role:</td>
-                <td class="column">@mainLayout.Role </td>
-            </tr>
-            <tr>
-                <td> ValidUntil:</td>
-                <td class="column">@mainLayout.ValidUntil</td>
-            </tr>
-            <tr>
-                <td> LocalTime</td>
-                <td class="column">@now.ToString() </td>
-            </tr>
-        </table>
+        }
+        else
+        {
+        <RadzenText>Please Login</RadzenText>
+        <RadzenButton Text="Login" Click="@(args => mainLayout.OpenLogin())" />
+        }
+</RadzenCard>
 
-        <button type="button" class="btn btn-danger" @onclick="mainLayout.Logout"> Logout</button>
-    </div>
-}
-else
-{
-    <h3 class="my-4"> Please Login</h3>
 
-    <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin"> Login</button>
-}
 @code {
     [CascadingParameter]
     public MainLayout mainLayout { get; set; }

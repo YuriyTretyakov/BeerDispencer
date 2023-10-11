@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace BeerDispenser.WebApi.Controllers
 {
     [Route("api/[controller]")]
-    public class CheckoutController : Controller
+    public class PaymentsController : Controller
     {
         private readonly IMediator _mediator;
         private static string _webUiBaseUrl;
 
-        public CheckoutController(IMediator mediator)
+        public PaymentsController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -70,6 +70,15 @@ namespace BeerDispenser.WebApi.Controllers
             await _mediator.Send(getPaymentInfo);
             return Redirect(_webUiBaseUrl + "bar");
         }
+
+        [HttpPost("addcard")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<ActionResult> AddCard([FromBody] object formData)
+        {
+            //  var getPaymentInfo = new GetOrderDetailsQuery { SessionId = sessionId };
+
+            // await _mediator.Send(getPaymentInfo);
+            return Ok();
+        }
     }
 }
-

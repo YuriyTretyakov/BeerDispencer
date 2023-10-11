@@ -53,10 +53,14 @@
     protected override async Task OnInitializedAsync()
     {
         _httpClient = _httpClientFactory.CreateClient("ServerAPI");
-        await OnChangeDisplaySettings(currentDisplayMode);
-
 
     }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        await OnChangeDisplaySettings(currentDisplayMode);
+    }
+
 
     private async Task OnChangeDisplaySettings(int value)
     {
