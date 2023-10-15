@@ -1,0 +1,26 @@
+﻿@page "/CardAddedSuccesfully"
+
+@inject NavigationManager NavManager
+
+
+<title>Payment Added Succesfully</title>
+<RadzenCard>
+    <RadzenStack AlignItems="AlignItems.Center">
+        <RadzenImage Path="images/creditcard.jpg" Style="width: 15rem;" />
+
+        <RadzenText TextStyle="TextStyle.H5" TextAlign="TextAlign.Center">Your card has been sucessfully added!</RadzenText>
+
+        <RadzenButton Click="@(args => onOkClick())" Text="Okay" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+
+
+    private void onOkClick()
+    {
+        NavManager.NavigateTo("account");
+    }
+
+}
+

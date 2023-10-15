@@ -1,5 +1,5 @@
 ﻿
-function onPaymentPageInit(pubkey) {
+function onPaymentPageInit(pubkey, beAddCardUrl) {
     var stripe = Stripe(pubkey);
     var elements = stripe.elements();
 
@@ -18,6 +18,8 @@ function onPaymentPageInit(pubkey) {
         },
     };
 
+    var options;
+
     var cardNumberElement = elements.create('cardNumber', {
         style: style
     });
@@ -35,23 +37,16 @@ function onPaymentPageInit(pubkey) {
 
 
     function setOutcome(result) {
-        var successElement = document.querySelector('.success');
-        var errorElement = document.querySelector('.error');
-        successElement.classList.remove('visible');
-        errorElement.classList.remove('visible');
-
+        hideError();
+        hideSuccess();
+        
         if (result.token) {
-            // In this example, we're simply displaying the token
-            successElement.querySelector('.token').textContent = result.token.id;
-            successElement.classList.add('visible');
-
-            // In a real integration, you'd submit the form with the token to your backend server
-            var form = document.querySelector('form');
-            form.querySelector('input[name="token"]').setAttribute('value', result.token.id);
-            form.submit();
+            showSuccess("Token has been provided by payment gateway");
+            sendPaymentDetailsToServer(beAddCardUrl, result)
+            
         } else if (result.error) {
-            errorElement.textContent = result.error.message;
-            errorElement.classList.add('visible');
+
+            showError(result.error.message);
         }
     }
 
@@ -73,11 +68,59 @@ function onPaymentPageInit(pubkey) {
         var name = document.getElementById('accountholder-element').value;
 
         e.preventDefault();
-        var options = {
+        options = {
             name: name,
             email: email
         };
         stripe.createToken(cardNumberElement, options).then(setOutcome);
     });
+
+    function doFormSubmit() {
+        var form = document.querySelector('form');
+        form.submit();
+    }
+
+    function showError(errorText) {
+        var errorElement = document.querySelector('.error');
+        errorElement.textContent = errorText;
+        errorElement.classList.add('visible');
+    }
+
+    function hideError() {
+        var errorElement = document.querySelector('.error');
+        errorElement.textContent = "";
+        errorElement.classList.remove('visible');
+    }
+
+    function showSuccess(success) {
+        var successElement = document.querySelector('.success');
+        successElement.textContent = success;
+        successElement.classList.add('visible');
+    }
+
+    function hideSuccess() {
+        var successElement = document.querySelector('.success');
+        successElement.classList.remove('visible');
+        successElement.textContent = "";
+    }
+
+    function sendPaymentDetailsToServer(url,tokenResponse) {
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(tokenResponse),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+            .then((response) => {
+                hideError();
+                console.log(response.json());
+                doFormSubmit();
+            })
+            .catch((error) => {
+                hideSuccess();
+                showError(error)
+            });
+    }
 
 }

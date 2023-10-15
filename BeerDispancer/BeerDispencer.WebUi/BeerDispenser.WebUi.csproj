@@ -48,6 +48,9 @@
     <Content Update="wwwroot\css\payments.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\images\creditcard.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeerDispencer.Shared\BeerDispencer.Shared.csproj">

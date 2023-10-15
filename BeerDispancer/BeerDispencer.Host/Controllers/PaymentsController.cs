@@ -73,11 +73,8 @@ namespace BeerDispenser.WebApi.Controllers
 
         [HttpPost("addcard")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult> AddCard([FromBody] object formData)
+        public async Task<ActionResult> AddCard([FromBody] StripeTokenResponse tokenResponse)
         {
-            //  var getPaymentInfo = new GetOrderDetailsQuery { SessionId = sessionId };
-
-            // await _mediator.Send(getPaymentInfo);
             return Ok();
         }
     }

@@ -1,16 +1,20 @@
 ﻿@page "/AddPayment"
 @inject IJSRuntime jsRuntime;
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
+
 <title>Add Payment</title>
 
 <link href="css/payments.css" rel="stylesheet" />
 <RadzenCard>
 
-    <RadzenText TextStyle="TextStyle.H3"  TextAlign="TextAlign.Center">Add Debit or Credit card</RadzenText>
-       <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+    <RadzenText TextStyle="TextStyle.H3" TextAlign="TextAlign.Center">Add Debit or Credit card</RadzenText>
+    <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
-                <form action="/api/payments/addcard" method="POST" class="paymentform">
-                    <input type="hidden" name="token" />
+                <form action="CardAddedSuccesfully" method="GET" class="paymentform">
                     <div class="group">
                         <label class="paymentlabel">
                             <span>Card number</span>
@@ -37,7 +41,6 @@
                     <div class="outcome">
                         <div class="error"></div>
                         <div class="success">
-                            Success! Your Stripe token is <span class="token"></span>
                         </div>
                     </div>
                 </form>
@@ -47,11 +50,20 @@
 </RadzenCard>
 @code {
 
+    private string GetCreateTokenBeUrl => $"{client.BaseAddress}api/payments/addcard";
+    private HttpClient client;
+
+
     protected override async void OnAfterRender(bool firstRender)
     {
         var pkey = "pk_test_51NpWMxBwrd9g8wB1Kl1fBZ4P25KtfUwBobeHU8WPORfQBQtdXb446cMP3R7DpSxiNgRSGMPUfu7hdGQpNokBOiRx00VhUbVBJa";
-        var secretKey = "sk_test_51NpWMxBwrd9g8wB1ZYC53bWwtbj73k93Jmil5TtvOK4kvmsBBfPHm172yAF2HhcKfXBLjCoZGrCKjfdUgv340PFH00Kh4wo9IZ";
-        await jsRuntime.InvokeVoidAsync("onPaymentPageInit", pkey);
+        await jsRuntime.InvokeVoidAsync("onPaymentPageInit", pkey, GetCreateTokenBeUrl);
     }
-}
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = _httpClientFactory.CreateClient("ServerAPI");
+
+    }
+    }
 
