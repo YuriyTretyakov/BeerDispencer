@@ -5,6 +5,8 @@
 @using BeerDispenser.WebUi.ViewModels.Response;
 @using Radzen.Blazor;
 @inject NavigationManager NavManager
+@using Implementation;
+@inject AccountService accountService;
 
 
 @page "/bar"
@@ -64,7 +66,7 @@ else
 
             <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Status" Title="Status" Width="100px" />
             <RadzenDataGridColumn TItem="DispenserWithStatus" Property="ReservedFor" Title="Reservation" Width="150px" />
-            <RadzenDataGridColumn TItem="DispenserWithStatus" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
+            <RadzenDataGridColumn Visible="@IsNotClientRole" TItem="DispenserWithStatus" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
                 <Template Context="DispenserWithStatus">
                     <RadzenButton Text="Reserve" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onPrePayClick(DispenserWithStatus.Id))"
                                   @onclick:stopPropagation="true" Visible="DispenserWithStatus.AllowReservation" Size="ButtonSize.Small">
@@ -106,26 +108,41 @@ else
 
 @code {
 
-            private async Task onDispencerClick(Guid id, DispenserStatus status)
+    private bool IsNotClientRole => accountService.Role != UserRoles.Client;
+
+        private async Task onDispencerClick(Guid id, DispenserStatus status)
+        {
+            bool requested = false;
+            var update = new DispenserUpdateModel
             {
-                var update = new DispenserUpdateModel
-                {
-                    Status = status == DispenserStatus.Closed ?
-                    DispenserStatus.Opened :
-                    DispenserStatus.Closed,
-                    UpdatedAt = DateTime.UtcNow
-                };
+                Status = status == DispenserStatus.Closed ?
+                DispenserStatus.Opened :
+                DispenserStatus.Closed,
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
 
+
+            if (accountService.Role == UserRoles.Client)
+            {
+                await _httpClient.PostAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/clientChangeStatus", update);
+                requested = true;
+            }
+            else if (accountService.Role == UserRoles.Operator)
+            {
                 await _httpClient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
+                requested = true;
+            }
 
+            if (requested)
+            {
                 dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
                         .OrderBy(x => x.Id)
                         .ToArray();
-
             }
+        }
 
 
-    private DispenserWithStatus[]? dispencers;
+        private DispenserWithStatus[]? dispencers;
 
         protected override async Task OnInitializedAsync()
         {

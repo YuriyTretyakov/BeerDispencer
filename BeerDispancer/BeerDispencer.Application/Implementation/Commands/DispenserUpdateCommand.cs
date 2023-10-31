@@ -8,7 +8,7 @@ namespace BeerDispenser.Application.Implementation.Commands
     {
         public Guid Id { get; set; }
         public DispenserStatus Status { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
     }
 }
 

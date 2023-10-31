@@ -1,12 +1,12 @@
 ﻿using BeerDispenser.Application.Implementation.Queries;
-using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-    public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, User[]>
+    public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, UserCredentials[]>
     {
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -15,20 +15,22 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             _userManager = userManager;
         }
 
-        public async Task<User[]> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<UserCredentials[]> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _userManager.Users.ToListAsync();
 
-            List<User> userWithRoles = new List<User>();
+            List<UserCredentials> userWithRoles = new List<UserCredentials>();
 
             foreach (var user in users)
             {
-                userWithRoles.Add(new User
+                var roleStr = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                userWithRoles.Add(new UserCredentials
                 {
 
                     UserName = user.UserName,
-                    Role = (await _userManager.GetRolesAsync(user)).ToArray()
-                });
+                    Role = Enum.Parse<UserRoles>(roleStr)
+                }); ;
 
                 
             }

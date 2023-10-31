@@ -14,6 +14,7 @@ namespace BeerDispenser.Domain.Entity
         private IBeerFlowSettings _beerFlowSettings;
         public IReadOnlyCollection<Usage> Usages => _usages;
 
+
         private List<Usage> _usages = new List<Usage>();
 
         private Dispenser(

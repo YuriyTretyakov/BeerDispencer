@@ -1,10 +1,9 @@
-﻿using System;
-using BeerDispenser.Application.Implementation.Response;
+﻿using BeerDispenser.Shared;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Queries
 {
-	public class GetAllUsersQuery: IRequest<User[]>
+    public class GetAllUsersQuery: IRequest<UserCredentials[]>
 	{
 	
 	}

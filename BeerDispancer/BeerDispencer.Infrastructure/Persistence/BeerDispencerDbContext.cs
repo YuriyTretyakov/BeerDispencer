@@ -1,4 +1,5 @@
 ﻿using System;
+using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Entities;
 using BeerDispenser.Infrastructure.Settings;
@@ -18,7 +19,8 @@ namespace BeerDispenser.Infrastructure.Persistence.Models
             _dbSettings = dbSettings.Value;
         }
 
-        
+        public DbSet<PaymentCard> PaymentCards { get ; set; }
+
         DbSet<Dispenser> IBeerDispencerDbContext.Dispencers { get ; set ; }
        
         DbSet<Usage> IBeerDispencerDbContext.Usage { get; set; }
@@ -35,7 +37,8 @@ namespace BeerDispenser.Infrastructure.Persistence.Models
         {
             modelBuilder.Entity<Dispenser>(x=>x.ToTable("Dispencer").HasKey(x => x.Id));
             modelBuilder.Entity<Usage>(x=>x.ToTable("Usage").HasKey(x => x.Id));
-            
+            modelBuilder.Entity<PaymentCard>(x => x.ToTable("PaymentCard").HasKey(x => x.Id));
+
         }
 
     }

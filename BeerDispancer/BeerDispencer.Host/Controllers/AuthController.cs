@@ -4,6 +4,7 @@ using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BeerDispenser.Shared;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -25,8 +26,6 @@ namespace BeerDispenser.WebApi.Controllers
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
         }
 
-      
-
         [Authorize]
         [HttpGet("logout")]
         public async Task<IActionResult> logoutAsync()
@@ -35,7 +34,7 @@ namespace BeerDispenser.WebApi.Controllers
             return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails); 
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserCommand createUser)
         {
@@ -43,7 +42,7 @@ namespace BeerDispenser.WebApi.Controllers
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("getallusers")]
         public async Task<IActionResult> GetAllUsersAsycn()
         {

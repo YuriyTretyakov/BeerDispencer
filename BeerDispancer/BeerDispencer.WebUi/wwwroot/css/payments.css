@@ -74,7 +74,7 @@ html {
 .paymentbutton {
     float: left;
     display: block;
-    background: #666EE8;
+    background: #5dbf74;
     color: white;
     box-shadow: 0 7px 14px 0 rgba(49, 49, 93, 0.10), 0 3px 6px 0 rgba(0, 0, 0, 0.08);
     border-radius: 4px;
@@ -89,11 +89,11 @@ html {
 }
 
     .paymentbutton:focus {
-        background: #555ABF;
+        background: #43d565;
     }
 
     .paymentbutton:active {
-        background: #43458B;
+        background: #5dbf74;
     }
 
 .outcome {

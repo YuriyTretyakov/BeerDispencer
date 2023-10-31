@@ -1,6 +1,5 @@
 ﻿using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
-using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Middleware;
 using BeerDispenser.Infrastructure.Migrations;
@@ -8,12 +7,15 @@ using BeerDispenser.Infrastructure.Persistence;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Models;
 using BeerDispenser.Infrastructure.Settings;
+using BeerDispenser.Shared;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BeerDispenser.Infrastructure
 {
@@ -29,10 +31,12 @@ namespace BeerDispenser.Infrastructure
              collection.AddTransient<IUsageRepository, CachedUsageRepository>();
             collection.AddScoped<IDispencerRepository, DispenserRepository>();
 
+            collection.AddScoped<IPaymentCardRepository, PaymentCardRepository>();
+
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
 
-            collection.AddDbContext<LoginDbContext>();
+            collection.AddDbContext<LoginDbContext>(options => options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             collection.AddTransient<ILoginDbContext>(c => c.GetRequiredService<LoginDbContext>());
             
             collection.AddIdentity();
@@ -49,7 +53,7 @@ namespace BeerDispenser.Infrastructure
             collection
            .AddFluentMigratorCore()
            .ConfigureRunner(x => x.AddPostgres().WithGlobalConnectionString(dbSettings.ConnectionString)
-           .ScanIn(typeof(BeerDispenser.Infrastructure.Migrations.M0001_CreateInitial).Assembly)
+           .ScanIn(typeof(BeerDispenser.Infrastructure.Migrations.M0002_PaymentsAdded).Assembly)
            .For
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());
@@ -65,8 +69,9 @@ namespace BeerDispenser.Infrastructure
                 if (dbContext.Database.EnsureCreated())
                 {
                     var rolesStore = new RoleStore<IdentityRole>(dbContext);
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Admin, NormalizedName = UserRoles.Admin.ToUpper() });
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Service, NormalizedName = UserRoles.Service.ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Administrator.ToString(), NormalizedName = UserRoles.Administrator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Operator.ToString(), NormalizedName = UserRoles.Operator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Client.ToString(), NormalizedName = UserRoles.Client.ToString().ToUpper() });
 
 
                     var user = new IdentityUser
@@ -90,15 +95,13 @@ namespace BeerDispenser.Infrastructure
 
 
                     using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRoles.Admin });
+                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRoles.Administrator.ToString() });
                 }
             }
         }
 
         public static void AddIdentity(this IServiceCollection collection)
         {
-
-
             collection.AddIdentity<IdentityUser, IdentityRole>(opt =>
                 {
                     opt.SignIn.RequireConfirmedAccount = false;

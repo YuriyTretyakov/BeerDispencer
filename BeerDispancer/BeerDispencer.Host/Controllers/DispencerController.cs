@@ -1,8 +1,7 @@
 ﻿using BeerDispenser.Application.Implementation.Commands;
-using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Shared;
 using BeerDispenser.WebApi.Extensions;
-using BeerDispenser.WebApi.ViewModels.Request;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +22,8 @@ namespace BeerDispenser.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = UserRoles.Service)]
+        [Authorize(Roles = Roles.Operator)]
+            
         [HttpPost()]
         public async Task<IActionResult> CreateDispencerAsync([FromBody] DispenserCreateCommand createDispencer)
         {
@@ -31,7 +31,7 @@ namespace BeerDispenser.Controllers
             return Ok(result.ToViewModel());
         }
 
-       
+        [Authorize(Roles = Roles.Operator)]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> ChangeStatusAsync([FromBody] DispenserUpdateModel update, Guid id)
         {
@@ -39,8 +39,31 @@ namespace BeerDispenser.Controllers
             var result = await _mediator.Send(command);
             return result.Result ? Accepted() : Conflict();
         }
-       
-     
+
+        [Authorize(Roles = Roles.Client)]
+        [HttpPost("{id}/clientChangeStatus")]
+        public async Task<IActionResult> ClientChangeStatusAsync([FromBody] DispenserUpdateModel update, Guid id)
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var userId = Guid.Parse(claim.Value);
+
+            var updateCommand = update.ToCommand(id);
+            var result = await _mediator.Send(updateCommand);
+
+
+            var withDrawCommand = new ClientOperationsCommand
+            {
+                Id = id,
+                Status = update.Status,
+                UpdatedAt = update.UpdatedAt,
+                UserId = userId
+            };
+
+            await _mediator.Send(withDrawCommand);
+            return result.Result ? Accepted() : Conflict();
+        }
+
+
         [HttpGet("{id}/spending")]
         public async Task<IActionResult> GetSpendingAsync(Guid id)
         {
@@ -65,7 +88,7 @@ namespace BeerDispenser.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = UserRoles.Service)]
+        [Authorize(Roles = Roles.Operator)]
         [HttpPost("/api/Dispenser/{id}/setinactive")]
         public async Task<IActionResult> DeactivateDispenser(Guid id)
         {

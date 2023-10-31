@@ -2,11 +2,12 @@
 using BeerDispenser.Application.Implementation.Queries;
 using BeerDispenser.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Mvc;
-
-
+using Microsoft.AspNetCore.Identity;
+using BeerDispenser.Application.Implementation.Commands.Payments;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -21,61 +22,101 @@ namespace BeerDispenser.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult> CheckoutOrder([FromBody] NewOrderDetails orderDetails, [FromServices] IServiceProvider sp)
-        {
-            var server = sp.GetRequiredService<IServer>();
-
-            var serverAddressesFeature = server.Features.Get<IServerAddressesFeature>();
-
-            string? thisApiUrl = null;
-
-            if (serverAddressesFeature is not null)
-            {
-                thisApiUrl = serverAddressesFeature.Addresses.FirstOrDefault();
-            }
-
-            _webUiBaseUrl = Request.Headers.Referer[0];
-
-            var DispenserPrePayCommand = new DispenserPrePayCommand
-            {
-                Amount = orderDetails.Amount,
-                Currency = orderDetails.Currency,
-                DispenserId = orderDetails.DispenserId,
-                WebApiBaseUrl = thisApiUrl,
-                WebUiBaseUrl = _webUiBaseUrl
-            };
-
-
-            var checkoutOrderResponse = await _mediator.Send(DispenserPrePayCommand);
-
-            if (checkoutOrderResponse is not null)
-            {
-                return Ok(checkoutOrderResponse);
-            }
-
-            else
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpGet("success")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult> CheckoutSuccess(string sessionId)
-        {
-            var getPaymentInfo = new GetOrderDetailsQuery { SessionId = sessionId };
-
-            await _mediator.Send(getPaymentInfo);
-            return Redirect(_webUiBaseUrl + "bar");
-        }
-
+        [Authorize()]
         [HttpPost("addcard")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> AddCard([FromBody] StripeTokenResponse tokenResponse)
         {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var command = new AddPaymentDetailsCommand
+            {
+                StripeData = tokenResponse,
+                UserId = id
+            };
+
+            var result = await _mediator.Send(command);
+
             return Ok();
         }
+
+        [Authorize()]
+        [HttpGet("getcards")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<ActionResult> GetCards()
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var command = new GetUserCardsQuery
+            {
+                UserId = id
+            };
+
+            var result = await _mediator.Send(command);
+
+            var response = result.Select(x =>
+            {
+                return new PaymentCardViewModel
+                {
+                    Id = x.Id,
+                    IsDefault = x.IsDefault,
+                    City = x.City,
+                    AdressCountry = x.AdressCountry,
+                    Line1 = x.Line1,
+                    State = x.State,
+                    Zip = x.Zip,
+                    Brand = x.Brand,
+                    Country = x.Country,
+                    CvcCheck = x.CvcCheck,
+                    ExpMonth = x.ExpMonth,
+                    ExpYear = x.ExpYear,
+                    Last4 = x.Last4,
+                    AccountHolderName = x.AccountHolderName,
+                    Created = x.Created,
+                    Email = x.Email
+                };
+            });
+
+            return Ok(response);
+        }
+
+        [Authorize()]
+        [HttpDelete("{cardId}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<ActionResult> DeleteCard(Guid cardId)
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var command = new DeleteCardCommand
+            {
+                UserId = id,
+                CardId = cardId
+            };
+
+            var result = await _mediator.Send(command);
+            return NoContent();
+        }
+
+        [Authorize()]
+        [HttpGet("{cardId}/setdefault")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<ActionResult> SetDefaultCard(Guid cardId)
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var command = new SetDefaultCardCommand
+            {
+                UserId = id,
+                CardId = cardId
+            };
+
+            var result = await _mediator.Send(command);
+            return NoContent();
+        }
+
     }
 }

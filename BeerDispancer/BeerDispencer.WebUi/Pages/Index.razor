@@ -1,13 +1,16 @@
-﻿
+﻿@using Implementation;
 
 
 @page "/"
-@inject BeerDispenser.WebUi.Implementation.TimeZoneService TimeZoneService
+@inject TimeZoneService TimeZoneService
+@inject AccountService accountService; 
+
+
 <PageTitle>Index</PageTitle>
 
-@if (mainLayout.UserName != null)
+@if (accountService.IsLoggedIn)
 {
-    <h2>Welcome back, @mainLayout.UserName</h2>
+    <h2>Welcome back, @accountService.UserName</h2>
 }
 <p>Now (UTC): @DateTimeOffset.UtcNow.ToString()</p>
 <p>Now (local): @now.ToString()</p>
@@ -24,9 +27,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var offset = await TimeZoneService.GetUTCOffset();
+        now = new DateTimeOffset(DateTime.Now, offset.Value);
 
-
-        now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
-       
     }
 }

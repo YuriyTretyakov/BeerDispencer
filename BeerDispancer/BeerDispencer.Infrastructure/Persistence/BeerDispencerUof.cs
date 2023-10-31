@@ -1,7 +1,6 @@
 ﻿using System.Transactions;
 
 using BeerDispenser.Application.Abstractions;
-using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 
 namespace BeerDispenser.Infrastructure.Persistence
@@ -14,17 +13,21 @@ namespace BeerDispenser.Infrastructure.Persistence
         public BeerDispencerUof(
             IBeerDispencerDbContext dbcontext,
             IUsageRepository usageRepository,
-            IDispencerRepository dispencerRepository)
+            IDispencerRepository dispencerRepository,
+            IPaymentCardRepository paymentCardRepository
+            )
         {
 
             DispencerRepo = dispencerRepository;
             UsageRepo = usageRepository;
+            PaymentCardRepository = paymentCardRepository;
             _dbcontext = dbcontext;
         }
 
 
         public IDispencerRepository DispencerRepo { get; set; }
         public IUsageRepository UsageRepo { get; set; }
+        public IPaymentCardRepository PaymentCardRepository { get ; set; }
 
         public async Task Complete()
         {

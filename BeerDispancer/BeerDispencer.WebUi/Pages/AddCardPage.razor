@@ -1,19 +1,22 @@
 ﻿@page "/AddPayment"
+@using Implementation;
+
 @inject IJSRuntime jsRuntime;
 
 @inject IHttpClientFactory _httpClientFactory;
 @inject HttpClient _httpClient;
-
+@inject AccountService accountService;
 
 <title>Add Payment</title>
 
 <link href="css/payments.css" rel="stylesheet" />
 <RadzenCard>
 
-    <RadzenText TextStyle="TextStyle.H3" TextAlign="TextAlign.Center">Add Debit or Credit card</RadzenText>
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Add Debit or Credit card</RadzenText>
     <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
+                <input id="jwttoken" type="hidden" @bind-value ="jwttoken" />
                 <form action="CardAddedSuccesfully" method="GET" class="paymentform">
                     <div class="group">
                         <label class="paymentlabel">
@@ -52,7 +55,7 @@
 
     private string GetCreateTokenBeUrl => $"{client.BaseAddress}api/payments/addcard";
     private HttpClient client;
-
+    private string jwttoken;
 
     protected override async void OnAfterRender(bool firstRender)
     {
@@ -63,7 +66,7 @@
     protected override async Task OnInitializedAsync()
     {
         client = _httpClientFactory.CreateClient("ServerAPI");
-
+        jwttoken = accountService.Token;
     }
     }
 

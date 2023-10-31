@@ -22,7 +22,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configu
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 builder.Services.AddSettings(builder.Configuration);
-
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDomain(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);

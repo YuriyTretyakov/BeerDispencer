@@ -1,6 +1,6 @@
 ﻿using BeerDispenser.Application.DTO;
 using BeerDispenser.Application.Implementation.Commands;
-using BeerDispenser.WebApi.ViewModels.Request;
+using BeerDispenser.Shared;
 using BeerDispenser.WebApi.ViewModels.Response;
 
 namespace BeerDispenser.WebApi.Extensions

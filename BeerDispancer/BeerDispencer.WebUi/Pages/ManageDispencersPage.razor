@@ -1,0 +1,170 @@
+﻿@page "/manage"
+
+@using BeerDispenser.WebUi.ViewModels.Response;
+@using BeerDispenser.WebUi.ViewModels.Request;
+@using BeerDispenser.Shared;
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+@inject DialogService DialogService
+
+
+
+<title>Manage Dispensers</title>
+
+@if (_dispensers == null)
+{
+    <p> <em> Loading...</em> </p>
+}
+else
+{
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.H3" TextAlign="TextAlign .Center">Manage Dispensers</RadzenText>
+
+        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Dispenser" Click="@InsertRow" Disabled=@(dispenserToCreate != null || dispenserToUpdate != null) />
+
+        <RadzenDataGrid @ref="_dispensersGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@_dispensers" RowCreate="@OnCreateRow" TItem="DispenserWithStatus" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Id" Title="Id" Width="150px" />
+
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Volume" Title="Volume">
+                    <EditTemplate Context="DispenserWithStatus">
+                        <RadzenNumeric @bind-Value="DispenserWithStatus.Volume" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Status" Title="Status" Width="150px">
+                    <EditTemplate Context="DispenserWithStatus">
+                        <RadzenDropDown @bind-Value="DispenserWithStatus.Status" Data="Enum.GetValues(typeof(DispenserStatus))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Property="IsActive" Title="IsActive" Width="150px">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Property="ReservedFor" Title="Reservation" Width="150px" />
+
+                <RadzenDataGridColumn TItem="DispenserWithStatus" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                    <Template Context="DispenserWithStatus">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(DispenserWithStatus))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <Template Context="DispenserWithStatus">
+                        <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Visible="DispenserWithStatus.IsActive" Click="@(async ()=>await OnDeleteClick(DispenserWithStatus))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(DispenserWithStatus))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="DispenserWithStatus">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(async (args) => await SaveRow(DispenserWithStatus))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(DispenserWithStatus))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenCard>
+}
+
+
+
+@code {
+
+    IEnumerable<DispenserStatus> dispenserStatuses = Enum.GetNames(typeof(DispenserStatus)).Cast<DispenserStatus>();
+    RadzenDataGrid<DispenserWithStatus> _dispensersGrid;
+    IEnumerable<DispenserWithStatus> _dispensers;
+
+    DispenserWithStatus dispenserToCreate;
+    DispenserWithStatus dispenserToUpdate;
+
+
+    async Task GetData()
+    {
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+
+        _dispensers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/all"))
+                .OrderByDescending(x => x.IsActive)
+                .ToArray();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetData();
+    }
+
+
+    async Task InsertRow()
+    {
+        dispenserToCreate = new DispenserWithStatus
+        {
+            Status = BeerDispenser.Shared.DispenserStatus.Closed
+        };
+        await _dispensersGrid.InsertRow(dispenserToCreate);
+    }
+
+    async Task DeleteRow(DispenserWithStatus dispenser)
+    {
+        Reset();
+        await _httpClient.PostAsync($"/api/Dispenser/{dispenser.Id}/setinactive", null);
+        await GetData();
+    }
+
+
+    async Task OnCreateRow(DispenserWithStatus dispenser)
+    {
+        var dispenserModel = new Dispenser { FlowVolume = dispenser.Volume };
+
+        await _httpClient.PostAsJsonAsync("/api/Dispenser", dispenserModel);
+        dispenserToCreate = null;
+        await GetData();
+    }
+
+    async Task SaveRow(DispenserWithStatus dispenser)
+    {
+        Console.WriteLine(nameof(SaveRow) + "is called");
+        await _dispensersGrid.UpdateRow(dispenser);
+        var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
+        await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);
+        await GetData();
+        Reset();
+    }
+
+    async Task EditRow(DispenserWithStatus dispenser)
+    {
+        await _dispensersGrid.EditRow(dispenser);
+    }
+
+    void CancelEdit(DispenserWithStatus dispenser)
+    {
+        Reset();
+        _dispensersGrid.CancelEditRow(dispenser);
+    }
+
+    async Task OnDeleteClick(DispenserWithStatus dispenser)
+    {
+        var result = await DialogService
+            .OpenAsync("Are you sure you want to delete this dispenser?", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <p>Confirm Delete <b>@dispenser.Id</b>?</p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="width: 80px;" />
+                <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenStack>);
+
+if (result == true)
+{
+await DeleteRow(dispenser);
+}
+}
+
+void Reset()
+{
+dispenserToCreate = null;
+dispenserToUpdate = null;
+}
+
+}

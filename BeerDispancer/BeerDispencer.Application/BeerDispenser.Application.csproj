@@ -19,6 +19,8 @@
     <None Remove="Implementation\Commands\Authorization\" />
     <None Remove="Implementation\Handlers\Authorization\" />
     <None Remove="Implementation\Validation\Authorization\" />
+    <None Remove="Implementation\Commands\Payments\" />
+    <None Remove="Implementation\Handlers\Payments\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
@@ -33,6 +35,8 @@
     <Folder Include="Implementation\Commands\Authorization\" />
     <Folder Include="Implementation\Handlers\Authorization\" />
     <Folder Include="Implementation\Validation\Authorization\" />
+    <Folder Include="Implementation\Commands\Payments\" />
+    <Folder Include="Implementation\Handlers\Payments\" />
   </ItemGroup>
    <ItemGroup>
   <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />

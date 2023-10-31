@@ -38,7 +38,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 return response;
             }
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, request.Role);
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, request.Role.ToString());
 
             if (!addToRoleResult.Succeeded)
             {

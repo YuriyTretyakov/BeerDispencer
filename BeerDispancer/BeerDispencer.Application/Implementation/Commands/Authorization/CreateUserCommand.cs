@@ -1,11 +1,11 @@
 ﻿using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
-    public class CreateUserCommand:UserLoginCommand, IRequest<AuthResponseDto>
+    public class CreateUserCommand: UserCredentials, IRequest<AuthResponseDto>
     {
-		public string Role { get; set; }
 	}
 }
 

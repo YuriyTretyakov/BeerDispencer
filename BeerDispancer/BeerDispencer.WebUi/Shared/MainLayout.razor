@@ -1,11 +1,11 @@
-﻿@using BeerDispenser.WebUi.ViewModels.Request;
+﻿
 @using BeerDispenser.WebUi.Implementation;
 
 @inherits LayoutComponentBase
-
-@inject Abstractions.ILocalStorage LocalStorage
 @inject NavigationManager NavManager
-@inject TimeZoneService TimeZoneService
+
+@inject AccountService AccountService;
+
 
 <style>
     .avatar img {
@@ -32,32 +32,21 @@
 
         <main>
             <div class="top-row px-4">
-
-
-
                 <div style="width:200px;text-align:right;">
-                    @if (loggedIn)
+                    @if (AccountService.IsLoggedIn)
                         {
-
-                        <div style="display:inline-block">
-
-                            <img class="avatar" src="/images/no-avatar.png" @onclick=@(() => NavManager.NavigateTo("/account")) />
-                            <a style="margin-left:0" href="account"><b>@UserName</b></a>
-
-                        </div>
-
-                        <button style="margin-left:50px" class="btn btn-sm btn-danger" title="Logout" @onclick="Logout"><span class="oi oi-account-logout"></span></button>
+                            <div style="display:inline-block">
+                                <img class="avatar" src="/images/no-avatar.png" @onclick=@(() => NavManager.NavigateTo("/account")) />
+                                <a style="margin-left:0" href="account"><b>@AccountService.UserName</b></a>
+                            </div>
+                            <button style="margin-left:50px" class="btn btn-sm btn-danger" title="Logout" @onclick="AccountService.LogoutAsync"><span class="oi oi-account-logout"></span></button>
                         }
                         else
                         {
-                        <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
+                            <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
                         }
                 </div>
-
-
-
             </div>
-
             <article class="content px-4">
                 @Body
             </article>
@@ -102,41 +91,21 @@
 
 @code {
 
-    private bool show, display, loggedIn;
+    private bool show, display;
 
-    private string? password;
+    private string username, password;
 
-    public string? Token;
 
-    private string? username;
-    public string? UserName { get; set; }
-    public string? Role { get; set; }
-
-    public DateTime? ValidUntil { get; set; }
-
-    DateTimeOffset now;
-
-    public string? GetUserName()
-    {
-        return loggedIn ? UserName : null;
-    }
 
     public async Task OpenLogin()
     {
         display = true;
         await Task.Delay(100);
         show = true;
+        StateHasChanged();
     }
 
-    public async Task Logout()
-    {
-        UserName = null;
-        password = null;
-        loggedIn = false;
-        Role = null;
-        Token = null;
-        await LocalStorage.RemoveAsync("user");
-    }
+
 
     private async Task Close()
     {
@@ -147,95 +116,37 @@
 
     private async Task Login()
     {
-        if (!string.IsNullOrEmpty(username))
+        var result = await AccountService.Login(username, password);
+
+        if (result)
         {
-            var loginModel = new UserLoginModel
-            {
-                UserName = username,
-                Password = password
-            };
-
-            var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
-            var response = await httpclient.PostAsJsonAsync<UserLoginModel>("/api/Auth/login", loginModel);
-
-            if (response.IsSuccessStatusCode)
-            {
-                Token = await response.Content.ReadAsStringAsync();
-                loggedIn = true;
-                UserName = username;
-                await LocalStorage.SaveStringAsync("user", Token);
-
-                if (!string.IsNullOrEmpty(Token))
-                {
-                    InitClaimsByFromJwt(Token);
-                }
-
-                await Close();
-                return;
-            }
-
-            UserName = null;
+            await Close();
+            StateHasChanged();
+            return;
         }
+
+        username = null;
+        password = null;
     }
 
     protected override async Task OnInitializedAsync()
     {
 
-        now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
-        Token = await LocalStorage.GetStringAsync("user");
+        //now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
+        //Token = await LocalStorage.GetStringAsync("user");
 
-        if (!string.IsNullOrEmpty(Token))
-        {
-            InitClaimsByFromJwt(Token);
-        }
-        loggedIn = !string.IsNullOrEmpty(Token);
+        //if (!string.IsNullOrEmpty(Token))
+        //{
+        //    InitClaimsByFromJwt(Token);
+        //}
+        //loggedIn = !string.IsNullOrEmpty(Token);
     }
 
 
-  
 
-    private void InitClaimsByFromJwt(string jwt)
-    {
-        var claims = new List<string>();
-        var payload = jwt.Split('.')[1];
-        var jsonBytes = ParseBase64WithoutPadding(payload);
 
-        var jsonText = System.Text.Encoding.UTF8.GetString(jsonBytes);
-        var keyValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonText);
 
-        foreach (var kv in keyValuePairs)
-        {
-            if (kv.Key.EndsWith("role"))
-            {
-                Role = kv.Value.ToString();
-            }
 
-            if (kv.Key.EndsWith("nameidentifier"))
-            {
-                UserName = kv.Value.ToString();
-            }
 
-            if (kv.Key.EndsWith("exp"))
-            {
-                var validUtc = DateTime.UnixEpoch.AddSeconds((long)kv.Value);
-                ValidUntil = GetValidUntil(validUtc);
-            }
-        }
-    }
-
-    private byte[] ParseBase64WithoutPadding(string base64)
-    {
-        switch (base64.Length % 4)
-        {
-            case 2: base64 += "=="; break;
-            case 3: base64 += "="; break;
-        }
-        return Convert.FromBase64String(base64);
-    }
-
-    private DateTime? GetValidUntil(DateTime? dt)
-    {
-        return dt.Value.Add(TimeZoneService.UserOffset.Value);
-    }
 
     }

@@ -41,6 +41,7 @@ function onPaymentPageInit(pubkey, beAddCardUrl) {
         hideSuccess();
         
         if (result.token) {
+            console.log(result);
             showSuccess("Token has been provided by payment gateway");
             sendPaymentDetailsToServer(beAddCardUrl, result)
             
@@ -104,12 +105,16 @@ function onPaymentPageInit(pubkey, beAddCardUrl) {
         successElement.textContent = "";
     }
 
-    function sendPaymentDetailsToServer(url,tokenResponse) {
+    function sendPaymentDetailsToServer(url, tokenResponse) {
+
+        console.log(tokenResponse);
+        var token = document.getElementById("jwttoken").value;
         fetch(url, {
             method: "POST",
             body: JSON.stringify(tokenResponse),
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": "Bearer " + token
             }
         })
             .then((response) => {
