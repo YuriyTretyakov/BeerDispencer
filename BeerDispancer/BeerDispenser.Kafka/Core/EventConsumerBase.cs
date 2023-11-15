@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
+using static Confluent.Kafka.ConfigPropertyNames;
 
 
 namespace BeerDispenser.Kafka.Core
@@ -13,7 +14,7 @@ namespace BeerDispenser.Kafka.Core
         IConsumer<string, EventHolder<T>> _consumer;
         private string _topicName;
         CancellationToken _cancellationToken;
-        Thread _consumerThread;
+        Task _consumerTask;
 
         ConcurrentQueue<EventHolder<T>> _messageQueue = new();
 
@@ -63,24 +64,27 @@ namespace BeerDispenser.Kafka.Core
 
         public void StartConsuming(CancellationToken cancellationToken)
         {
+            _cancellationToken = cancellationToken;
             _consumer.Subscribe(_topicName);
 
-            if (_consumerThread is not null && _consumerThread.ThreadState == ThreadState.Running)
+            if (_consumerTask is not null && _consumerTask.Status == TaskStatus.Running)
             {
                 throw new InvalidOperationException(nameof(EventConsumerBase<T>));
             }
 
-            _cancellationToken = cancellationToken;
-            _consumerThread = new Thread(Consume);
-            _consumerThread.Start();
+            _consumerTask = Task
+                .Factory
+                .StartNew(
+                Consume,
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         public void Stop(CancellationToken cancellationToken)
         {
             _consumer.Unsubscribe();
-            var cts = new CancellationTokenSource();
-            cts.Cancel();
-            _cancellationToken = cts.Token;
+            _consumer.Close();
         }
 
         public IReadonlyEventHolder<T> GetMessages()

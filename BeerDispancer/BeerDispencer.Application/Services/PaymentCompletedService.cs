@@ -12,7 +12,7 @@ namespace BeerDispenser.Application.Services
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PaymentCompletedConsumer _completedEventConsumer;
-        private Thread _consumingThread;
+        private Task _consumingTask;
         CancellationToken _cancellationToken;
 
         public PaymentCompletedService(
@@ -21,28 +21,29 @@ namespace BeerDispenser.Application.Services
         {
             _serviceScopeFactory = serviceScopeFactory;
             _completedEventConsumer = completedEventConsumer;
-
-            _consumingThread = new Thread(() =>
-          {
-              ProcessConsumingAsync();
-          });
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             _completedEventConsumer.StartConsuming(cancellationToken);
+            _completedEventConsumer.StartConsuming(cancellationToken);
 
-              _consumingThread.Start();
+            _consumingTask = Task
+                           .Factory
+                           .StartNew(
+                                     ProcessConsumingAsync,
+                                     cancellationToken,
+                                     TaskCreationOptions.LongRunning,
+                                     TaskScheduler.Default);
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _completedEventConsumer.Stop(cancellationToken);
-
-            _consumingThread.Join();
-
+            _cancellationToken = cancellationToken;
             return Task.CompletedTask;
         }
 

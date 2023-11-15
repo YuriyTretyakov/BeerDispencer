@@ -1,4 +1,5 @@
-﻿using BeerDispenser.Application.Implementation.Messaging.Consumers;
+﻿using System.Threading;
+using BeerDispenser.Application.Implementation.Messaging.Consumers;
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Kafka.Core;
@@ -15,7 +16,7 @@ namespace BeerDispenser.Application.Services
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PaymentToProcessConsumer _toProcessConsumer;
         private CancellationToken _cancellationToken;
-        private Thread _consumingThread;
+        private Task _consumingTask;
 
         public PaymentInprocessService(
             IServiceScopeFactory serviceScopeFactory,
@@ -24,22 +25,28 @@ namespace BeerDispenser.Application.Services
         {
             _serviceScopeFactory = serviceScopeFactory;
             _toProcessConsumer = toProcessConsumer;
-            _consumingThread = new Thread(ProcessConsuming);
+           
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             _toProcessConsumer.StartConsuming(cancellationToken);
-            _consumingThread.Start();
-           
-             return Task.CompletedTask;
+            _consumingTask = Task
+                            .Factory
+                            .StartNew(
+                                      ProcessConsuming,
+                                      cancellationToken,
+                                      TaskCreationOptions.LongRunning,
+                                      TaskScheduler.Default);
+
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         { 
             _toProcessConsumer.Stop(cancellationToken);
-            _consumingThread.Join();
+            _cancellationToken = cancellationToken;
             return Task.CompletedTask;
         }
 
