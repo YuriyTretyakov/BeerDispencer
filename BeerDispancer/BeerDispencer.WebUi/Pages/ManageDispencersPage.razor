@@ -98,7 +98,7 @@ else
     {
         dispenserToCreate = new DispenserWithStatus
         {
-            Status = BeerDispenser.Shared.DispenserStatus.Closed
+            Status = BeerDispenser.Shared.DispenserStatus.Closed,
         };
         await _dispensersGrid.InsertRow(dispenserToCreate);
     }
@@ -113,25 +113,44 @@ else
 
     async Task OnCreateRow(DispenserWithStatus dispenser)
     {
+        Console.WriteLine("OnCreateRow");
         var dispenserModel = new Dispenser { FlowVolume = dispenser.Volume };
-
-        await _httpClient.PostAsJsonAsync("/api/Dispenser", dispenserModel);
-        dispenserToCreate = null;
-        await GetData();
+        dispenserToCreate = new DispenserWithStatus { Volume = dispenser.Volume };
     }
 
     async Task SaveRow(DispenserWithStatus dispenser)
     {
-        Console.WriteLine(nameof(SaveRow) + "is called");
-        await _dispensersGrid.UpdateRow(dispenser);
-        var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
-        await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);
-        await GetData();
+        if (dispenserToUpdate is not null)
+        {
+            
+
+            var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
+            await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);
+        }
+
+        if (dispenserToCreate is not null)
+        {
+            Console.WriteLine("DispenserWithStatus=" + dispenser.Volume);
+            Console.WriteLine("dispenserToCreate=" + dispenserToCreate.Volume);
+            var dispenserModel = new DispenserCreate { FlowVolume = dispenserToCreate.Volume };
+            await _httpClient.PostAsJsonAsync("/api/Dispenser", dispenserModel);
+        }
+
         Reset();
+        await GetData();
     }
 
     async Task EditRow(DispenserWithStatus dispenser)
     {
+        dispenserToUpdate = new DispenserWithStatus
+        {
+            Id = dispenser.Id,
+            IsActive = dispenser.IsActive,
+            ReservedFor = dispenser.ReservedFor,
+            Status = dispenser.Status,
+            Volume = dispenser.Volume
+        };
+
         await _dispensersGrid.EditRow(dispenser);
     }
 

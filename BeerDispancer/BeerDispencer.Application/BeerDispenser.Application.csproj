@@ -21,6 +21,11 @@
     <None Remove="Implementation\Validation\Authorization\" />
     <None Remove="Implementation\Commands\Payments\" />
     <None Remove="Implementation\Handlers\Payments\" />
+    <None Remove="Implementation\Messaging\" />
+    <None Remove="Implementation\Messaging\Events\" />
+    <None Remove="Services\" />
+    <None Remove="Implementation\Messaging\Publishers\" />
+    <None Remove="Implementation\Messaging\Consumers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
@@ -37,6 +42,11 @@
     <Folder Include="Implementation\Validation\Authorization\" />
     <Folder Include="Implementation\Commands\Payments\" />
     <Folder Include="Implementation\Handlers\Payments\" />
+    <Folder Include="Implementation\Messaging\" />
+    <Folder Include="Implementation\Messaging\Events\" />
+    <Folder Include="Services\" />
+    <Folder Include="Implementation\Messaging\Publishers\" />
+    <Folder Include="Implementation\Messaging\Consumers\" />
   </ItemGroup>
    <ItemGroup>
   <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
@@ -52,5 +62,6 @@
    <ItemGroup>
      <ProjectReference Include="..\BeerDispencer.Domain\BeerDispenser.Domain.csproj" />
      <ProjectReference Include="..\BeerDispencer.Shared\BeerDispenser.Shared.csproj" />
+     <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Kafka.csproj" />
    </ItemGroup>
 </Project>

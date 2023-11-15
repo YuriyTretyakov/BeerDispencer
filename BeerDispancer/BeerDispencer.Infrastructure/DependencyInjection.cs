@@ -1,5 +1,4 @@
 ﻿using BeerDispenser.Application.Abstractions;
-using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Middleware;
 using BeerDispenser.Infrastructure.Migrations;
@@ -15,7 +14,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace BeerDispenser.Infrastructure
 {
@@ -44,6 +42,7 @@ namespace BeerDispenser.Infrastructure
             collection.AddTransient<ITokenManager, TokenManager>();
             collection.AddTransient<TokenManagerMiddleware>();
             collection.AddMemoryCache();
+
         }
 
         public static void AddMigrations(this IServiceCollection collection, ConfigurationManager configuration)

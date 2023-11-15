@@ -1,22 +1,28 @@
-﻿using System;
-using BeerDispenser.Application.Abstractions;
+﻿using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Commands;
+using BeerDispenser.Application.Implementation.Messaging.Events;
+using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
+using BeerDispenser.Kafka.Core;
 using MediatR;
-using Stripe;
 
 namespace BeerDispenser.Application.Implementation.Handlers
 {
-	public class ClientOperationsHandler : IRequestHandler<ClientOperationsCommand>
+    public class ClientOperationsHandler : IRequestHandler<ClientOperationsCommand>
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowSettings _beerFlowSettings;
+        private readonly PaymentToProcessPublisher _eventsTrigger;
 
-        public ClientOperationsHandler(IDispencerUof dispencerUof, IBeerFlowSettings beerFlowSettings)
+        public ClientOperationsHandler(
+            IDispencerUof dispencerUof,
+            IBeerFlowSettings beerFlowSettings,
+            PaymentToProcessPublisher eventsTrigger)
 		{
             _dispencerUof = dispencerUof;
             _beerFlowSettings = beerFlowSettings;
+            _eventsTrigger = eventsTrigger;
         }
 
         public async Task Handle(ClientOperationsCommand request, CancellationToken cancellationToken)
@@ -47,19 +53,22 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     .FirstOrDefault(x => x.ClosedAt.Equals(spendings.Usages.Max(x => x.ClosedAt)));
 
                 var amountToCharge = recentUsage.TotalSpent;
-                var defaultCard = await _dispencerUof.PaymentCardRepository.GetDefaultCard(request.UserId);
 
-                var options = new ChargeCreateOptions
-                {
-                    Customer = defaultCard.CustomerId,
-                    Amount = (long)amountToCharge *100,
+                var defaultCard = await _dispencerUof
+                    .PaymentCardRepository
+                    .GetDefaultCard(request.UserId);
+
+                var paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent {
+                    Amount = (long)amountToCharge * 100,
                     Currency = "usd",
-                    Source = defaultCard.CardId,
-                    Description = $"Payment for usage Dispenser {dispencerDto.Id} Amount: {amountToCharge} Volume: {recentUsage.FlowVolume}",
-                };
-                var service = new ChargeService();
-               var charge =  service.Create(options);
+                    CustomerId = defaultCard.CustomerId,
+                    CardId = defaultCard.CardId,
+                    PaymentDescription = $"Payment for usage Dispenser {dispencerDto.Id} Amount: {amountToCharge} Volume: {recentUsage.FlowVolume}"
+                });
 
+             //   _eventsTrigger.
+
+                await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
             }
         }
     }
