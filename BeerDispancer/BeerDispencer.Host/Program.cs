@@ -12,10 +12,6 @@ using Serilog;
 using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Stripe;
-using BeerDispenser.Application.Services;
-using BeerDispenser.Application.Implementation.Messaging.Publishers;
-using BeerDispenser.Kafka.Core;
-using BeerDispenser.Application.Implementation.Messaging.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,18 +23,8 @@ StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 builder.Services.AddSettings(builder.Configuration);
 
-builder.Services.AddSingleton<KafkaConfig>();
+builder.Services.AddMessaging();
 
-builder.Services.AddTransient<PaymentCompletedPublisher>();
-builder.Services.AddSingleton<PaymentCompletedConsumer>();
-
-
-builder.Services.AddTransient<PaymentToProcessPublisher>();
-builder.Services.AddSingleton<PaymentToProcessConsumer>();
-
-
-builder.Services.AddHostedService<PaymentInprocessService>();
-//builder.Services.AddHostedService<PaymentCompletedService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDomain(builder.Configuration);

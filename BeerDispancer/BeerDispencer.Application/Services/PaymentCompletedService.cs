@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentCompletedService : IHostedService
+    public class PaymentCompletedService : IHostedService, IDisposable
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PaymentCompletedConsumer _completedEventConsumer;
@@ -23,10 +23,14 @@ namespace BeerDispenser.Application.Services
             _completedEventConsumer = completedEventConsumer;
         }
 
+        public void Dispose()
+        {
+            StopAsync(_cancellationToken).ConfigureAwait(false);
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            _completedEventConsumer.StartConsuming(cancellationToken);
             _completedEventConsumer.StartConsuming(cancellationToken);
 
             _consumingTask = Task
@@ -43,20 +47,23 @@ namespace BeerDispenser.Application.Services
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _completedEventConsumer.Stop(cancellationToken);
+            _completedEventConsumer.Dispose();
             _cancellationToken = cancellationToken;
             return Task.CompletedTask;
         }
 
-        private async void ProcessConsumingAsync()
+        private async Task ProcessConsumingAsync()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
-                var message = _completedEventConsumer.GetMessages();
+                EventHolder<PaymentCompletedEvent> message = null;
+                message = _completedEventConsumer.GetMessages();
 
                 if (message is not null)
                 {
                     await ProcessPaymentAsync(message);
                 }
+               // Thread.Yield();
             }
         }
 

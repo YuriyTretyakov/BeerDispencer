@@ -9,7 +9,7 @@ using Stripe;
 
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentInprocessService : IHostedService /*, IDisposable */
+    public class PaymentInprocessService : IHostedService,  IDisposable
     {
         const int MAX_RETRY_COUNT= 5;
 
@@ -26,6 +26,11 @@ namespace BeerDispenser.Application.Services
             _serviceScopeFactory = serviceScopeFactory;
             _toProcessConsumer = toProcessConsumer;
            
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -46,11 +51,12 @@ namespace BeerDispenser.Application.Services
         public Task StopAsync(CancellationToken cancellationToken)
         { 
             _toProcessConsumer.Stop(cancellationToken);
+            _toProcessConsumer.Dispose();
             _cancellationToken = cancellationToken;
             return Task.CompletedTask;
         }
 
-        private void ProcessConsuming()
+        private async Task ProcessConsuming()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
@@ -64,13 +70,13 @@ namespace BeerDispenser.Application.Services
                       message,
                       _cancellationToken).ConfigureAwait(false);
                 }
-                Thread.Yield();
+                //Thread.Yield();
             }
         }
 
         private async Task ProcessMessageAsync(
             IServiceScope scope,
-            IReadonlyEventHolder<PaymentToProcessEvent> message,
+            EventHolder<PaymentToProcessEvent> message,
             CancellationToken cancellationToken)
         {
             IEventPublisher<PaymentCompletedEvent> paymentCompletedTrigger = null;
