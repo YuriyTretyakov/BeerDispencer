@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Kafka.Core
@@ -9,10 +8,6 @@ namespace BeerDispenser.Kafka.Core
 
         IConsumer<string, EventHolder<T>> _consumer;
         private string _topicName;
-        CancellationToken _cancellationToken;
-        Thread _consumerThread;
-
-        ConcurrentQueue<EventHolder<T>> _messageQueue = new();
         private readonly ILogger _logger;
 
         public abstract string ConfigSectionName { get; }
@@ -45,26 +40,20 @@ namespace BeerDispenser.Kafka.Core
             _logger.LogError("Consumer {name} error: {@error}", _topicName, error);
         }
 
-        public async Task<EventHolder<T>> Consume()
+        public async Task<EventHolder<T>> ConsumeAsync(CancellationToken cancellationToken)
         {
             return await Task.Factory.StartNew(() =>
             {
-
-                var consumeResult = _consumer.Consume(_cancellationToken);
-                var message = consumeResult.Message?.Value;
-                _logger.LogInformation("Consumer {name} message received: {@message}", _topicName, message);
-                _messageQueue.Enqueue(message);
+                var consumeResult = _consumer.Consume(cancellationToken);
+                var message = consumeResult?.Message?.Value;
+               
                 _consumer.Commit(consumeResult);
-                //Thread.Yield();
-
-
-                //catch (Exception ex)
-                //{
-                //_logger.LogError("Consuming error for topic name: {name}. Exception: {@ex}", _topicName, ex);
-                //throw;
+                _logger.LogInformation("Consumer {name} message received: {@message} Offset: {offset}",
+                    _topicName,
+                    message,
+                    consumeResult.Offset);
                 return message;
-            });
-     
+            }, cancellationToken);
         }
 
         public void Dispose()
@@ -74,40 +63,9 @@ namespace BeerDispenser.Kafka.Core
             _consumer.Dispose();
         }
 
-        public EventHolder<T> Get()
-        {
-            var consumeResult = _consumer.Consume(_cancellationToken);
-            var message = consumeResult.Message?.Value;
-            _logger.LogInformation("Consumer {name} message received: {@message}", _topicName, message);
-            return message;
-        }
-
         public void StartConsuming(CancellationToken cancellationToken)
         {
-            _cancellationToken = cancellationToken;
             _consumer.Subscribe(_topicName);
-          //  Consume();
-            //if (_consumerThread is not null && _consumerThread.ThreadState == ThreadState.Running)
-            //{
-            //    _logger.LogError("Consuming already started for topic name: {name}", _topicName);
-            //    throw new InvalidOperationException(nameof(EventConsumerBase<T>));
-            //}
-
-            //_consumerTask = Task
-            //    .Factory
-            //    .StartNew(
-            //    Consume,
-            //    cancellationToken,
-            //    TaskCreationOptions.LongRunning,
-            //    TaskScheduler.Default);
-
-
-            //_consumerThread = new Thread(Consume)
-            //{
-            //    IsBackground = true
-            //};
-            //_consumerThread.Start();
-
             _logger.LogInformation("Consuming started {name}", _topicName);
         }
 
@@ -118,23 +76,6 @@ namespace BeerDispenser.Kafka.Core
             _consumer.Close();
             _consumer.Dispose();
         }
-
-        //public async Task<EventHolder<T>> GetMessagesAsync()
-        //{
-        //    try
-        //    {
-        //        if (_messageQueue.TryDequeue(out var message))
-        //        {
-        //            return message;
-        //        }
-        //        return default;
-        //    }
-        //    finally
-        //    {
-        //        await Task.Yield();
-        //    }
-
-        //}
     }
 }
 

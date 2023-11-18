@@ -66,8 +66,6 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     PaymentDescription = $"Payment for usage Dispenser {dispencerDto.Id} Amount: {amountToCharge} Volume: {recentUsage.FlowVolume}"
                 });
 
-             //   _eventsTrigger.
-
                 await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
             }
         }

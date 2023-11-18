@@ -1,4 +1,5 @@
-﻿using Confluent.Kafka;
+﻿using System.Diagnostics;
+using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -38,10 +39,19 @@ namespace BeerDispenser.Kafka.Core
                 Key = @event.Key.ToString(),
                 Value = messageJson
             };
-
-            _logger.LogInformation("Producer {topicName} producing message: {@event}", topicName, @event);
-            await _kafkaProducer
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var result = await _kafkaProducer
                 .ProduceAsync(topicName, kafkaMessage, cancellationToken);
+
+            stopWatch.Stop();
+
+            _logger.LogInformation(
+                "Producer {topicName} producing message: {@event} Offset: {offset} Duration: {time}",
+                topicName,
+                @event,
+                result.Offset,
+                stopWatch.Elapsed);
         }
 
         public void Dispose()
