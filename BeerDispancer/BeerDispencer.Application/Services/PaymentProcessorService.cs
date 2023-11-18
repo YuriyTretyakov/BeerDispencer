@@ -3,13 +3,14 @@ using BeerDispenser.Application.Implementation.Messaging.Consumers;
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Kafka.Core;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
 
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentInprocessService : IHostedService,  IDisposable
+    public class PaymentInprocessService : BackgroundService
     {
         const int MAX_RETRY_COUNT= 5;
 
@@ -25,53 +26,49 @@ namespace BeerDispenser.Application.Services
         {
             _serviceScopeFactory = serviceScopeFactory;
             _toProcessConsumer = toProcessConsumer;
-           
         }
 
-        public void Dispose()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
-        }
+            //await Task.Yield();
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _cancellationToken = cancellationToken;
-            _toProcessConsumer.StartConsuming(cancellationToken);
-            _consumingTask = Task
-                            .Factory
-                            .StartNew(
-                                      ProcessConsuming,
-                                      cancellationToken,
-                                      TaskCreationOptions.LongRunning,
-                                      TaskScheduler.Default);
+            _cancellationToken = stoppingToken;
+            _toProcessConsumer.StartConsuming(stoppingToken);
+            //_consumingTask = Task
+            //                .Factory
+            //                .StartNew(
+            //                          ProcessConsuming,
+            //                          stoppingToken,
+            //                          TaskCreationOptions.LongRunning,
+            //                          TaskScheduler.Default);
 
-            return Task.CompletedTask;
-        }
+            ProcessConsuming();
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        { 
-            _toProcessConsumer.Stop(cancellationToken);
-            _toProcessConsumer.Dispose();
-            _cancellationToken = cancellationToken;
-            return Task.CompletedTask;
+
         }
 
         private async Task ProcessConsuming()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
-                var message = _toProcessConsumer.GetMessages();
+
+               // var message = _toProcessConsumer.Get();
+
+                var message = await _toProcessConsumer.Consume();
 
                 if (message is not null)
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
-                    ProcessMessageAsync(
+                    await ProcessMessageAsync(
                       scope,
                       message,
                       _cancellationToken).ConfigureAwait(false);
                 }
-                //Thread.Yield();
+               // Thread.Yield();
             }
+
+            _toProcessConsumer.Stop(_cancellationToken);
+            _toProcessConsumer.Dispose();
         }
 
         private async Task ProcessMessageAsync(
@@ -85,7 +82,7 @@ namespace BeerDispenser.Application.Services
 
             try
             {
-                paymentCompletedTrigger = scope.ServiceProvider.GetService<PaymentCompletedPublisher>() ??
+                paymentCompletedTrigger = scope.ServiceProvider.GetService<PaymentCompletedPublisher>()??
                                              throw new Exception(nameof(PaymentCompletedPublisher));
 
                 paymentToProcessTrigger = scope.ServiceProvider.GetService<PaymentToProcessPublisher>() ??
@@ -106,16 +103,20 @@ namespace BeerDispenser.Application.Services
 
                 if (charge.Status.Equals("succeeded", StringComparison.OrdinalIgnoreCase))
                 {
-                    var sucessEvent = new PaymentCompletedEvent(message, PaymentStatus.Success);
-                    await paymentCompletedTrigger.RaiseEventAsync(new EventHolder<PaymentCompletedEvent>(sucessEvent), cancellationToken);
+                    var sucessEvent = new PaymentCompletedEvent(message.Event, PaymentStatus.Success);
+
+                    var completedEventHolder = new PaymentCompletedEventHolder(sucessEvent, message.RetryCount, message.CorrelationId);
+                    await paymentCompletedTrigger.RaiseEventAsync(completedEventHolder, cancellationToken);
                 }
 
                 else
                 {
-                    if (message.Event.RetryCount > MAX_RETRY_COUNT)
+                    if (message.RetryCount > MAX_RETRY_COUNT)
                     {
-                        var exceededRetryEvent = new PaymentCompletedEvent(message, PaymentStatus.Failed, charge.Status.ToString());
-                        await paymentCompletedTrigger.RaiseEventAsync(new EventHolder<PaymentCompletedEvent>(exceededRetryEvent), cancellationToken);
+                        var exceededRetryEvent = new PaymentCompletedEvent(message.Event, PaymentStatus.Failed, charge.Status.ToString());
+
+                        var completedEventHolder = new PaymentCompletedEventHolder(exceededRetryEvent, message.RetryCount, message.CorrelationId);
+                        await paymentCompletedTrigger.RaiseEventAsync(completedEventHolder, cancellationToken);
                     }
 
                     //TODO: Identify all use cases with possibility to fix by retry
@@ -127,8 +128,9 @@ namespace BeerDispenser.Application.Services
 
             catch (Exception ex)
             {
-                var completedEvent = new PaymentCompletedEvent(message, PaymentStatus.Failed, ex.Message);
-                await paymentCompletedTrigger?.RaiseEventAsync(new EventHolder<PaymentCompletedEvent>(completedEvent), cancellationToken);
+                var completedEvent = new PaymentCompletedEvent(message.Event, PaymentStatus.Failed, ex.Message);
+                var completedEventHolder = new PaymentCompletedEventHolder(completedEvent, message.RetryCount, message.CorrelationId);
+                await paymentCompletedTrigger.RaiseEventAsync(completedEventHolder, cancellationToken);
             }
         }
     }

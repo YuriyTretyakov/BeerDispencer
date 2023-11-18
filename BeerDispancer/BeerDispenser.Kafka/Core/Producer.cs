@@ -39,7 +39,7 @@ namespace BeerDispenser.Kafka.Core
                 Value = messageJson
             };
 
-            _logger.LogInformation("Producer {topicName} producing message: {@message}", topicName, kafkaMessage);
+            _logger.LogInformation("Producer {topicName} producing message: {@event}", topicName, @event);
             await _kafkaProducer
                 .ProduceAsync(topicName, kafkaMessage, cancellationToken);
         }

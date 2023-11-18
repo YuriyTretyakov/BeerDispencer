@@ -19,6 +19,13 @@
             CorrelationId = Guid.NewGuid();
         }
 
+        protected EventHolder(T @event, int retries, Guid correlationId)
+        {
+            Event = @event;
+            RetryCount = retries;
+            CorrelationId = correlationId;
+        }
+
         public void IncrementRetries()
         {
             RetryCount++;

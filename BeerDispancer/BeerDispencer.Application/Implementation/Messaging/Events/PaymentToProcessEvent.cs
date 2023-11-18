@@ -8,7 +8,5 @@
         public string Currency { get; set; }
         public string PaymentDescription { get; set; }
         public Guid PaymentId { get; set; }
-
-        public int RetryCount { get ; set; }
     }
 }

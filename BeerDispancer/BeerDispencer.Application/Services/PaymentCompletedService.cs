@@ -8,11 +8,11 @@ using Microsoft.Extensions.Hosting;
 
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentCompletedService : IHostedService, IDisposable
+    public class PaymentCompletedService : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PaymentCompletedConsumer _completedEventConsumer;
-        private Task _consumingTask;
+        private Thread _consumingTask;
         CancellationToken _cancellationToken;
 
         public PaymentCompletedService(
@@ -23,41 +23,37 @@ namespace BeerDispenser.Application.Services
             _completedEventConsumer = completedEventConsumer;
         }
 
-        public void Dispose()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            StopAsync(_cancellationToken).ConfigureAwait(false);
+           
+            _cancellationToken = stoppingToken;
+            _completedEventConsumer.StartConsuming(stoppingToken);
+
+            //_consumingTask = Task
+            //               .Factory
+            //               .StartNew(
+            //                         ProcessConsumingAsync,
+            //                         stoppingToken,
+            //                         TaskCreationOptions.LongRunning,
+            //                         TaskScheduler.Default);
+
+            //_consumingTask = new Thread(ProcessConsumingAsync)
+            //{ IsBackground = true };
+
+            ProcessConsumingAsync();
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _cancellationToken = cancellationToken;
-            _completedEventConsumer.StartConsuming(cancellationToken);
-
-            _consumingTask = Task
-                           .Factory
-                           .StartNew(
-                                     ProcessConsumingAsync,
-                                     cancellationToken,
-                                     TaskCreationOptions.LongRunning,
-                                     TaskScheduler.Default);
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            _completedEventConsumer.Stop(cancellationToken);
-            _completedEventConsumer.Dispose();
-            _cancellationToken = cancellationToken;
-            return Task.CompletedTask;
-        }
+ 
 
         private async Task ProcessConsumingAsync()
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
+                
                 EventHolder<PaymentCompletedEvent> message = null;
-                message = _completedEventConsumer.GetMessages();
+                //  message = await _completedEventConsumer.GetMessagesAsync();
+
+                message =  await _completedEventConsumer.Consume();
 
                 if (message is not null)
                 {
@@ -65,6 +61,8 @@ namespace BeerDispenser.Application.Services
                 }
                // Thread.Yield();
             }
+            _completedEventConsumer.Stop(_cancellationToken);
+            _completedEventConsumer.Dispose();
         }
 
         private async Task ProcessPaymentAsync(
