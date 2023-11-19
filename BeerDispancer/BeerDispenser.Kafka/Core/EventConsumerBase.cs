@@ -3,9 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Kafka.Core
 {
-    public abstract class EventConsumerBase<T> : IEventConsumer<T> where T : class
+    public abstract class EventConsumerBase<T> :IDisposable where T : class
     {
-
         IConsumer<string, EventHolder<T>> _consumer;
         private string _topicName;
         private readonly ILogger _logger;
@@ -37,10 +36,11 @@ namespace BeerDispenser.Kafka.Core
 
         private void OnConsumerError(IConsumer<string, EventHolder<T>> consumer, Error error)
         {
+
             _logger.LogError("Consumer {name} error: {@error}", _topicName, error);
         }
 
-        public async Task<EventHolder<T>> ConsumeAsync(CancellationToken cancellationToken)
+        public async Task<IReadonlyEventHolder<T>> ConsumeAsync(CancellationToken cancellationToken)
         {
             return await Task.Factory.StartNew(() =>
             {

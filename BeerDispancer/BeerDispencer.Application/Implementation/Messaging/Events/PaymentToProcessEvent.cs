@@ -7,6 +7,7 @@
         public long Amount { get; set; }
         public string Currency { get; set; }
         public string PaymentDescription { get; set; }
-        public Guid PaymentId { get; set; }
+        public Guid DIspenserId { get; set; }
+        public Guid PaymentInitiatedBy { get; set; }
     }
 }

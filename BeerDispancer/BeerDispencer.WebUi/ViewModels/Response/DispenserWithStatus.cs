@@ -9,12 +9,12 @@ namespace BeerDispenser.WebUi.ViewModels.Response
         public Guid Id { get; set; }
         public decimal Volume { get; set; }
         [JsonProperty("status")]
-        public DispenserStatus Status { get; set; }
+        public DispenserStatusDto Status { get; set; }
         public string ReservedFor { get; set; }
 
         public bool IsActive { get; set; }
         public bool AllowReservation =>
-            (string.IsNullOrEmpty(ReservedFor) && Status == DispenserStatus.Closed);
+            (string.IsNullOrEmpty(ReservedFor) && Status == DispenserStatusDto.Closed);
     }
 }
 

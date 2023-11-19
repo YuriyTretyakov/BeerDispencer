@@ -8,7 +8,7 @@ namespace BeerDispenser.Shared
         public DateTimeOffset UpdatedAt { get; set; }
 
         [JsonProperty("status")]
-        public DispenserStatus Status { get; set; }
+        public DispenserStatusDto Status { get; set; }
 
     }
 }

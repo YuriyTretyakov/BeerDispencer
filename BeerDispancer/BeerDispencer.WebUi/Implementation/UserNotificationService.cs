@@ -41,17 +41,18 @@ namespace BeerDispenser.WebUi.Implementation
             _notificationService.Notify(errorMessage);
         }
 
-        public void ShowSuccessNotification()
+        public void ShowSuccessNotification(string message = null)
         {
             Console.WriteLine($"Operation Success");
 
             var errorMessage = new NotificationMessage
             {
-                Summary = "Success",
+                Summary = message?? "Success",
                 CloseOnClick = false,
                 Detail = "Opearion successfully completed",
                 Severity = NotificationSeverity.Success,
-                Duration = 4000
+                Duration = 10000,
+                
             };
             _notificationService.Notify(errorMessage);
         }

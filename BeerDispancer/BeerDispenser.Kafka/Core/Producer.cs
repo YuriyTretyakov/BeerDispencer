@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BeerDispenser.Kafka.Core
 {
-    public class Producer<T> : IProducer<T> where T : class
+    public class Producer<T> :IDisposable where T : class
     {
         private string _broker { get; set; }
 

@@ -6,8 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
-
 namespace BeerDispenser.Controllers
 {
     [Route("api/[controller]")]
@@ -47,10 +45,6 @@ namespace BeerDispenser.Controllers
             var claim = User.Claims.First(x => x.Type == "Id");
             var userId = Guid.Parse(claim.Value);
 
-            var updateCommand = update.ToCommand(id);
-            var result = await _mediator.Send(updateCommand);
-
-
             var withDrawCommand = new ClientOperationsCommand
             {
                 Id = id,
@@ -59,8 +53,14 @@ namespace BeerDispenser.Controllers
                 UserId = userId
             };
 
-            await _mediator.Send(withDrawCommand);
-            return result.Result ? Accepted() : Conflict();
+           var result =  await _mediator.Send(withDrawCommand);
+
+            if (update.Status == DispenserStatusDto.Closed)
+            {
+                return StatusCode(402, result);
+            }
+
+            return Ok(); 
         }
 
 

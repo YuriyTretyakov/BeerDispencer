@@ -35,7 +35,7 @@ else
 
                 <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Status" Title="Status" Width="150px">
                     <EditTemplate Context="DispenserWithStatus">
-                        <RadzenDropDown @bind-Value="DispenserWithStatus.Status" Data="Enum.GetValues(typeof(DispenserStatus))" />
+                        <RadzenDropDown @bind-Value="DispenserWithStatus.Status" Data="Enum.GetValues(typeof(DispenserStatusDto))" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
@@ -71,7 +71,7 @@ else
 
 @code {
 
-    IEnumerable<DispenserStatus> dispenserStatuses = Enum.GetNames(typeof(DispenserStatus)).Cast<DispenserStatus>();
+    IEnumerable<DispenserStatusDto> dispenserStatuses = Enum.GetNames(typeof(DispenserStatusDto)).Cast<DispenserStatusDto>();
     RadzenDataGrid<DispenserWithStatus> _dispensersGrid;
     IEnumerable<DispenserWithStatus> _dispensers;
 
@@ -98,7 +98,7 @@ else
     {
         dispenserToCreate = new DispenserWithStatus
         {
-            Status = BeerDispenser.Shared.DispenserStatus.Closed,
+            Status = BeerDispenser.Shared.DispenserStatusDto.Closed,
         };
         await _dispensersGrid.InsertRow(dispenserToCreate);
     }
@@ -122,7 +122,7 @@ else
     {
         if (dispenserToUpdate is not null)
         {
-            
+
 
             var dispenserToUpdate = new DispenserUpdateModel { Status = dispenser.Status, UpdatedAt = DateTime.UtcNow };
             await _httpClient.PutAsJsonAsync($"/api/Dispenser/{dispenser.Id}/status", dispenserToUpdate);

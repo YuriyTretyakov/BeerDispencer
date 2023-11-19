@@ -7,7 +7,7 @@ namespace BeerDispenser.Application.Implementation.Commands
     public class DispenserUpdateCommand : IRequest<DispenserUpdateResponse>
     {
         public Guid Id { get; set; }
-        public DispenserStatus Status { get; set; }
+        public DispenserStatusDto Status { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
     }
 }

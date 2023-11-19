@@ -1,4 +1,6 @@
 ﻿using System;
+using BeerDispenser.Application.Implementation.Messaging.Events;
+using BeerDispenser.Shared;
 
 namespace BeerDispenser.Application.DTO
 {
@@ -10,6 +12,9 @@ namespace BeerDispenser.Application.DTO
         public DateTime? ClosedAt { get; set; }
         public decimal? FlowVolume { get; set; }
         public decimal? TotalSpent { get; set; }
+        public Guid? PaidBy { get; set; }
+        public PaymentStatusDto? PaymentStatus { get; set; }
+        public string Reason { get; set; }
     }
 }
 

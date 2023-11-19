@@ -2,7 +2,7 @@
 
 namespace BeerDispenser.Shared
 {
-    public enum DispenserStatus
+    public enum DispenserStatusDto
     {
         Opened = 1,
         Closed = 2,

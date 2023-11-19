@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Publishers
 {
-    public class PaymentCompletedPublisher:EventPublisherBase<PaymentCompletedEvent>
+    public class PaymentCompletedPublisher:EventPublisher<PaymentCompletedEvent>
 	{
 		public PaymentCompletedPublisher(ILogger<PaymentCompletedPublisher> logger, KafkaConfig configuration)
 			:base(configuration, nameof(PaymentCompletedEvent), logger)

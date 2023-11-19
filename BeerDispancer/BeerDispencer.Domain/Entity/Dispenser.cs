@@ -7,7 +7,7 @@ namespace BeerDispenser.Domain.Entity
     public sealed class Dispenser : Entity
     {
         public decimal Volume { get; private set; }
-        public DispenserStatus Status { get; private set; }
+        public DispenserStatusDto Status { get; private set; }
         public string ReservedFor { get; private set; }
         public bool IsActive { get; private set; }
 
@@ -20,7 +20,7 @@ namespace BeerDispenser.Domain.Entity
         private Dispenser(
             Guid id,
             decimal volume,
-            DispenserStatus status,
+            DispenserStatusDto status,
             bool isActive,
             IBeerFlowSettings beerFlowSettings = null,
             string reservedFor = null)
@@ -36,7 +36,7 @@ namespace BeerDispenser.Domain.Entity
 
         public Usage Open()
         {
-            if (Status == DispenserStatus.Opened || Status == DispenserStatus.OutOfService)
+            if (Status == DispenserStatusDto.Opened || Status == DispenserStatusDto.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid Dispenser state: {Status}");
             }
@@ -46,7 +46,7 @@ namespace BeerDispenser.Domain.Entity
                 throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
             }
 
-            Status = DispenserStatus.Opened;
+            Status = DispenserStatusDto.Opened;
 
             var usage = Usage.CreateStarted(Id, _beerFlowSettings);
             _usages.Add(usage);
@@ -55,7 +55,7 @@ namespace BeerDispenser.Domain.Entity
 
         public Usage Close()
         {
-            if (Status == DispenserStatus.Closed || Status == DispenserStatus.OutOfService)
+            if (Status == DispenserStatusDto.Closed || Status == DispenserStatusDto.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid Dispenser state: {Status}");
             }
@@ -65,10 +65,16 @@ namespace BeerDispenser.Domain.Entity
                 throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
             }
 
-            Status = DispenserStatus.Closed;
+            Status = DispenserStatusDto.Closed;
 
-            var currentUsage = _usages.First(x => x.ClosedAt == null);
+            var currentUsage = GetRecentUsage();
             currentUsage.SetClose();
+            return currentUsage;
+        }
+
+        public Usage GetRecentUsage()
+        {
+            var currentUsage = _usages.First(x => x.ClosedAt == null);
             return currentUsage;
         }
 
@@ -89,6 +95,7 @@ namespace BeerDispenser.Domain.Entity
             {
                 var entry = new UsageEntry
                 {
+                    Id = x.Id,
                     OpenedAt = x.OpenAt,
                     ClosedAt = x.ClosedAt,
                 };
@@ -104,7 +111,7 @@ namespace BeerDispenser.Domain.Entity
 
         public Usage Reserve(string reservedFor, decimal amount)
         {
-            if (Status == DispenserStatus.Opened || Status == DispenserStatus.OutOfService)
+            if (Status == DispenserStatusDto.Opened || Status == DispenserStatusDto.OutOfService)
             {
                 throw new InvalidOperationException($"Invalid dispencer state: {Status}");
             }
@@ -114,7 +121,7 @@ namespace BeerDispenser.Domain.Entity
                 throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
             }
 
-            Status = DispenserStatus.Reserved;
+            Status = DispenserStatusDto.Reserved;
             ReservedFor = reservedFor;
 
             var usage = Usage.CreateReserved(Id, amount);
@@ -125,14 +132,14 @@ namespace BeerDispenser.Domain.Entity
 
         public static Dispenser CreateNewDispenser(decimal volume, IBeerFlowSettings beerFlowSettings)
         {
-            return new Dispenser(Guid.NewGuid(), volume, DispenserStatus.Closed, true, beerFlowSettings);
+            return new Dispenser(Guid.NewGuid(), volume, DispenserStatusDto.Closed, true, beerFlowSettings);
         }
 
 
         public static Dispenser CreateDispenser(
             Guid id,
             decimal volume,
-            DispenserStatus status,
+            DispenserStatusDto status,
             bool isActive,
             IList<Usage> usages = null,
             IBeerFlowSettings beerFlowSettings = null)

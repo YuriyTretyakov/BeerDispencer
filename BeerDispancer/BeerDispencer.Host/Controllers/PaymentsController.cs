@@ -118,5 +118,18 @@ namespace BeerDispenser.WebApi.Controllers
             return NoContent();
         }
 
+        [Authorize()]
+        [HttpGet("getpaymentstatus/{paymentId}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<ActionResult> PaymentsSuccessCallback(Guid paymentId)
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var paymentStatusQuery = new GetPaymentsStatus { PaymentId = paymentId };
+
+            var result = await _mediator.Send(paymentStatusQuery);
+            return StatusCode((int)result);
+        }
     }
 }

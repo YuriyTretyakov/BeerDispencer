@@ -59,7 +59,7 @@ public class DispencerUnitTests
         //Assert
         dto.Should().NotBeNull();
         dto.Volume.Should().Be(50);
-        dto.Status.Should().Be(DispenserStatus.Closed);
+        dto.Status.Should().Be(DispenserStatusDto.Closed);
 
 
         mockSet.Verify(_ => _.AddAsync(It.IsAny<Dispenser>(), CancellationToken.None), Times.Once);
@@ -75,7 +75,7 @@ public class DispencerUnitTests
         var dispencer = new DispenserDto
         {
             Id = dispencerId,
-            Status = DispenserStatus.Closed,
+            Status = DispenserStatusDto.Closed,
             Volume = 30
         };
 
@@ -96,7 +96,7 @@ public class DispencerUnitTests
         var _sut = new DispenserUpdateHandler(mockUof.Object,
             beerSettings);
 
-        var dispenserUpdateCommand = new DispenserUpdateCommand { Id = dispencerId, Status = DispenserStatus.Opened, UpdatedAt = DateTime.UtcNow };
+        var dispenserUpdateCommand = new DispenserUpdateCommand { Id = dispencerId, Status = DispenserStatusDto.Opened, UpdatedAt = DateTime.UtcNow };
 
         //Act
         var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);
@@ -114,7 +114,7 @@ public class DispencerUnitTests
             .Verify(x => x
             .UpdateAsync(It.Is<DispenserUpdateDto>(
                 x => x.Id == dispencerId &&
-            x.Status == DispenserStatus.Opened)),
+            x.Status == DispenserStatusDto.Opened)),
             Times.Once);
 
         usagesMock
@@ -137,7 +137,7 @@ public class DispencerUnitTests
         var dispencer = new DispenserDto
         {
             Id = dispencerId,
-            Status = DispenserStatus.Opened,
+            Status = DispenserStatusDto.Opened,
             Volume = 30
         };
 
@@ -172,7 +172,7 @@ public class DispencerUnitTests
         var dispenserUpdateCommand = new DispenserUpdateCommand
         {
             Id = dispencerId,
-            Status = DispenserStatus.Closed,
+            Status = DispenserStatusDto.Closed,
             UpdatedAt = DateTime.UtcNow
         };
 
@@ -193,7 +193,7 @@ public class DispencerUnitTests
             .Verify(x => x
             .UpdateAsync(It.Is<DispenserUpdateDto>(
                 x => x.Id == dispencerId &&
-            x.Status == DispenserStatus.Closed)),
+            x.Status == DispenserStatusDto.Closed)),
             Times.Once);
 
         usagesMock
@@ -215,9 +215,9 @@ public class DispencerUnitTests
     }
 
 
-    [TestCase(DispenserStatus.Opened, DispenserStatus.Opened)]
-    [TestCase(DispenserStatus.Closed, DispenserStatus.Closed)]
-    public async Task UpdateDispencerCommand_Status_Is_False_If_Operation_CannotBePErformed(DispenserStatus initialstate, DispenserStatus updateTo)
+    [TestCase(DispenserStatusDto.Opened, DispenserStatusDto.Opened)]
+    [TestCase(DispenserStatusDto.Closed, DispenserStatusDto.Closed)]
+    public async Task UpdateDispencerCommand_Status_Is_False_If_Operation_CannotBePErformed(DispenserStatusDto initialstate, DispenserStatusDto updateTo)
     {
         //Arrange
         var dispencerId = Guid.NewGuid();
@@ -284,7 +284,7 @@ public class DispencerUnitTests
         var dispenserUpdateCommand = new DispenserUpdateCommand
         {
             Id = Guid.NewGuid(),
-            Status = DispenserStatus.Opened,
+            Status = DispenserStatusDto.Opened,
             UpdatedAt = DateTime.UtcNow
         };
         var dto = await _sut.Handle(dispenserUpdateCommand, CancellationToken.None);

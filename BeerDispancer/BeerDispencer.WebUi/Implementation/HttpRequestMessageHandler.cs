@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
+using BeerDispenser.Shared;
 using BeerDispenser.WebUi.Abstractions;
 using Microsoft.AspNetCore.Components;
+using Newtonsoft.Json;
 
 namespace BeerDispenser.WebUi.Implementation
 {
@@ -23,13 +25,19 @@ namespace BeerDispenser.WebUi.Implementation
 
             var response = await base.SendAsync(request, cancellationToken);
             
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                await Task.Run(_notificationService.ShowSuccessNotification);
-               
-            }
-            else
-            {
+                if (response.StatusCode == HttpStatusCode.PaymentRequired)
+                {
+                    Console.WriteLine($"{HttpStatusCode.PaymentRequired} received redirecting");
+
+                    var contentStr = await response.Content.ReadAsStringAsync();
+
+                    var payment = JsonConvert.DeserializeObject<PaymentRequiredDto>(contentStr);
+
+                    _navManager.NavigateTo($"/paymentInProgress/{payment.PaymentId}", false);
+                }
+
                 if (response.StatusCode.Equals(HttpStatusCode.Unauthorized))
                 {
                    

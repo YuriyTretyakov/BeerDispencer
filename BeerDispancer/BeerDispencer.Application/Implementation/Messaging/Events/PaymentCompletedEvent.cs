@@ -1,14 +1,15 @@
 ﻿using BeerDispenser.Kafka.Core;
+using BeerDispenser.Shared;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Events
 {
     public class PaymentCompletedEvent
     {
         public PaymentToProcessEvent OriginalEvent { set;  get; }
-        public PaymentStatus Status { get;  set; }
+        public PaymentStatusDto Status { get;  set; }
         public string Reason { get;  set; }
 
-        public PaymentCompletedEvent(PaymentToProcessEvent originalEvent, PaymentStatus status, string reason = null)
+        public PaymentCompletedEvent(PaymentToProcessEvent originalEvent, PaymentStatusDto status, string reason = null)
         {
             Status = status;
             Reason = reason;

@@ -50,6 +50,9 @@ namespace BeerDispenser.Infrastructure.Persistence
 
             if (entity != null)
             {
+                entity.PaymentStatus = dto.PaymentStatus ?? entity.PaymentStatus;
+                entity.Reason = dto.Reason ?? entity.Reason;
+                entity.PaidBy = dto.PaidBy ?? entity.PaidBy;
                 entity.ClosedAt = dto.ClosedAt ?? entity.ClosedAt;
                 entity.FlowVolume = dto.FlowVolume ?? entity.FlowVolume;
                 entity.TotalSpent = dto.TotalSpent ?? entity.TotalSpent;

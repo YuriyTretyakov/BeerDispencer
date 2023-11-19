@@ -52,13 +52,13 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     _beerFlowSettings);
 
 
-                if (request.Status == DispenserStatus.Opened)
+                if (request.Status == DispenserStatusDto.Opened)
                 {
                     var usageDto = dispenser.Open().ToDto();
                     await _dispencerUof.UsageRepo.AddAsync(usageDto);
                 }
 
-                else if (request.Status == DispenserStatus.Closed)
+                else if (request.Status == DispenserStatusDto.Closed)
                 {
                     var usageDto = dispenser.Close().ToDto();
                     await _dispencerUof.UsageRepo.UpdateAsync(usageDto);
