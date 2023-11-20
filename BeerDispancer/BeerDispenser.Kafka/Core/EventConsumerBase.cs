@@ -20,6 +20,7 @@ namespace BeerDispenser.Kafka.Core
                 BootstrapServers = configuration.GetBroker(),
                 GroupId = "group1",
                 AutoOffsetReset = AutoOffsetReset.Earliest,
+                Debug = "broker, consumer"
             };
 
             _logger.LogInformation("{name}: {@consumerConfig}", nameof(ConsumerConfig), consumerConfig);
