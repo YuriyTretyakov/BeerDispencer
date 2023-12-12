@@ -1,7 +1,8 @@
 ﻿using System;
-namespace BeerDispenser.WebUi.ViewModels.Request
+
+namespace BeerDispenser.Shared
 {
-    public class UserLoginModel
+    public class LoginDto
     {
         public string UserName { get; set; }
         public string Password { get; set; }

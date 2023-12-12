@@ -1,6 +1,4 @@
 ﻿@using BeerDispenser.Shared;
-@using BeerDispenser.WebUi.ViewModels.Request;
-@using BeerDispenser.WebUi.ViewModels.Response;
 @using System.Globalization;
 @inject IHttpClientFactory _httpClientFactory;
 @inject HttpClient _httpClient;
@@ -39,7 +37,7 @@
     private bool all;
     private bool activeonly;
 
-    private DispenserWithStatus[]? dispencers;
+    private DispenserResponseDto[]? dispencers;
     private int currentDisplayMode = 2;
     private Guid? selectedDispenserId;
 
@@ -68,14 +66,14 @@
 
         if (value == 2)
         {
-            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/active"))
                 .OrderBy(x => x.Id)
                 .ToArray();
         }
 
         else if (value == 1)
         {
-            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/all"))
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/all"))
                 .OrderBy(x => x.Id)
                 .ToArray();
         }

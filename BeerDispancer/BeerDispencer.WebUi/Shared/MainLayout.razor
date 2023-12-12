@@ -43,7 +43,7 @@
                         }
                         else
                         {
-                            <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
+                            <RadzenButton Text="Sign In" ButtonStyle="ButtonStyle.Success" Click="@OpenLogin"/>
                         }
                 </div>
             </div>
@@ -56,34 +56,7 @@
 
 </CascadingValue>
 
-<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
 
-<div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Login Form</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="userName" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="userName" placeholder="Enter user name..." autocomplete="off" required @bind-value="username" />
-                </div>
-                <div class="mb-3">
-                    <label for="loginPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="loginPassword" required @bind-value="password" />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" @onclick="(async () => await Login())">Login</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 <RadzenDialog />
 <RadzenNotification />
 <RadzenContextMenu />
@@ -91,62 +64,16 @@
 
 @code {
 
-    private bool show, display;
-
-    private string username, password;
-
-
 
     public async Task OpenLogin()
     {
-        display = true;
-        await Task.Delay(100);
-        show = true;
-        StateHasChanged();
-    }
-
-
-
-    private async Task Close()
-    {
-        show = false;
-        await Task.Delay(500);
-        display = false;
-    }
-
-    private async Task Login()
-    {
-        var result = await AccountService.Login(username, password);
-
-        if (result)
-        {
-            await Close();
-            StateHasChanged();
-            return;
-        }
-
-        username = null;
-        password = null;
+        NavManager.NavigateTo("/login");
     }
 
     protected override async Task OnInitializedAsync()
     {
-
-        //now = await TimeZoneService.GetLocalDateTime(DateTimeOffset.UtcNow);
-        //Token = await LocalStorage.GetStringAsync("user");
-
-        //if (!string.IsNullOrEmpty(Token))
-        //{
-        //    InitClaimsByFromJwt(Token);
-        //}
-        //loggedIn = !string.IsNullOrEmpty(Token);
+        await base.OnInitializedAsync();
+       
     }
-
-
-
-
-
-
-
 
     }

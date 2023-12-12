@@ -1,9 +1,5 @@
 ﻿@using Microsoft.JSInterop;
-@using Newtonsoft.Json;
 @using BeerDispenser.Shared;
-@using BeerDispenser.WebUi.ViewModels.Request;
-@using BeerDispenser.WebUi.ViewModels.Response;
-@using Radzen.Blazor;
 @inject NavigationManager NavManager
 @using Implementation;
 @inject AccountService accountService;
@@ -56,17 +52,17 @@
 }
 else
 {
-    <RadzenDataGrid Data="@dispencers" TItem="DispenserWithStatus" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
+    <RadzenDataGrid Data="@dispencers" TItem="DispenserResponseDto" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
                     AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
         <Columns>
 
-            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Id" Title="Id" Width="150px" />
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />
 
-            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Volume" Title="Volume" Width="150px" />
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Volume" Title="Volume" Width="150px" />
 
-            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="Status" Title="Status" Width="100px" />
-            <RadzenDataGridColumn TItem="DispenserWithStatus" Property="ReservedFor" Title="Reservation" Width="150px" />
-            <RadzenDataGridColumn Visible="@IsNotClientRole" TItem="DispenserWithStatus" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Status" Title="Status" Width="100px" />
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="ReservedFor" Title="Reservation" Width="150px" />
+            <RadzenDataGridColumn Visible="@IsNotClientRole" TItem="DispenserResponseDto" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
                 <Template Context="DispenserWithStatus">
                     <RadzenButton Text="Reserve" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onPrePayClick(DispenserWithStatus.Id))"
                                   @onclick:stopPropagation="true" Visible="DispenserWithStatus.AllowReservation" Size="ButtonSize.Small">
@@ -135,20 +131,20 @@ else
 
         if (requested)
         {
-            dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/active"))
                     .OrderBy(x => x.Id)
                     .ToArray();
         }
     }
 
 
-    private DispenserWithStatus[]? dispencers;
+    private DispenserResponseDto[]? dispencers;
 
     protected override async Task OnInitializedAsync()
     {
         _httpClient = _httpClientFactory.CreateClient("ServerAPI");
 
-        dispencers = (await _httpClient.GetFromJsonAsync<DispenserWithStatus[]>("api/Dispenser/active"))
+        dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/active"))
             .OrderBy(x => x.Id)
             .ToArray();
     }

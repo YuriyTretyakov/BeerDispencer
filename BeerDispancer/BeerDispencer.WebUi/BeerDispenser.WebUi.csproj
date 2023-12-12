@@ -20,14 +20,14 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="ViewModels\" />
     <None Remove="Abstractions\" />
     <None Remove="Implementation\" />
+    <None Remove="ViewModels\Response\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModels\" />
     <Folder Include="Abstractions\" />
     <Folder Include="Implementation\" />
+    <Folder Include="ViewModels\Response\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\css\payments.css" />

@@ -1,11 +1,9 @@
-﻿
-using BeerDispenser.Shared;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace BeerDispenser.WebUi.ViewModels.Response
+namespace BeerDispenser.Shared
 {
-    public class DispenserWithStatus
-	{
+    public class DispenserResponseDto
+    {
         public Guid Id { get; set; }
         public decimal Volume { get; set; }
         [JsonProperty("status")]
@@ -14,7 +12,7 @@ namespace BeerDispenser.WebUi.ViewModels.Response
 
         public bool IsActive { get; set; }
         public bool AllowReservation =>
-            (string.IsNullOrEmpty(ReservedFor) && Status == DispenserStatusDto.Closed);
+            string.IsNullOrEmpty(ReservedFor) && Status == DispenserStatusDto.Closed;
     }
 }
 

@@ -1,0 +1,59 @@
+﻿@page "/login"
+@using Implementation;
+@inject NavigationManager NavManager
+@inject AccountService accountService;
+@inject UserNotificationService NotificationService;
+
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
+    <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
+        <RadzenLogin AllowRegister="true" AllowResetPassword="true" Username="" Password=""
+                     AllowRememberMe="true" RememberMe="@rememberMe"
+                     Login=@(args =>OnLogin(args))
+                     ResetPassword=@(args=>OnResetPassword(args))
+                     Register=@(OnRegister) />
+    </RadzenTemplateForm>
+</RadzenCard>
+
+
+
+@code {
+
+    bool rememberMe = false;
+
+
+    protected override async void OnInitialized()
+    {
+        if (accountService.IsLoggedIn)
+        {
+            NavManager.NavigateTo($"/account");
+        }
+       
+    }
+
+    async Task OnLogin(LoginArgs args)
+    {
+        Console.WriteLine($"Username: {args.Username}, password: {args.Password}, remember me: {args.RememberMe}");
+
+        var (result, details) = await accountService.Login(args.Username, args.Password);
+
+        if (result)
+        {
+            NavManager.NavigateTo("/bar");
+        }
+        else
+        {
+            NotificationService.ShowErrorNotification($"Login failed. {details}");
+        }
+    }
+
+    void OnRegister()
+    {
+        Console.WriteLine("-> Register");
+    }
+
+    void OnResetPassword(string value)
+    {
+        Console.WriteLine($"ResetPassword for user: {value}");
+    }
+    }
+

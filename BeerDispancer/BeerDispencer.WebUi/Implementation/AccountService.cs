@@ -1,12 +1,10 @@
-﻿using System;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using BeerDispenser.Shared;
 using BeerDispenser.WebUi.Abstractions;
-using BeerDispenser.WebUi.ViewModels.Request;
 
 namespace BeerDispenser.WebUi.Implementation
 {
-    
+
 
     public class AccountStateChangedArgs:EventArgs
     {
@@ -56,9 +54,9 @@ namespace BeerDispenser.WebUi.Implementation
             Task.Factory.StartNew(MonitorTokenExpirationAsync, TaskCreationOptions.LongRunning);
         }
 
-        public async Task<bool> Login(string username, string password)
+        public async Task<(bool, string)> Login(string username, string password)
         {
-            var loginModel = new UserLoginModel
+            var loginModel = new LoginDto
             {
                 UserName = username,
                 Password = password
@@ -76,9 +74,9 @@ namespace BeerDispenser.WebUi.Implementation
                      SetAccountProperties(token);
                     RaiseloginEvent();
                 }
-                return true;
+                return (true, string.Empty);
             }
-            return false;
+            return (false, await response.Content.ReadAsStringAsync());
         }
 
         private void RaiseloginEvent()

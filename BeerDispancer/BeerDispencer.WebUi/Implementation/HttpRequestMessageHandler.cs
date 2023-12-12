@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using BeerDispenser.Shared;
 using BeerDispenser.WebUi.Abstractions;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +11,7 @@ namespace BeerDispenser.WebUi.Implementation
         private readonly UserNotificationService _notificationService;
         private readonly ILocalStorage _localStorage;
         private readonly NavigationManager _navManager;
-
+        private readonly IServiceScopeFactory _factory;
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -40,10 +39,18 @@ namespace BeerDispenser.WebUi.Implementation
 
                 if (response.StatusCode.Equals(HttpStatusCode.Unauthorized))
                 {
+
                    
-                    await Task.Run(_notificationService.ShowUnauthorizedNotification);
-                    await _localStorage.RemoveAsync("user");
-                    response.StatusCode = HttpStatusCode.OK;
+                    using var scope = _factory.CreateScope();
+
+                    var accountServcice = scope.ServiceProvider.GetRequiredService<AccountService>();
+
+                    await accountServcice.LogoutAsync();
+                    _navManager.NavigateTo("/login/");
+
+                    _notificationService.ShowUnauthorizedNotification();
+                    // await _localStorage.RemoveAsync("user");
+                    //response.StatusCode = HttpStatusCode.OK;
                 }
                 
                 else
@@ -59,13 +66,16 @@ namespace BeerDispenser.WebUi.Implementation
 
         public HttpRequestMessageHandler(
             UserNotificationService notificationService,
-            ILocalStorage localStorage, NavigationManager navManager
+            ILocalStorage localStorage,
+            NavigationManager navManager,
+            IServiceScopeFactory factory
             )
         {
            
             _notificationService = notificationService;
             _localStorage = localStorage;
             _navManager = navManager;
+            _factory = factory;
         }
     }
 }
