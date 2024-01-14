@@ -1,11 +1,11 @@
 ﻿using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Commands;
 using BeerDispenser.Application;
-using BeerDispenser.Shared;
 using BeerDispenser.Domain.Entity;
 using MediatR;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.Application.Implementation.Handlers
 {

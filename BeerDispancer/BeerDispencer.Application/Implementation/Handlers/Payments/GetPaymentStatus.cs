@@ -2,6 +2,7 @@
 using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.DTO;
 using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Shared.Dto;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Payments
@@ -19,7 +20,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Payments
         {
             var payment = await _dispencerUof.UsageRepo.GetByIdAsync(request.PaymentId);
 
-            return payment?.PaymentStatus == Shared.PaymentStatusDto.Success ? HttpStatusCode.OK : HttpStatusCode.NoContent;
+            return payment?.PaymentStatus == PaymentStatusDto.Success ? HttpStatusCode.OK : HttpStatusCode.NoContent;
         }
     }
 }

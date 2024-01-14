@@ -6,7 +6,7 @@ using BeerDispenser.Infrastructure.Persistence;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Models;
 using BeerDispenser.Infrastructure.Settings;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +28,7 @@ namespace BeerDispenser.Infrastructure
              collection.AddTransient<IUsageRepository, UsageRepository>();
             // collection.AddTransient<IUsageRepository, CachedUsageRepository>();
             collection.AddScoped<IDispencerRepository, DispenserRepository>();
+            collection.AddScoped<IOutboxRepository, OutBoxRepository>();
 
             collection.AddScoped<IPaymentCardRepository, PaymentCardRepository>();
 
@@ -68,9 +69,9 @@ namespace BeerDispenser.Infrastructure
                 if (dbContext.Database.EnsureCreated())
                 {
                     var rolesStore = new RoleStore<IdentityRole>(dbContext);
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Administrator.ToString(), NormalizedName = UserRoles.Administrator.ToString().ToUpper() });
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Operator.ToString(), NormalizedName = UserRoles.Operator.ToString().ToUpper() });
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Client.ToString(), NormalizedName = UserRoles.Client.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Administrator.ToString(), NormalizedName = UserRolesDto.Administrator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Operator.ToString(), NormalizedName = UserRolesDto.Operator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Client.ToString(), NormalizedName = UserRolesDto.Client.ToString().ToUpper() });
 
 
                     var user = new IdentityUser
@@ -94,7 +95,7 @@ namespace BeerDispenser.Infrastructure
 
 
                     using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRoles.Administrator.ToString() });
+                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRolesDto.Administrator.ToString() });
                 }
             }
         }

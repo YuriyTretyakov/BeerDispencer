@@ -1,6 +1,7 @@
 ﻿using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Implementations;
 using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.Domain.Entity
 {

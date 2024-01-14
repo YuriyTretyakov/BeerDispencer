@@ -45,6 +45,13 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 
 builder.Services.AddJWTAuthentication(builder.Configuration);
 
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["OAUTH:Google:ClientId"];
+    googleOptions.ClientSecret = builder.Configuration["OAUTH:Google:Key"];
+    googleOptions.CallbackPath = "/api/auth/google-signin";
+});
+
 builder.Services.AddHealthChecks()
     .AddCheck<ReadyHealthCheck>(nameof(ReadyHealthCheck),
         tags: new[] { "ready" })
@@ -85,8 +92,6 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
-
-//app.Services.GetRequiredService<IEventConsumer<PaymentToProcessEvent>>().StartConsuming(CancellationToken.None);
 
 app.Run();
 

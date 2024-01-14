@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BeerDispenser.Shared
+namespace BeerDispenser.Shared.Dto
 {
     public class DispenserResponseDto
     {

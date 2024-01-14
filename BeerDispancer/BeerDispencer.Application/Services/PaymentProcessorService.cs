@@ -2,7 +2,7 @@
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Kafka.Core;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
@@ -106,7 +106,7 @@ namespace BeerDispenser.Application.Services
 
             catch (Exception ex)
             {
-                var completedEvent = new PaymentCompletedEvent(message.Event, Shared.PaymentStatusDto.Failed, ex.Message);
+                var completedEvent = new PaymentCompletedEvent(message.Event, PaymentStatusDto.Failed, ex.Message);
                 var completedEventHolder = new PaymentCompletedEventHolder(completedEvent, message.RetryCount, message.CorrelationId);
                 await paymentCompletedTrigger.RaiseEventAsync(completedEventHolder, _cancellationToken);
             }

@@ -1,10 +1,10 @@
 ﻿using System;
 using BeerDispenser.Application.Implementation.Messaging.Events;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.Application.DTO
 {
-	public class UsageDto
+    public class UsageDto
 	{
         public Guid Id { get; set; }
         public Guid DispencerId { get; set; }

@@ -9,13 +9,13 @@ using BeerDispenser.Domain.Implementations;
 using BeerDispenser.Infrastructure.Persistence;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Entities;
-using BeerDispenser.Shared;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Stripe.Tax;
+using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.UnitTests;
 

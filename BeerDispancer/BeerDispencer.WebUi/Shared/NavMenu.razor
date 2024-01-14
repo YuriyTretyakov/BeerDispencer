@@ -32,23 +32,23 @@
             </NavLink>
         </div>
 
-        @if (@accountService.Role == BeerDispenser.Shared.UserRoles.Operator)
-        {
+        @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Operator)
+            {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="manage">
                     <span class="oi oi-briefcase" aria-hidden="true"></span> Manage Dispensers
                 </NavLink>
             </div>
         }
-        @if (@accountService.Role == BeerDispenser.Shared.UserRoles.Administrator)
-        {
+        @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Administrator)
+            {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="administration">
                     <span class="oi oi-people" aria-hidden="true"></span> Manage Users
                 </NavLink>
             </div>
         }
-        @if (@accountService.Role != BeerDispenser.Shared.UserRoles.Client)
+        @if (@accountService.Role != BeerDispenser.Shared.Dto.UserRolesDto.Client)
             {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="analytics">

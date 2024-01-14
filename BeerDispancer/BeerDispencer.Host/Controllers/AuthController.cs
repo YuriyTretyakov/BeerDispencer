@@ -4,7 +4,7 @@ using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -48,6 +48,14 @@ namespace BeerDispenser.WebApi.Controllers
         {
             var result = await _mediator.Send(new GetAllUsersQuery());
             return Ok(result);
+        }
+
+       
+        [HttpPost("google-signin")]
+        public async Task<IActionResult> GoogleSignInCallback()
+        {
+           // var result = await _mediator.Send(new GetAllUsersQuery());
+            return Ok();
         }
     }
 }

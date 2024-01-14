@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BeerDispenser.Shared
+namespace BeerDispenser.Shared.Dto
 {
     public enum DispenserStatusDto
     {

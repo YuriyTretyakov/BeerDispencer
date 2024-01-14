@@ -1,10 +1,8 @@
-﻿using System;
-using BeerDispencer.Infrastructure.Persistence.Entities;
+﻿using BeerDispencer.Infrastructure.Persistence.Entities;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Entities;
 using BeerDispenser.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 
 namespace BeerDispenser.Infrastructure.Persistence.Models
@@ -20,7 +18,7 @@ namespace BeerDispenser.Infrastructure.Persistence.Models
         }
 
         public DbSet<PaymentCard> PaymentCards { get ; set; }
-
+        public DbSet<Outbox> Outbox { get; set ; }
         DbSet<Dispenser> IBeerDispencerDbContext.Dispencers { get ; set ; }
        
         DbSet<Usage> IBeerDispencerDbContext.Usage { get; set; }

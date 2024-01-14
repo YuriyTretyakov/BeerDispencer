@@ -1,5 +1,5 @@
 ﻿using BeerDispenser.Application.Implementation.Response;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Commands

@@ -10,6 +10,7 @@ namespace BeerDispenser.Infrastructure.Persistence.Abstractions
         DbSet<Dispenser> Dispencers { get; set; }
         DbSet<Usage> Usage { get; set; }
         DbSet<PaymentCard> PaymentCards { get; set; }
+        DbSet<Outbox> Outbox { get; set; }
         void Dispose();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

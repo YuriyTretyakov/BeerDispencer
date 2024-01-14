@@ -1,4 +1,5 @@
-﻿@using BeerDispenser.Shared;
+﻿@using BeerDispenser.Shared.Dto;
+@using BeerDispenser.Shared;
 @using System.Globalization;
 @inject IHttpClientFactory _httpClientFactory;
 @inject HttpClient _httpClient;
@@ -41,7 +42,7 @@
     private int currentDisplayMode = 2;
     private Guid? selectedDispenserId;
 
-    UsageEntry[]? usageEntries=> usageResponse?.Usages;
+    UsageEntry[]? usageEntries => usageResponse?.Usages;
 
 
     UsageResponse? usageResponse;

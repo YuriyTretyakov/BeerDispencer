@@ -1,4 +1,4 @@
-﻿using BeerDispenser.Shared;
+﻿using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.Application.DTO
 {

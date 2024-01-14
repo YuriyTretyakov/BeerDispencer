@@ -6,8 +6,9 @@ using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
 using BeerDispenser.Kafka.Core;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace BeerDispenser.Application.Implementation.Handlers
 {
@@ -60,24 +61,53 @@ namespace BeerDispenser.Application.Implementation.Handlers
             {
                 var recentUsage = dispenser.Close().ToDto();
 
-                await _dispencerUof.UsageRepo.UpdateAsync(new UsageDto { Id = recentUsage.Id, PaymentStatus = PaymentStatusDto.Pending});
+                EventHolder<PaymentToProcessEvent> paymentEvent;
+                OutboxDto outboxEntry;
 
-                var defaultCard = await _dispencerUof
+                using (var transaction = _dispencerUof.StartTransaction())
+                {
+                    await _dispencerUof.UsageRepo.UpdateAsync(new UsageDto { Id = recentUsage.Id, PaymentStatus = PaymentStatusDto.Pending });
+
+                    var defaultCard = await _dispencerUof
                     .PaymentCardRepository
                     .GetDefaultCard(request.UserId);
 
-                var paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent
-                {
-                    PaymentInitiatedBy = request.UserId,
-                    Amount = (long)recentUsage.TotalSpent * 100,
-                    Currency = "usd",
-                    CustomerId = defaultCard.CustomerId,
-                    CardId = defaultCard.CardId,
-                    DIspenserId = dispencerDto.Id,
-                    PaymentDescription = $"Payment for usage Dispenser {dispencerDto.Id} Amount: {recentUsage.TotalSpent} Volume: {recentUsage.FlowVolume}"
-                });
+                    paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent
+                    {
+                        PaymentInitiatedBy = request.UserId,
+                        Amount = (long)recentUsage.TotalSpent * 100,
+                        Currency = "usd",
+                        CustomerId = defaultCard.CustomerId,
+                        CardId = defaultCard.CardId,
+                        DIspenserId = dispencerDto.Id,
+                        PaymentDescription = $"Payment for usage Dispenser {dispencerDto.Id} Amount: {recentUsage.TotalSpent} Volume: {recentUsage.FlowVolume}"
+                    });
+
+
+                    outboxEntry = new OutboxDto
+                    {
+                        Id = Guid.NewGuid(),
+                        EventType = typeof(EventHolder<PaymentToProcessEvent>).ToString(),
+                        Payload = JsonConvert.SerializeObject(paymentEvent),
+                        CreatedAt = DateTime.UtcNow,
+                        EventState = EventStateDto.Created
+                    };
+
+                    await _dispencerUof.OutboxRepo.AddAsync(outboxEntry);
+
+                    await _dispencerUof.Complete();
+                    _dispencerUof.CommitTransaction();
+                }
+               
 
                 await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
+
+                // how to handle if event sent to messaging but status update in db leads to error?
+
+                outboxEntry.EventState = EventStateDto.Completed;
+                outboxEntry.UpdatedAt = DateTime.UtcNow;
+                await _dispencerUof.OutboxRepo.UpdateAsync(outboxEntry);
+                await _dispencerUof.Complete();
 
                 return new PaymentRequiredDto { PaymentId = recentUsage.Id.ToString() };
             }

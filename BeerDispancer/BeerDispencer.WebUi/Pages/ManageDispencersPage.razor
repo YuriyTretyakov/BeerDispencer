@@ -1,6 +1,7 @@
 ﻿@page "/manage"
 @using ViewModels.Request;
 @using ViewModels.Response;
+@using BeerDispenser.Shared.Dto;
 @using BeerDispenser.Shared;
 @inject IHttpClientFactory _httpClientFactory;
 @inject HttpClient _httpClient;
@@ -97,7 +98,7 @@ else
     {
         dispenserToCreate = new DispenserResponseDto
         {
-            Status = BeerDispenser.Shared.DispenserStatusDto.Closed,
+            Status = BeerDispenser.Shared.Dto.DispenserStatusDto.Closed,
         };
         await _dispensersGrid.InsertRow(dispenserToCreate);
     }

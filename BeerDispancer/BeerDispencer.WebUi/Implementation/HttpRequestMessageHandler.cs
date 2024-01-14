@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using BeerDispenser.WebUi.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;

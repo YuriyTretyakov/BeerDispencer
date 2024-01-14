@@ -1,6 +1,7 @@
 ﻿@page "/account"
 @using Radzen.Blazor;
 @using Implementation;
+@using BeerDispenser.Shared.Dto;
 @using BeerDispenser.Shared;
 @inject IJSRuntime jsRuntime;
 @inject TimeZoneService timeZoneService;
@@ -15,9 +16,9 @@
 
 
 @if (@accountService.IsLoggedIn)
-    {
+{
 
-@*<div hidden="(!@accountService.IsLoggedIn)">*@
+    @*<div hidden="(!@accountService.IsLoggedIn)">*@
 
     <RadzenCard>
         <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Login Details</RadzenText>
@@ -47,17 +48,17 @@
                 <RadzenDataGridColumn TItem="PaymentCardViewModel" Property="Brand" Title="Type" Width="50px">
                     <Template Context="data">
                         @if (data.Brand.Equals("Visa", StringComparison.InvariantCultureIgnoreCase))
-                            {
+                        {
                             <i class="fa fa-cc-visa" style="font-size:48px;color:blue"></i>
-                            }
-                            else if (data.Brand.Equals("MasterCard", StringComparison.InvariantCultureIgnoreCase))
-                            {
+                        }
+                        else if (data.Brand.Equals("MasterCard", StringComparison.InvariantCultureIgnoreCase))
+                        {
                             <i class="fa fa-cc-mastercard" style="font-size: 48px; color: #fbb600"></i>
-                            }
-                            else
-                            {
+                        }
+                        else
+                        {
                             <i class="fa fa-credit-card" style="font-size:48px;color:black"></i>
-                            }
+                        }
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -91,24 +92,24 @@
         <RadzenButton Text="Add Card" Style="text-align: right; margin-top:20px" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onAddCardClick())"
                       @onclick:stopPropagation="true" Size="ButtonSize.Medium" />
     </RadzenCard>
-@*</div>*@
+    @*</div>*@
 
-    }
-    else
-    {
+}
+else
+{
 
-@*<div hidden="@(accountService.IsLoggedIn)">*@
+    @*<div hidden="@(accountService.IsLoggedIn)">*@
     <RadzenCard>
         <RadzenText>Please Login</RadzenText>
         <RadzenButton Style="margin-top:20px" ButtonStyle="ButtonStyle.Success" Text="Login" Click="@(args => mainLayout.OpenLogin())" />
     </RadzenCard>
-@*</!--div>*@
+    @*</!--div>*@
 
 }
 
 @code {
-[CascadingParameter]
-public MainLayout mainLayout { get; set; }
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
 
 
 
@@ -116,34 +117,34 @@ public MainLayout mainLayout { get; set; }
 
 
 
-private IEnumerable<AccountData> _account;
-RadzenDataGrid<AccountData> _accountGrid;
+    private IEnumerable<AccountData> _account;
+    RadzenDataGrid<AccountData> _accountGrid;
 
-private IEnumerable<PaymentCardViewModel> _paymentCards;
-RadzenDataGrid<PaymentCardViewModel> _paymentsGrid;
+    private IEnumerable<PaymentCardViewModel> _paymentCards;
+    RadzenDataGrid<PaymentCardViewModel> _paymentsGrid;
 
-private class AccountData
-{
-    public string UserName { get; set; }
-    public string Token { get; set; }
-    public UserRoles? Role { get; set; }
-    public DateTimeOffset? ValidUndtill { get; set; }
-    public DateTimeOffset? LocalTime { get; set; }
-}
+    private class AccountData
+    {
+        public string UserName { get; set; }
+        public string Token { get; set; }
+        public UserRolesDto? Role { get; set; }
+        public DateTimeOffset? ValidUndtill { get; set; }
+        public DateTimeOffset? LocalTime { get; set; }
+    }
 
 
 
-protected override async Task OnAfterRenderAsync(bool result)
-{
-    await OnInitializedAsync();
-}
+    protected override async Task OnAfterRenderAsync(bool result)
+    {
+        await OnInitializedAsync();
+    }
 
-protected override async Task OnInitializedAsync()
-{
+    protected override async Task OnInitializedAsync()
+    {
 
-  //  accountService.OnAccountStateChanged += OnAccountStateChanged;
+        //  accountService.OnAccountStateChanged += OnAccountStateChanged;
 
-    _account = new List<AccountData>{new AccountData
+        _account = new List<AccountData>{new AccountData
                     {
                         UserName = accountService.UserName,
                         Token = accountService.Token,
@@ -152,61 +153,61 @@ protected override async Task OnInitializedAsync()
                         LocalTime = DateTime.Now
                     } };
 
-    _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
 
-    if (accountService.IsLoggedIn)
-    {
-        _paymentCards = (await _httpClient.GetFromJsonAsync<PaymentCardViewModel[]>("api/Payments/getcards"))
+        if (accountService.IsLoggedIn)
+        {
+            _paymentCards = (await _httpClient.GetFromJsonAsync<PaymentCardViewModel[]>("api/Payments/getcards"))
             .OrderBy(x => x.Created)
             .ToArray();
-    }
-}
-
-private void OnAccountStateChanged(object sender, AccountStateChangedArgs args)
-{
-    Console.WriteLine("Event fired:" + args.IsLoggedIn);
-
-    StateHasChanged();
-}
-
-private async Task CopyToClipboard(string textToCopy)
-{
-    await jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", textToCopy);
-}
-
-private async Task onAddCardClick()
-{
-    NavManager.NavigateTo("AddPayment");
-}
-
-async Task OnDeleteClick(PaymentCardViewModel card)
-{
-    var result = await DialogService.OpenAsync("Are you sure you want to delete this card?", ds =>
-@<RadzenStack Gap="1.5rem">
-    <p>Confirm Delete <b>@card.Brand @card.Last4 @card.AccountHolderName</b>?</p>
-    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-        <RadzenStack Orientation="Orientation.Horizontal">
-            <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="width: 80px;" />
-            <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-        </RadzenStack>
-    </RadzenStack>
-</RadzenStack>);
-
-            if (result == true)
-            {
-                await DeleteRow(card);
-            }
-        }
-        async Task DeleteRow(PaymentCardViewModel card)
-        {
-            await _httpClient.DeleteAsync($"/api/payments/{card.Id}");
-            await OnInitializedAsync();
-        }
-
-        async Task OnSetDefaultClick(PaymentCardViewModel card)
-        {
-            await _httpClient.GetAsync($"/api/payments/{card.Id}/setdefault");
-            await OnInitializedAsync();
         }
     }
+
+    private void OnAccountStateChanged(object sender, AccountStateChangedArgs args)
+    {
+        Console.WriteLine("Event fired:" + args.IsLoggedIn);
+
+        StateHasChanged();
+    }
+
+    private async Task CopyToClipboard(string textToCopy)
+    {
+        await jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", textToCopy);
+    }
+
+    private async Task onAddCardClick()
+    {
+        NavManager.NavigateTo("AddPayment");
+    }
+
+    async Task OnDeleteClick(PaymentCardViewModel card)
+    {
+        var result = await DialogService.OpenAsync("Are you sure you want to delete this card?", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <p>Confirm Delete <b>@card.Brand @card.Last4 @card.AccountHolderName</b>?</p>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="width: 80px;" />
+                    <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenStack>);
+
+if (result == true)
+{
+  await DeleteRow(card);
+}
+}
+async Task DeleteRow(PaymentCardViewModel card)
+{
+await _httpClient.DeleteAsync($"/api/payments/{card.Id}");
+await OnInitializedAsync();
+}
+
+async Task OnSetDefaultClick(PaymentCardViewModel card)
+{
+await _httpClient.GetAsync($"/api/payments/{card.Id}/setdefault");
+await OnInitializedAsync();
+}
+}
 

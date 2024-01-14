@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -72,7 +72,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             };
             claims.Add(new Claim("Id", user.Id));
 
-            var isAdmin = userClaims.Contains(UserRoles.Administrator.ToString());
+            var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 
             var token = new JwtSecurityToken(_jwtSettings.Audience,
                 _jwtSettings.Issuer,

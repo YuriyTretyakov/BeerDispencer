@@ -14,20 +14,20 @@ namespace BeerDispenser.Infrastructure.Persistence
             IBeerDispencerDbContext dbcontext,
             IUsageRepository usageRepository,
             IDispencerRepository dispencerRepository,
-            IPaymentCardRepository paymentCardRepository
-            )
+            IPaymentCardRepository paymentCardRepository,
+            IOutboxRepository outboxRepository)
         {
-
             DispencerRepo = dispencerRepository;
             UsageRepo = usageRepository;
             PaymentCardRepository = paymentCardRepository;
+            OutboxRepo = outboxRepository;
             _dbcontext = dbcontext;
         }
-
 
         public IDispencerRepository DispencerRepo { get; set; }
         public IUsageRepository UsageRepo { get; set; }
         public IPaymentCardRepository PaymentCardRepository { get ; set; }
+        public IOutboxRepository OutboxRepo { get ; set; }
 
         public async Task Complete()
         {

@@ -9,7 +9,8 @@ namespace BeerDispenser.Application.Abstractions
         IDispencerRepository DispencerRepo { get; set; }
 		IUsageRepository UsageRepo { get; set; }
         IPaymentCardRepository PaymentCardRepository { get; set; }
-		Task Complete();
+        IOutboxRepository OutboxRepo { get; set; }
+        Task Complete();
         public TransactionScope StartTransaction();
         public void CommitTransaction();
     }

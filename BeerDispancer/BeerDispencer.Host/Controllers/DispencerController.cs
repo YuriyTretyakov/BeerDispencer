@@ -1,6 +1,7 @@
 ﻿using BeerDispenser.Application.Implementation.Commands;
 using BeerDispenser.Application.Implementation.Queries;
 using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using BeerDispenser.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

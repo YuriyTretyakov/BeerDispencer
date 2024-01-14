@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using BeerDispenser.Shared;
+using BeerDispenser.Shared.Dto;
 using BeerDispenser.WebUi.Abstractions;
 
 namespace BeerDispenser.WebUi.Implementation
@@ -24,7 +24,7 @@ namespace BeerDispenser.WebUi.Implementation
         public string Password { private set; get; }
         public string Token { private set; get; }
         public string UserName { get; private set; }
-        public UserRoles? Role { get; private set; }
+        public UserRolesDto? Role { get; private set; }
         public DateTimeOffset? ValidUntil { get; private set; }
         public DateTimeOffset? Now { get; private set; }
 
@@ -117,7 +117,7 @@ namespace BeerDispenser.WebUi.Implementation
 
 
         private (string Token,
-            UserRoles Role,
+            UserRolesDto Role,
             string Name,
             DateTimeOffset ValidUntil,
             DateTimeOffset ValidUntilLocalTime)
@@ -130,7 +130,7 @@ namespace BeerDispenser.WebUi.Implementation
             var jsonText = System.Text.Encoding.UTF8.GetString(jsonBytes);
             var keyValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonText);
 
-            UserRoles role = UserRoles.Unknown;
+            UserRolesDto role = UserRolesDto.Unknown;
             string username = null;
             DateTimeOffset validUntil = default;
             DateTimeOffset localTime = default;
@@ -139,7 +139,7 @@ namespace BeerDispenser.WebUi.Implementation
             {
                 if (kv.Key.EndsWith("role"))
                 {
-                    role = Enum.Parse<UserRoles>(kv.Value.ToString());
+                    role = Enum.Parse<UserRolesDto>(kv.Value.ToString());
                 }
 
                 if (kv.Key.EndsWith("nameidentifier"))

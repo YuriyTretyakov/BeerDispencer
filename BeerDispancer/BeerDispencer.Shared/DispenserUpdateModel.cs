@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BeerDispenser.Shared.Dto;
+using Newtonsoft.Json;
 namespace BeerDispenser.Shared
 
 {
