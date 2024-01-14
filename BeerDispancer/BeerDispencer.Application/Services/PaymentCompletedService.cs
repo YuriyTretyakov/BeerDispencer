@@ -40,7 +40,7 @@ namespace BeerDispenser.Application.Services
         {
             while (!_cancellationToken.IsCancellationRequested)
             {
-                var message =  await _completedEventConsumer.ConsumeAsync(_cancellationToken);
+                var message = await _completedEventConsumer.ConsumeAsync(_cancellationToken);
 
                 if (message is not null)
                 {
@@ -58,47 +58,44 @@ namespace BeerDispenser.Application.Services
 
             var uow = scope.ServiceProvider.GetRequiredService<IDispencerUof>();
 
-            using var transaction = uow.StartTransaction();
+            using (var transaction = uow.StartTransaction())
+            {
+                _logger.LogInformation("Transaction started");
 
-            _logger.LogInformation("Transaction started");
+                var dispencerDto = await uow
+                  .DispencerRepo
+                  .GetByIdAsync(message.Event.OriginalEvent.DIspenserId);
 
-            var dispencerDto = await uow
-              .DispencerRepo
-              .GetByIdAsync(message.Event.OriginalEvent.DIspenserId);
+                var usagesDto = await uow.UsageRepo.GetByDispencerIdAsync(dispencerDto.Id);
 
-            var usagesDto = await uow.UsageRepo.GetByDispencerIdAsync(dispencerDto.Id);
+                var usages = usagesDto.ToDomain(_beerFlowSettings);
 
-            var usages = usagesDto.ToDomain(_beerFlowSettings);
+                var dispenser = Dispenser.CreateDispenser(
+                    dispencerDto.Id,
+                    dispencerDto.Volume.Value,
+                    dispencerDto.Status.Value,
+                    dispencerDto.IsActive.Value,
+                    usages.ToList(),
+                    _beerFlowSettings);
 
-            var dispenser = Dispenser.CreateDispenser(
-                dispencerDto.Id,
-                dispencerDto.Volume.Value,
-                dispencerDto.Status.Value,
-                dispencerDto.IsActive.Value,
-                usages.ToList(),
-                _beerFlowSettings);
+                var usageDto = dispenser.Close().ToDto();
 
-            var usageDto = dispenser.Close().ToDto();
+                usageDto.PaidBy = message.Event.OriginalEvent.PaymentInitiatedBy;
+                usageDto.PaymentStatus = message.Event.Status;
+                usageDto.Reason = message.Event.Reason;
 
-            usageDto.PaidBy = message.Event.OriginalEvent.PaymentInitiatedBy;
-            usageDto.PaymentStatus = message.Event.Status;
-            usageDto.Reason = message.Event.Reason;
+                await uow.UsageRepo.UpdateAsync(usageDto);
 
-            await uow.UsageRepo.UpdateAsync(usageDto);
+                _logger.LogInformation("Usages table updated {@usage}", usageDto);
 
-            _logger.LogInformation("Usages table updated {@usage}", usageDto);
+                await uow.DispencerRepo.UpdateAsync(dispenser.ToDto());
 
-            await uow.DispencerRepo.UpdateAsync(dispenser.ToDto());
-
-            _logger.LogInformation("dispenser table updated {@usage}", dispenser.ToDto());
-            await uow.Complete();
-
-            _logger.LogInformation("Data saved");
-
-            uow.CommitTransaction();
-            _logger.LogInformation("transaction commited");
-
+                _logger.LogInformation("dispenser table updated {@usage}", dispenser.ToDto());
+                await uow.Complete();
+                uow.CommitTransaction();
+                _logger.LogInformation("Data saved");
+            }
         }
     }
-}
 
+}

@@ -30,7 +30,7 @@ namespace BeerDispenser.Application.Services
         {
             _cancellationToken = stoppingToken;
             _toProcessConsumer.StartConsuming(stoppingToken);
-            ProcessConsuming();
+            _= ProcessConsuming();
         }
 
         private async Task ProcessConsuming()

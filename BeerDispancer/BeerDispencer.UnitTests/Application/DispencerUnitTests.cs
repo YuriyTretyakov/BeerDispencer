@@ -41,11 +41,13 @@ public class DispencerUnitTests
 
         var dispencerRepo = new DispenserRepository(mockContext.Object);
         var paymentsRepo = new PaymentCardRepository(mockContext.Object);
+        var outboxRepo = new OutBoxRepository(mockContext.Object);
 
         var uof = new BeerDispencerUof(mockContext.Object,
             new Mock<IUsageRepository>().Object,
             dispencerRepo,
-            paymentsRepo);
+            paymentsRepo,
+            outboxRepo);
 
         var beerSettings = new BeerFlowSettings { LitersPerSecond = 0.1M, PricePerLiter = 6 };
 

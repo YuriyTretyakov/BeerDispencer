@@ -15,7 +15,7 @@ namespace BeerDispenser.Application.Services
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly PaymentToProcessPublisher _eventsTrigger;
         private readonly ILogger<OutboxEventDispatcher> _logger;
-        private bool _ready;
+        private ManualResetEvent _ready;
 
         public OutboxEventDispatcher(
             IServiceScopeFactory serviceScopeFactory,
@@ -26,15 +26,14 @@ namespace BeerDispenser.Application.Services
             _serviceScopeFactory = serviceScopeFactory;
             _eventsTrigger = eventsTrigger;
             _logger = logger;
-            lifetime.ApplicationStarted.Register(() => _ready = true);
+           
         }
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
-            {
-                if (_ready)
+            { 
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
 
@@ -49,12 +48,12 @@ namespace BeerDispenser.Application.Services
                             await ProcessEventAsync(@event, uow, stoppingToken);
 
                         }
+                        await uow.Complete();
+                        uow.CommitTransaction();
                     }
-                    await uow.Complete();
-                    uow.CommitTransaction();
+                   
+                    await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
                 }
-
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
 
