@@ -12,6 +12,7 @@ using Serilog;
 using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Stripe;
+using BeerDispenser.Infrastructure.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +93,7 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
+await app.UseMigration();
 
 app.Run();
 

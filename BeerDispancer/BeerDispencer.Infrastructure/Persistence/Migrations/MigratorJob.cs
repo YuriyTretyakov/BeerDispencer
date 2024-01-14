@@ -9,7 +9,7 @@ using Npgsql;
 
 namespace BeerDispenser.Infrastructure.Migrations
 {
-	public class MigratorJob:BackgroundService
+	public class MigratorJob
 	{
         private readonly IServiceProvider _service;
         private readonly DBSettings _dbSettings;
@@ -20,7 +20,7 @@ namespace BeerDispenser.Infrastructure.Migrations
             _dbSettings = dbSettings.Value;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task ExecuteAsync()
         {
          
             using (var scope = _service.CreateScope())

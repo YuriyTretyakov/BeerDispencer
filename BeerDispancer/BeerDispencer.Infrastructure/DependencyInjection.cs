@@ -58,7 +58,7 @@ namespace BeerDispenser.Infrastructure
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());
 
-            collection.AddHostedService<MigratorJob>();
+            collection.AddSingleton<MigratorJob>();
         }
 
         public static async Task SeedLoginDbAsync(this WebApplication webapp)
@@ -115,6 +115,11 @@ namespace BeerDispenser.Infrastructure
 
                             .AddEntityFrameworkStores<LoginDbContext>()
                             .AddDefaultTokenProviders();
+        }
+
+        public static async Task UseMigration(this WebApplication app)
+        {
+            await app.Services.GetRequiredService<MigratorJob>().ExecuteAsync();
         }
 
     }
