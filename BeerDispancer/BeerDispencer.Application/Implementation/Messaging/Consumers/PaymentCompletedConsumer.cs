@@ -8,7 +8,8 @@ namespace BeerDispenser.Application.Implementation.Messaging.Consumers
 	{
 		public PaymentCompletedConsumer(
 			ILogger<PaymentCompletedConsumer> logger,
-			KafkaConfig configuration) : base(logger, configuration)
+			KafkaConfig configuration)
+			: base(logger, configuration, nameof(PaymentCompletedConsumer))
 		{
 		}
 

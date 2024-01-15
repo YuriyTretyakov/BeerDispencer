@@ -1,16 +1,19 @@
-﻿using BeerDispenser.Application.Abstractions;
+﻿using System.Threading;
+using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Messaging.Consumers;
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
 using BeerDispenser.Kafka.Core;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentCompletedService : BackgroundService
+    public class PaymentCompletedService : IHostedService
     {
         private readonly ILogger<PaymentCompletedService> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -29,31 +32,42 @@ namespace BeerDispenser.Application.Services
             _beerFlowSettings = beerFlowSettings;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            _cancellationToken = stoppingToken;
-            _completedEventConsumer.StartConsuming(stoppingToken);
-            ProcessConsumingAsync();
+            _completedEventConsumer.StartConsuming(cancellationToken);
+            _completedEventConsumer.OnNewMessage += OnNewMessage;
+
+             Task.Factory.StartNew(
+                () =>
+                {},
+                TaskCreationOptions.LongRunning)
+                .ConfigureAwait(false);
+
+            return Task.CompletedTask;
         }
 
-        private async Task ProcessConsumingAsync()
+        private async void OnNewMessage(object sender, EventConsumerBase<PaymentCompletedEvent>.NewMessageEvent e)
         {
-            while (!_cancellationToken.IsCancellationRequested)
+            if (e.Event.Message is not null)
             {
-                var message = await _completedEventConsumer.ConsumeAsync(_cancellationToken);
-
-                if (message is not null)
-                {
-                    await ProcessPaymentAsync(message);
-                }
+                await ProcessPaymentAsync(e.Event.Message.Value);
+                _completedEventConsumer.Commit(e.Event);
             }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
             _completedEventConsumer.Stop(_cancellationToken);
             _completedEventConsumer.Dispose();
+            return Task.CompletedTask;
         }
 
         private async Task ProcessPaymentAsync(
-            IReadonlyEventHolder<PaymentCompletedEvent> message)
+            EventHolder<PaymentCompletedEvent> message)
         {
+            try
+            {
+
             using var scope = _serviceScopeFactory.CreateScope();
 
             var uow = scope.ServiceProvider.GetRequiredService<IDispencerUof>();
@@ -94,6 +108,13 @@ namespace BeerDispenser.Application.Services
                 await uow.Complete();
                 uow.CommitTransaction();
                 _logger.LogInformation("Data saved");
+
+                }
+            
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Error: {@err}",ex);
             }
         }
     }

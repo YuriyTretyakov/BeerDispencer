@@ -7,7 +7,7 @@
         public DateTimeOffset CreatedAt { get; set; }
         public Guid Key { get;  set; } 
         public T Event { get;  set; }
-
+        public int Offset { get; set; }
         public Guid CorrelationId { get;  set; }
 
         public int RetryCount { get;  set; }

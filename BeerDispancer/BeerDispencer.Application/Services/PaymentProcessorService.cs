@@ -3,13 +3,14 @@ using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Kafka.Core;
 using BeerDispenser.Shared.Dto;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
 
 namespace BeerDispenser.Application.Services
 {
-    public class PaymentInprocessService : BackgroundService
+    public class PaymentInprocessService : IHostedService
     {
         const int MAX_RETRY_COUNT= 5;
 
@@ -26,28 +27,35 @@ namespace BeerDispenser.Application.Services
             _toProcessConsumer = toProcessConsumer;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            _cancellationToken = stoppingToken;
-            _toProcessConsumer.StartConsuming(stoppingToken);
-            _= ProcessConsuming();
+            _toProcessConsumer.StartConsuming(cancellationToken);
+            _toProcessConsumer.OnNewMessage += OnNewMessage;
+
+             Task.Factory.StartNew(
+                () =>
+                {},
+                TaskCreationOptions.LongRunning)
+                .ConfigureAwait(false);
+
+            return Task.CompletedTask;
         }
 
-        private async Task ProcessConsuming()
+        private async void OnNewMessage(object sender, EventConsumerBase<PaymentToProcessEvent>.NewMessageEvent e)
         {
-            while (!_cancellationToken.IsCancellationRequested)
+            if (e.Event?.Message?.Value is not null)
             {
-                var message = await _toProcessConsumer.ConsumeAsync(_cancellationToken);
-
-                if (message is not null)
-                {
-                    using var scope = _serviceScopeFactory.CreateScope();
-                    await ProcessMessageAsync(scope, message);
-                }
+                using var scope = _serviceScopeFactory.CreateScope();
+                await ProcessMessageAsync(scope, e.Event?.Message?.Value);
+                _toProcessConsumer.Commit(e.Event);
             }
+        }
 
-            _toProcessConsumer.Stop(_cancellationToken);
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _toProcessConsumer.Stop(cancellationToken);
             _toProcessConsumer.Dispose();
+            return Task.CompletedTask;
         }
 
         private async Task ProcessMessageAsync(

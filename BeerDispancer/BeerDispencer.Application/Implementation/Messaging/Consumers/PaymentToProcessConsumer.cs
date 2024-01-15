@@ -6,7 +6,8 @@ namespace BeerDispenser.Application.Implementation.Messaging.Consumers
 {
     public class PaymentToProcessConsumer : EventConsumerBase<PaymentToProcessEvent>
 	{
-		public PaymentToProcessConsumer(ILogger<PaymentToProcessConsumer> logger, KafkaConfig configuration) : base(logger, configuration)
+		public PaymentToProcessConsumer(ILogger<PaymentToProcessConsumer> logger, KafkaConfig configuration)
+			: base(logger, configuration, nameof(PaymentToProcessConsumer))
 		{
 		}
 
