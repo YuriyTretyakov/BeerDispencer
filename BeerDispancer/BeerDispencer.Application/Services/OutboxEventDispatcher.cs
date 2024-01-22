@@ -32,14 +32,13 @@ namespace BeerDispenser.Application.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var uow = scope.ServiceProvider.GetRequiredService<IDispencerUof>();
+
             while (!stoppingToken.IsCancellationRequested)
             { 
                 {
-                    using var scope = _serviceScopeFactory.CreateScope();
-
-                    var uow = scope.ServiceProvider.GetRequiredService<IDispencerUof>();
-
-                    using var transaction = uow.StartTransaction();
                     {
                         var eventsToProcess = await uow.OutboxRepo.GetNotProccessedEvents();
 
@@ -48,8 +47,6 @@ namespace BeerDispenser.Application.Services
                             await ProcessEventAsync(@event, uow, stoppingToken);
 
                         }
-                        await uow.Complete();
-                        uow.CommitTransaction();
                     }
                    
                     await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
@@ -57,19 +54,14 @@ namespace BeerDispenser.Application.Services
             }
         }
 
-
         private async Task ProcessEventAsync(OutboxDto outboxEvent, IDispencerUof uow,  CancellationToken cancellationToken)
         {
             try
             {
                 if (outboxEvent.EventType == typeof(EventHolder<PaymentToProcessEvent>).ToString())
                 {
-                    await ProcessPaymentEventAsync(outboxEvent, cancellationToken);
+                    await ProcessPaymentEventAsync(outboxEvent, uow, cancellationToken);
                 }
-
-                outboxEvent.EventState = EventStateDto.Completed;
-                outboxEvent.UpdatedAt = DateTime.UtcNow;
-                await uow.OutboxRepo.UpdateAsync(outboxEvent);
             }
             catch (Exception ex)
             {
@@ -77,10 +69,18 @@ namespace BeerDispenser.Application.Services
             }
         }
 
-        private async Task ProcessPaymentEventAsync(OutboxDto outboxEvent, CancellationToken cancellationToken)
+        private async Task ProcessPaymentEventAsync(OutboxDto outboxEvent, IDispencerUof uow, CancellationToken cancellationToken)
         {
+            using var transaction = uow.StartTransaction();
+
             var paymentEvent = JsonConvert.DeserializeObject<EventHolder<PaymentToProcessEvent>>(outboxEvent.Payload);
             await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
+
+            outboxEvent.EventState = EventStateDto.Completed;
+            outboxEvent.UpdatedAt = DateTime.UtcNow;
+            await uow.OutboxRepo.UpdateAsync(outboxEvent);
+            await uow.Complete();
+            uow.CommitTransaction();
         }
     }
 }

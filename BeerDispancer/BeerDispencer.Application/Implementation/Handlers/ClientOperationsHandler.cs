@@ -72,10 +72,12 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     .PaymentCardRepository
                     .GetDefaultCard(request.UserId);
 
+                    var amount = ((long)recentUsage.TotalSpent * 100) < 50 ? 50 : ((long)recentUsage.TotalSpent * 100);
+
                     paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent
                     {
                         PaymentInitiatedBy = request.UserId,
-                        Amount = (long)recentUsage.TotalSpent * 100,
+                        Amount = amount,
                         Currency = "usd",
                         CustomerId = defaultCard.CustomerId,
                         CardId = defaultCard.CardId,

@@ -41,7 +41,7 @@ namespace BeerDispenser.Infrastructure.Persistence
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromSeconds(5)//TransactionManager.MaximumTimeout
+                Timeout = TransactionManager.MaximumTimeout
             };
             _transaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
             return _transaction;
