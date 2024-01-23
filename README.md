@@ -16,6 +16,8 @@ This product demonstrates author's understanding of:
 - Unit Test coverage with using Moq library
 - Using FluentValidation to validate http requests
 - Using FluentMigrator to allow deployment with less downtime
+- Stripe payments gateway integration
+- Fault-tolerance with Outbox pattern
 
 
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-18%25-critical?style=flat) [![.NET Build And UnitTests](https://github.com/YuriyTretyakov/BeerDispencer/actions/workflows/dotnet.yml/badge.svg?event=workflow_run)](https://github.com/YuriyTretyakov/BeerDispencer/actions/workflows/dotnet.yml)
