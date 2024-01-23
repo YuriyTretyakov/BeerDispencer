@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using FluentMigrator;
 
-namespace BeerDispencer.Infrastructure.Migrations;
+namespace BeerDispenser.Infrastructure.Migrations;
 
 [Migration(1)]
 public class M0001_CreateInitial : Migration
@@ -16,17 +16,20 @@ public class M0001_CreateInitial : Migration
     {
         Create.Table("Dispencer")
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
-            .WithColumn("Volume").AsDouble()
-            .WithColumn("Status").AsInt16();
+            .WithColumn("Volume").AsDecimal()
+            .WithColumn("Status").AsInt16()
+            .WithColumn("ReservedFor").AsAnsiString().Nullable()
+            .WithColumn("IsActive").AsBoolean().NotNullable();
+
 
 
         Create.Table("Usage")
-            .WithColumn("Id").AsInt32().Indexed().NotNullable().Identity()
+            .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("DispencerId").AsGuid().ForeignKey("Dispencer", "Id")
             .WithColumn("OpenAt").AsCustom("timestamp with time zone").NotNullable()
             .WithColumn("ClosedAt").AsCustom("timestamp with time zone").Nullable()
-            .WithColumn("FlowVolume").AsDouble().Nullable()
-            .WithColumn("TotalSpent").AsDouble().Nullable();
+            .WithColumn("FlowVolume").AsDecimal().Nullable()
+            .WithColumn("TotalSpent").AsDecimal().Nullable();
 
 
     }

@@ -1,10 +1,9 @@
 ﻿using System.Transactions;
 
-using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class BeerDispencerUof : IDispencerUof
     {
@@ -14,17 +13,21 @@ namespace BeerDispencer.Infrastructure.Persistence
         public BeerDispencerUof(
             IBeerDispencerDbContext dbcontext,
             IUsageRepository usageRepository,
-            IDispencerRepository dispencerRepository)
+            IDispencerRepository dispencerRepository,
+            IPaymentCardRepository paymentCardRepository,
+            IOutboxRepository outboxRepository)
         {
-
             DispencerRepo = dispencerRepository;
             UsageRepo = usageRepository;
+            PaymentCardRepository = paymentCardRepository;
+            OutboxRepo = outboxRepository;
             _dbcontext = dbcontext;
         }
 
-
         public IDispencerRepository DispencerRepo { get; set; }
         public IUsageRepository UsageRepo { get; set; }
+        public IPaymentCardRepository PaymentCardRepository { get ; set; }
+        public IOutboxRepository OutboxRepo { get ; set; }
 
         public async Task Complete()
         {
@@ -32,17 +35,6 @@ namespace BeerDispencer.Infrastructure.Persistence
         }
 
         private TransactionScope _transaction;
-
-        //public void StartTransaction()
-        //{
-        //    var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted };
-        //    new TransactionScope(transactionOptions,TimeSpan.MaxValue)
-
-        //    _transaction = new TransactionScope(
-        //        new TransactionScopeOption { }
-        //            IsolationLevel =  },TransactionScopeAsyncFlowOption.Enabled
-        //   );
-        //}
 
         public TransactionScope StartTransaction()
         {

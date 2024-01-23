@@ -1,4 +1,4 @@
-﻿namespace BeerDispencer.WebUi.Abstractions
+﻿namespace BeerDispenser.WebUi.Abstractions
 {
     public interface ILocalStorage
     {

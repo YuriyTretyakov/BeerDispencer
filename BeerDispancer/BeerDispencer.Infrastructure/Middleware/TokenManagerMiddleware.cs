@@ -1,10 +1,10 @@
 ﻿using System;
-using BeerDispencer.Infrastructure.Authorization;
+using BeerDispenser.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Net;
-using BeerDispencer.Application.Abstractions;
+using BeerDispenser.Application.Abstractions;
 
-namespace BeerDispencer.Infrastructure.Middleware
+namespace BeerDispenser.Infrastructure.Middleware
 {
     public class TokenManagerMiddleware : IMiddleware
     {

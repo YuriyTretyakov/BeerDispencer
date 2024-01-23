@@ -1,54 +1,137 @@
-﻿@page "/administartion"
-<h1>Administration</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>UserName</th>
-            <th>Roles</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in users)
-        {
-            <tr>
-                <td>@user.UserName </td>
-                <td>@getRolesAsString(@user.Role)</td>
-                <td>
-                    <a href="/edituser/@user.UserName">Edit</a>
-                </td>
-                <td>
-                    <a onclick="DeleteUser(@user.UserName)">Delete</a>
-                </td>
+﻿@page "/administration"
 
-            </tr>
-        }
-    </tbody>
-</table>
+@using BeerDispenser.Shared.Dto;
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
+
+<PageTitle>Account Information</PageTitle>
+
+@if (_users?.Any() == null)
+
+{
+    <p> <em> Loading...</em> </p>
+}
+
+
+<RadzenCard>
+    <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Authorized Users</RadzenText>
+
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add User" Click="@InsertRow" Disabled=@(usertoCreate != null || userToUpdate != null) />
+
+
+    <RadzenDataGrid @ref="_usersGrid" TItem="UserCredentialsDto" AllowAlternatingRows="false" EditMode="DataGridEditMode.Single"
+                    Data="@_users" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="UserCredentialsDto" Property="UserName" Title="UserName" Width="150px">
+                <EditTemplate Context="User">
+                    <RadzenTextBox @bind-Value="User.UserName" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="UserCredentialsDto"  Title="Password" Width="150px">
+                <EditTemplate Context="User">
+                    <RadzenPassword @bind-Value="User.Password" Style="width:100%" />
+                </EditTemplate>
+
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="UserCredentialsDto" Property="Role" Title="Role" Width="150px">
+                <EditTemplate Context="User">
+                    <RadzenDropDown  @bind-Value="User.Role" Data="Enum.GetValues(typeof(UserRolesDto))" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="UserCredentialsDto" Context="User" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="User">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(User))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <Template Context="User">
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(async () => await OnDeleteClick(User))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(User))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="User">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(async (args) => await SaveRow(User))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(User))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
 
 
 @code {
-        [CascadingParameter]
-        public MainLayout mainLayout { get; set; }
 
-    
+    RadzenDataGrid<UserCredentialsDto> _usersGrid;
+    IEnumerable<UserCredentialsDto> _users;
 
+    UserCredentialsDto usertoCreate;
+    UserCredentialsDto userToUpdate;
 
-        BeerDispencer.WebUi.ViewModels.Response.User[]? users;
+    string _password;
 
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDataAsync();
+    }
+
+    private async Task GetDataAsync()
+    {
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+        _users = (await _httpClient.GetFromJsonAsync<UserCredentialsDto[]>("api/auth/getallusers"));
+    }
+
+    async Task InsertRow()
+    {
+        usertoCreate = new UserCredentialsDto
         {
-            var httpclient = new HttpClient { BaseAddress = new Uri("http://localhost:5268") };
-            Console.WriteLine($"Bearer {mainLayout.Token}");
-            httpclient.DefaultRequestHeaders.Add("Authorization", $"Bearer {mainLayout.Token}");
+            Role = UserRolesDto.Client
+        };
+        await _usersGrid.InsertRow(usertoCreate);
+    }
 
-            users = (await httpclient.GetFromJsonAsync<BeerDispencer.WebUi.ViewModels.Response.User[]>("api/auth/getallusers"));
-        }
+    async Task EditRow(UserCredentialsDto user)
+    {
+        await _usersGrid.EditRow(user);
+    }
 
-        private string getRolesAsString(string[] roles)
+    async Task SaveRow(UserCredentialsDto user)
+    {
+        await _usersGrid.UpdateRow(user);
+
+        var createCommand = new UserCredentialsDto
         {
-            return string.Join(',', roles);
-        }
+            UserName = user.UserName,
+            Password = user.Password,
+            Role = user.Role
+        };
+
+        await _httpClient.PostAsJsonAsync($"/api/auth/create", createCommand);
+
+        await GetDataAsync();
+        Reset();
+    }
+
+    async Task OnDeleteClick(UserCredentialsDto user)
+    {
+
+    }
+
+    void CancelEdit(UserCredentialsDto user)
+    {
+        Reset();
+        _usersGrid.CancelEditRow(user);
+    }
+
+    void Reset()
+    {
+        usertoCreate = null;
+        userToUpdate = null;
+    }
 
     }

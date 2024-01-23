@@ -1,0 +1,158 @@
+﻿@using Microsoft.JSInterop;
+@using BeerDispenser.Shared.Dto;
+@using BeerDispenser.Shared;
+@inject NavigationManager NavManager
+@using Implementation;
+@inject AccountService accountService;
+
+
+@page "/bar"
+
+@inject IJSRuntime jsRuntime;
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
+
+<PageTitle>Bar</PageTitle>
+
+<h1>Bar "The Ugly Coyot"</h1>
+
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: 20% 20% 20% 20% 20% 20%;
+        align-items: center;
+        background-image: url('/images/background.png');
+        height: 500px;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    .dispencer {
+        height: "200px";
+        width: "100px";
+        position: absolute;
+        bottom: "15%";
+        align-items: center;
+    }
+
+    .background {
+        max-width: inherit;
+        max-height: inherit;
+        height: inherit;
+        width: inherit;
+        object-fit: cover;
+    }
+</style>
+
+@if (dispencers == null)
+{
+    <p> <em> Loading...</em> </p>
+}
+else
+{
+    <RadzenDataGrid Data="@dispencers" TItem="DispenserResponseDto" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
+                    AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
+        <Columns>
+
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />
+
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Volume" Title="Volume" Width="150px" />
+
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Status" Title="Status" Width="100px" />
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="ReservedFor" Title="Reservation" Width="150px" />
+            <RadzenDataGridColumn Visible="@IsNotClientRole" TItem="DispenserResponseDto" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
+                <Template Context="DispenserWithStatus">
+                    <RadzenButton Text="Reserve" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onPrePayClick(DispenserWithStatus.Id))"
+                                  @onclick:stopPropagation="true" Visible="DispenserWithStatus.AllowReservation" Size="ButtonSize.Small">
+                    </RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+
+    </RadzenDataGrid>
+
+
+    <div class="container">
+        @foreach (var dispencer in dispencers)
+        {
+            @if (dispencer.Status == DispenserStatusDto.Closed)
+            {
+                <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
+                    <img style="bottom:15%" class="dispencer" src="/images/kran_regular.png" alt="BeerDispencer" height="200px" width="100px" />
+                </div>
+            }
+            @if (dispencer.Status == DispenserStatusDto.Opened)
+            {
+                <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
+                    <img class="dispencer" style="bottom:15%" src="/images/kran_inuse.png" alt="BeerDispencer" height="200px" width="100px" />
+                </div>
+            }
+            @if (dispencer.Status == DispenserStatusDto.Reserved)
+            {
+                <div>
+                    <img class="dispencer" style="bottom:15%" src="/images/kran_reserved.png" alt="BeerDispencer" height="200px" width="100px" />
+                </div>
+            }
+        }
+    </div>
+
+}
+
+
+
+@code {
+
+    private bool IsNotClientRole => accountService.Role != UserRolesDto.Client;
+
+    private async Task onDispencerClick(Guid id, DispenserStatusDto status)
+    {
+        bool requested = false;
+        var update = new DispenserUpdateModel
+        {
+            Status = status == DispenserStatusDto.Closed ?
+            DispenserStatusDto.Opened :
+            DispenserStatusDto.Closed,
+            UpdatedAt = DateTimeOffset.UtcNow
+        };
+
+
+        if (accountService.Role == UserRolesDto.Client)
+        {
+            await _httpClient.PostAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/clientChangeStatus", update);
+            requested = true;
+        }
+        else if (accountService.Role == UserRolesDto.Operator)
+        {
+            await _httpClient.PutAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/status", update);
+            requested = true;
+        }
+
+        if (requested)
+        {
+            dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/active"))
+                    .OrderBy(x => x.Id)
+                    .ToArray();
+        }
+    }
+
+
+    private DispenserResponseDto[]? dispencers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+
+        dispencers = (await _httpClient.GetFromJsonAsync<DispenserResponseDto[]>("api/Dispenser/active"))
+            .OrderBy(x => x.Id)
+            .ToArray();
+    }
+
+    private async Task onPrePayClick(Guid id)
+    {
+        NavManager.NavigateTo("AddPayment");
+    }
+}
+

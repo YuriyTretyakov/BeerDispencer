@@ -1,0 +1,40 @@
+﻿
+
+@inject NotificationService NotificationService
+
+@code {
+
+
+    public void ShowUnauthorizedNotification()
+    {
+        var errorMessage = new NotificationMessage {
+            Summary = "Authentication error",
+            Detail = "You have to login to continue",
+            Severity = NotificationSeverity.Warning };
+    }
+
+    void ShowErrorNotification(string error)
+    {
+        var errorMessage = new NotificationMessage {
+            Summary = "Error",
+            CloseOnClick = true,
+            Detail = error,
+            Severity = NotificationSeverity.Error };
+
+        NotificationService.Notify(errorMessage);
+    }
+
+    void ShowSuccessNotification()
+    {
+        var errorMessage = new NotificationMessage {
+            Summary = "Success",
+            CloseOnClick = false,
+            Detail = "Opearion successfully completed",
+            Severity = NotificationSeverity.Success };
+        NotificationService.Notify(errorMessage);
+        Console.WriteLine($"Operation success");
+    }
+
+
+}
+

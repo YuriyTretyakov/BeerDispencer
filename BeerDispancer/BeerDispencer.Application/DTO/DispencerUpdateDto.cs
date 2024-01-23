@@ -1,9 +1,9 @@
 ﻿using System;
-using BeerDispancer.Application.DTO;
+using BeerDispenser.Application.DTO;
 
-namespace BeerDispencer.Application.DTO
+namespace BeerDispenser.Application.DTO
 {
-	public class DispencerUpdateDto:DispencerDto
+	public class DispenserUpdateDto:DispenserDto
 	{
         public DateTime UpdatedAt { get; set; }
     }

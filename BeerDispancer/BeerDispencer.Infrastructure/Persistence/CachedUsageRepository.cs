@@ -1,10 +1,8 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Entities;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class CachedUsageRepository : IUsageRepository
     {
@@ -21,7 +19,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return _decorated.AddAsync(dto);
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(Guid id)
         {
             return _decorated.DeleteAsync(id);
         }
@@ -44,13 +42,13 @@ namespace BeerDispencer.Infrastructure.Persistence
                 nameof(GetByDispencerIdAsync),
                 x =>
                 {
-                    x.SetAbsoluteExpiration(TimeSpan.FromMilliseconds(1));
+                    x.SetAbsoluteExpiration(TimeSpan.FromMilliseconds(5));
                     return _decorated.GetByDispencerIdAsync(dispencerId);
                 }
               );
         }
 
-        public Task<UsageDto> GetByIdAsync(int id)
+        public Task<UsageDto> GetByIdAsync(Guid id)
         {
             return _memoryCache.GetOrCreateAsync(
                 nameof(GetByIdAsync),

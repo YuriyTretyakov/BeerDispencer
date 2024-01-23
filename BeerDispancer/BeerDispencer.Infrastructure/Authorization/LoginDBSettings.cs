@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BeerDispencer.Infrastructure.Authorization
+namespace BeerDispenser.Infrastructure.Authorization
 {
 	public class LoginDBSettings
 	{

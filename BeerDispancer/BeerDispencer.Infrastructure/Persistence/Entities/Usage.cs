@@ -1,20 +1,25 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BeerDispenser.Application.Implementation.Messaging.Events;
+using BeerDispenser.Shared.Dto;
 
-namespace BeerDispencer.Infrastructure.Persistence.Entities
+namespace BeerDispenser.Infrastructure.Persistence.Entities
 {
     [Table("Usage")]
     public class Usage
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [ForeignKey("Dispencer.Id")]
         public Guid DispencerId { get; set; }
-        public DateTime? OpenAt { get; set; }
+        public DateTime OpenAt { get; set; }
         public DateTime? ClosedAt { get; set; }
-        public double? FlowVolume { get; set; }
-        public double? TotalSpent { get; set; }
+        public decimal? FlowVolume { get; set; }
+        public decimal? TotalSpent { get; set; }
+        public Guid? PaidBy { get; set; }
+        public PaymentStatusDto? PaymentStatus { get; set; }
+        public string Reason { get; set; }
     }
 }
 

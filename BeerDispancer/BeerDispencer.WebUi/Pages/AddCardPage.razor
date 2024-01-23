@@ -1,0 +1,72 @@
+﻿@page "/AddPayment"
+@using Implementation;
+
+@inject IJSRuntime jsRuntime;
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+@inject AccountService accountService;
+
+<title>Add Payment</title>
+
+<link href="css/payments.css" rel="stylesheet" />
+<RadzenCard>
+
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Add Debit or Credit card</RadzenText>
+    <RadzenRow Gap="1rem" JustifyContent="JustifyContent.Center">
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <input id="jwttoken" type="hidden" @bind-value ="jwttoken" />
+                <form action="CardAddedSuccesfully" method="GET" class="paymentform">
+                    <div class="group">
+                        <label class="paymentlabel">
+                            <span>Card number</span>
+                            <div id="card-number-element" class="field"></div>
+                        </label>
+                        <label class="paymentlabel">
+                            <span>Expiry date</span>
+                            <div id="card-expiry-element" class="field"></div>
+                        </label>
+                        <label class="paymentlabel">
+                            <span>CVC</span>
+                            <div id="card-cvc-element" class="field"></div>
+                        </label>
+                        <label class="paymentlabel">
+                            <span>Account Holder</span>
+                            <input type="text" autocomplete="on" id="accountholder-element" class="field" />
+                        </label>
+                        <label class="paymentlabel">
+                            <span>Email</span>
+                            <input type="text" autocomplete="on" autocompletetype="email" id="email-element" class="field" />
+                        </label>
+                    </div>
+                    <button class="paymentbutton" type="submit">Add Card</button>
+                    <div class="outcome">
+                        <div class="error"></div>
+                        <div class="success">
+                        </div>
+                    </div>
+                </form>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+@code {
+
+    private string GetCreateTokenBeUrl => $"{client.BaseAddress}api/payments/addcard";
+    private HttpClient client;
+    private string jwttoken;
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        var pkey = "pk_test_51NpWMxBwrd9g8wB1Kl1fBZ4P25KtfUwBobeHU8WPORfQBQtdXb446cMP3R7DpSxiNgRSGMPUfu7hdGQpNokBOiRx00VhUbVBJa";
+        await jsRuntime.InvokeVoidAsync("onPaymentPageInit", pkey, GetCreateTokenBeUrl);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = _httpClientFactory.CreateClient("ServerAPI");
+        jwttoken = accountService.Token;
+    }
+    }
+

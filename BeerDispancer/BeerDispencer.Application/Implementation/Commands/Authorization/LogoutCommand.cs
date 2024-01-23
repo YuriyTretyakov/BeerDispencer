@@ -1,8 +1,8 @@
 ﻿using System;
-using BeerDispencer.Application.Implementation.Response;
+using BeerDispenser.Application.Implementation.Response;
 using MediatR;
 
-namespace BeerDispencer.Application.Implementation.Commands.Authorization
+namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
 	public class LogoutCommand:IRequest<AuthResponseDto>
 	{

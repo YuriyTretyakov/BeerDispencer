@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
-namespace BeerDispencer.WebApi.HealthChecks
+namespace BeerDispenser.WebApi.HealthChecks
 {
 	public class ReadyHealthCheck: IHealthCheck
 	{

@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Implementation;
+
+@inject AccountService accountService; 
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">BeerDispencer</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -20,30 +24,39 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Bar
             </NavLink>
         </div>
+
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="account">
                 <span class="oi oi-key" aria-hidden="true"></span> Account
             </NavLink>
         </div>
 
-        @if (@mainLayout.Role == "service")
-        {
+        @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Operator)
+            {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="manage">
-                    <span class="oi oi-key" aria-hidden="true"></span> Manage
+                    <span class="oi oi-briefcase" aria-hidden="true"></span> Manage Dispensers
                 </NavLink>
             </div>
         }
-        @if (@mainLayout.Role == "admin")
-        {
+        @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Administrator)
+            {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="administartion">
-                    <span class="oi oi-key" aria-hidden="true"></span> Administrate
+                <NavLink class="nav-link" href="administration">
+                    <span class="oi oi-people" aria-hidden="true"></span> Manage Users
                 </NavLink>
             </div>
         }
-
-    </nav>
+        @if (@accountService.Role != BeerDispenser.Shared.Dto.UserRolesDto.Client)
+            {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="analytics">
+                    <span class="oi oi-bar-chart" aria-hidden="true"></span> Analytics
+                </NavLink>
+            </div>
+            }
+        </nav>
 </div>
 
 @code {

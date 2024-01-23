@@ -1,14 +1,12 @@
-﻿using System.Data;
-using BeerDispancer.Application.Implementation.Queries;
-using BeerDispancer.Application.Implementation.Response;
-using BeerDispencer.Application.Implementation.Response;
+﻿using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Shared.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeerDispencer.Application.Implementation.Handlers.Authorization
+namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-    public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, User[]>
+    public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, UserCredentialsDto[]>
     {
         private readonly UserManager<IdentityUser> _userManager;
 
@@ -17,20 +15,22 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
             _userManager = userManager;
         }
 
-        public async Task<User[]> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<UserCredentialsDto[]> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _userManager.Users.ToListAsync();
 
-            List<User> userWithRoles = new List<User>();
+            List<UserCredentialsDto> userWithRoles = new List<UserCredentialsDto>();
 
             foreach (var user in users)
             {
-                userWithRoles.Add(new User
+                var roleStr = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                userWithRoles.Add(new UserCredentialsDto
                 {
 
                     UserName = user.UserName,
-                    Role = (await _userManager.GetRolesAsync(user)).ToArray()
-                });
+                    Role = Enum.Parse<UserRolesDto>(roleStr)
+                }); ;
 
                 
             }

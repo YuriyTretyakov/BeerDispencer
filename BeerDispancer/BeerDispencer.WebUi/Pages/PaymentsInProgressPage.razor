@@ -1,0 +1,70 @@
+﻿@page "/paymentInProgress/{Id:guid}"
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+@inject NavigationManager NavManager;
+
+@inject UserNotificationService NotificationService;
+
+@using BeerDispenser.WebUi.Implementation;
+@using System.Net;
+
+<RadzenCard>
+    <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-12">
+
+        <RadzenImage Path="images/paymentsinprogress.gif" Style="width: 15rem;" />
+
+    </RadzenStack>
+    <RadzenText TextStyle="TextStyle.DisplayH6" TextAlign="TextAlign.Center">Please, wait till payment to be processed...</RadzenText>
+</RadzenCard>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    DateTimeOffset timeout;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timeout = DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(60));
+        }
+
+        HttpStatusCode lastReceivedCode = HttpStatusCode.Unused;
+
+        while (timeout > DateTimeOffset.UtcNow)
+        {
+            var result = await _httpClient.GetAsync($"api/payments/getpaymentstatus/{Id.ToString()}");
+
+            lastReceivedCode = result.StatusCode;
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                break;
+            }
+            await Task.Delay(3000);
+        }
+
+        if (lastReceivedCode == System.Net.HttpStatusCode.OK)
+        {
+
+            NotificationService.ShowSuccessNotification("Payment succesfull");
+            NavManager.NavigateTo("/bar");
+        }
+
+        else
+        {
+
+            NotificationService.ShowErrorNotification("Payment failed. Fix your payment method");
+            NavManager.NavigateTo("/account");
+        }
+
+    }
+    }
+

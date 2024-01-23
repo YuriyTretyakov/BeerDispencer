@@ -1,34 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FluentMigrator.Runner;
-using FluentMigrator.Runner.Initialization;
-using BeerDispencer.Infrastructure.Settings;
-using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.WebApi.Extensions;
+﻿using BeerDispenser.Infrastructure.Persistence.Models;
+using BeerDispenser.WebApi.Extensions;
 using MediatR;
-using System.Reflection;
 using FluentValidation;
-using Beerdispancer.Domain.Implementations;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.WebApi;
-using BeerDispancer.Application.Implementation.PipelineBehavior;
-using BeerDispancer.Application.Implementation.Validation;
-using BeerDispancer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Persistence;
-using BeerDispancer.Application.Implementation;
-using BeerDispancer.Infrastructure;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using BeerDispencer.Infrastructure.Authorization;
-using BeerDispencer.Domain.Implementations;
-using BeerDispencer.Infrastructure.Middleware;
+using BeerDispenser.Application.Implementation.PipelineBehavior;
+using BeerDispenser.Application.Implementation.Validation;
+using BeerDispenser.Application.Implementation;
+using BeerDispenser.Infrastructure;
+using BeerDispenser.Domain.Implementations;
+using BeerDispenser.Infrastructure.Middleware;
 using Serilog;
-using Microsoft.Extensions.Configuration;
-using BeerDispencer.WebApi.HealthChecks;
+using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Stripe;
+using BeerDispenser.Infrastructure.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +20,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
 
 
-//builder.Services.AddEntityFrameworkNpgsql();
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 builder.Services.AddSettings(builder.Configuration);
 
+builder.Services.AddMessaging();
+
+
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDomain(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -57,6 +45,13 @@ builder.Services.AddHealthChecks().AddDbContextCheck<BeerDispencerDbContext>();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddJWTAuthentication(builder.Configuration);
+
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["OAUTH:Google:ClientId"];
+    googleOptions.ClientSecret = builder.Configuration["OAUTH:Google:Key"];
+    googleOptions.CallbackPath = "/api/auth/google-signin";
+});
 
 builder.Services.AddHealthChecks()
     .AddCheck<ReadyHealthCheck>(nameof(ReadyHealthCheck),
@@ -98,6 +93,7 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
+await app.UseMigration();
 
 app.Run();
 

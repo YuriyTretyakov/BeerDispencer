@@ -1,16 +1,12 @@
-﻿using System;
-using System.Runtime;
-using Beerdispancer.Domain.Implementations;
-using BeerDispancer.Application.Abstractions;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Authorization;
-using BeerDispencer.Infrastructure.Middleware;
-using BeerDispencer.Infrastructure.Migrations;
-using BeerDispencer.Infrastructure.Persistence;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Models;
-using BeerDispencer.Infrastructure.Settings;
+﻿using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Authorization;
+using BeerDispenser.Infrastructure.Middleware;
+using BeerDispenser.Infrastructure.Migrations;
+using BeerDispenser.Infrastructure.Persistence;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Models;
+using BeerDispenser.Infrastructure.Settings;
+using BeerDispenser.Shared.Dto;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BeerDispancer.Infrastructure
+namespace BeerDispenser.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -29,14 +25,17 @@ namespace BeerDispancer.Infrastructure
             collection.AddDbContext<BeerDispencerDbContext>();
             collection.AddTransient<IBeerDispencerDbContext>(c => c.GetRequiredService<BeerDispencerDbContext>());
 
-            collection.AddScoped<UsageRepository>();
-            collection.AddScoped<IUsageRepository, CachedUsageRepository>();
-            collection.AddScoped<IDispencerRepository, DispencerRepository>();
+             collection.AddTransient<IUsageRepository, UsageRepository>();
+            // collection.AddTransient<IUsageRepository, CachedUsageRepository>();
+            collection.AddScoped<IDispencerRepository, DispenserRepository>();
+            collection.AddScoped<IOutboxRepository, OutBoxRepository>();
+
+            collection.AddScoped<IPaymentCardRepository, PaymentCardRepository>();
 
             collection.AddTransient<IDispencerUof, BeerDispencerUof>();
             collection.AddMigrations(configuration);
 
-            collection.AddDbContext<LoginDbContext>();
+            collection.AddDbContext<LoginDbContext>(options => options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             collection.AddTransient<ILoginDbContext>(c => c.GetRequiredService<LoginDbContext>());
             
             collection.AddIdentity();
@@ -44,6 +43,7 @@ namespace BeerDispancer.Infrastructure
             collection.AddTransient<ITokenManager, TokenManager>();
             collection.AddTransient<TokenManagerMiddleware>();
             collection.AddMemoryCache();
+
         }
 
         public static void AddMigrations(this IServiceCollection collection, ConfigurationManager configuration)
@@ -53,12 +53,12 @@ namespace BeerDispancer.Infrastructure
             collection
            .AddFluentMigratorCore()
            .ConfigureRunner(x => x.AddPostgres().WithGlobalConnectionString(dbSettings.ConnectionString)
-           .ScanIn(typeof(BeerDispencer.Infrastructure.Migrations.M0001_CreateInitial).Assembly)
+           .ScanIn(typeof(BeerDispenser.Infrastructure.Migrations.M0002_PaymentsAdded).Assembly)
            .For
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());
 
-            collection.AddHostedService<MigratorJob>();
+            collection.AddSingleton<MigratorJob>();
         }
 
         public static async Task SeedLoginDbAsync(this WebApplication webapp)
@@ -69,8 +69,9 @@ namespace BeerDispancer.Infrastructure
                 if (dbContext.Database.EnsureCreated())
                 {
                     var rolesStore = new RoleStore<IdentityRole>(dbContext);
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Admin, NormalizedName = UserRoles.Admin.ToUpper() });
-                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRoles.Service, NormalizedName = UserRoles.Service.ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Administrator.ToString(), NormalizedName = UserRolesDto.Administrator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Operator.ToString(), NormalizedName = UserRolesDto.Operator.ToString().ToUpper() });
+                    await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Client.ToString(), NormalizedName = UserRolesDto.Client.ToString().ToUpper() });
 
 
                     var user = new IdentityUser
@@ -94,15 +95,13 @@ namespace BeerDispancer.Infrastructure
 
 
                     using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
-                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRoles.Admin });
+                    var result = await _userManager.AddToRolesAsync(user, new[] { UserRolesDto.Administrator.ToString() });
                 }
             }
         }
 
         public static void AddIdentity(this IServiceCollection collection)
         {
-
-
             collection.AddIdentity<IdentityUser, IdentityRole>(opt =>
                 {
                     opt.SignIn.RequireConfirmedAccount = false;
@@ -116,6 +115,11 @@ namespace BeerDispancer.Infrastructure
 
                             .AddEntityFrameworkStores<LoginDbContext>()
                             .AddDefaultTokenProviders();
+        }
+
+        public static async Task UseMigration(this WebApplication app)
+        {
+            await app.Services.GetRequiredService<MigratorJob>().ExecuteAsync();
         }
 
     }

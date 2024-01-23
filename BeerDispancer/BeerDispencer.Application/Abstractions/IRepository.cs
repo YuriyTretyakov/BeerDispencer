@@ -1,13 +1,12 @@
-﻿using System;
-namespace BeerDispencer.Application.Abstractions
+﻿namespace BeerDispenser.Application.Abstractions
 {
-	public interface IRepository<T, TIdType> where T: class
+    public interface IRepository<T> where T: class
 	{
 		Task<IEnumerable<T>> GetAllAsync();
-		Task<T> GetByIdAsync(TIdType id);
+		Task<T> GetByIdAsync(Guid id);
 		Task<T> AddAsync(T dto);
 		Task UpdateAsync(T dto);
-		Task DeleteAsync(TIdType id);
+		Task DeleteAsync(Guid id);
 	}
 }
 

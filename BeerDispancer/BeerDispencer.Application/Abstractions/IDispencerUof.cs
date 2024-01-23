@@ -1,17 +1,16 @@
-﻿using System;
-using System.Transactions;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Application.DTO;
+﻿using System.Transactions;
+using BeerDispenser.Application.Abstractions;
 
 
-namespace BeerDispancer.Application.Abstractions
+namespace BeerDispenser.Application.Abstractions
 {
-	public interface IDispencerUof : IDisposable
+    public interface IDispencerUof : IDisposable
 	{
         IDispencerRepository DispencerRepo { get; set; }
 		IUsageRepository UsageRepo { get; set; }
-		Task Complete();
+        IPaymentCardRepository PaymentCardRepository { get; set; }
+        IOutboxRepository OutboxRepo { get; set; }
+        Task Complete();
         public TransactionScope StartTransaction();
         public void CommitTransaction();
     }

@@ -1,13 +1,11 @@
-﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Infrastructure.Extensions;
-using BeerDispencer.Infrastructure.Persistence.Abstractions;
-using BeerDispencer.Infrastructure.Persistence.Entities;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Infrastructure.Extensions;
+using BeerDispenser.Infrastructure.Persistence.Abstractions;
+using BeerDispenser.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace BeerDispencer.Infrastructure.Persistence
+namespace BeerDispenser.Infrastructure.Persistence
 {
     public class UsageRepository : IUsageRepository
     {
@@ -35,7 +33,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return entityList.Cast<UsageDto>();
         }
 
-        public async Task<UsageDto> GetByIdAsync(int id)
+        public async Task<UsageDto> GetByIdAsync(Guid id)
         {
             var entity = await _dbcontext
                         .Usage
@@ -52,6 +50,9 @@ namespace BeerDispencer.Infrastructure.Persistence
 
             if (entity != null)
             {
+                entity.PaymentStatus = dto.PaymentStatus ?? entity.PaymentStatus;
+                entity.Reason = dto.Reason ?? entity.Reason;
+                entity.PaidBy = dto.PaidBy ?? entity.PaidBy;
                 entity.ClosedAt = dto.ClosedAt ?? entity.ClosedAt;
                 entity.FlowVolume = dto.FlowVolume ?? entity.FlowVolume;
                 entity.TotalSpent = dto.TotalSpent ?? entity.TotalSpent;
@@ -59,7 +60,7 @@ namespace BeerDispencer.Infrastructure.Persistence
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(Guid id)
         {
             return Task.FromResult(_dbcontext
                .Usage.Remove(new Usage { Id = id }));

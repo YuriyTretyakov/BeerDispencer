@@ -1,10 +1,9 @@
-﻿using System;
-using BeerDispancer.Application.Implementation.Response;
+﻿using BeerDispenser.Shared;
 using MediatR;
 
-namespace BeerDispancer.Application.Implementation.Queries
+namespace BeerDispenser.Application.Implementation.Queries
 {
-	public class GetAllSpendingsQuery: IRequest<UsageResponse>
+    public class GetAllSpendingsQuery: IRequest<UsageResponse>
 	{
 		public Guid DispencerId { get; set; }
 	}

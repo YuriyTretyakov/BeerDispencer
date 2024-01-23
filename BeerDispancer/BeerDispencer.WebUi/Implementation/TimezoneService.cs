@@ -1,28 +1,30 @@
 ﻿using System;
 using Microsoft.JSInterop;
 
-namespace BeerDispencer.WebUi.Implementation
+namespace BeerDispenser.WebUi.Implementation
 {
     public sealed class TimeZoneService
     {
         private readonly IJSRuntime _jsRuntime;
 
-        public TimeSpan? UserOffset;
+        private TimeSpan? _userOffset;
 
         public TimeZoneService(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;
+
         }
 
-        public async ValueTask<DateTimeOffset> GetLocalDateTime(DateTimeOffset dateTime)
+        public async Task<TimeSpan?> GetUTCOffset()
         {
-            if (UserOffset == null)
+            if (_userOffset == null)
             {
                 int offsetInMinutes = await _jsRuntime.InvokeAsync<int>("blazorGetTimezoneOffset");
-                UserOffset = TimeSpan.FromMinutes(-offsetInMinutes);
+                _userOffset = TimeSpan.FromMinutes(-offsetInMinutes);
             }
 
-            return dateTime.ToOffset(UserOffset.Value);
+            return _userOffset;
+
         }
     }
 }

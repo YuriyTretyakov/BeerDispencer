@@ -1,10 +1,10 @@
 ﻿using System;
-namespace BeerDispencer.WebApi.ViewModels.Response
+namespace BeerDispenser.WebApi.ViewModels.Response
 {
 	public class Dispencer
     {
         public Guid Id { get; set; }
-        public double FlowVolume { get; set; }
+        public decimal FlowVolume { get; set; }
 		
     };
 }

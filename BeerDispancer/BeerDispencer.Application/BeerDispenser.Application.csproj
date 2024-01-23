@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Abstractions\" />
+    <None Remove="Implementation\" />
+    <None Remove="Implementation\Commands\" />
+    <None Remove="Implementation\Handlers\" />
+    <None Remove="Implementation\Queries\" />
+    <None Remove="Implementation\PipelineBehavior\" />
+    <None Remove="Implementation\Validation\" />
+    <None Remove="Implementation\Response\" />
+    <None Remove="DTO\" />
+    <None Remove="Implementation\Commands\Authorization\" />
+    <None Remove="Implementation\Handlers\Authorization\" />
+    <None Remove="Implementation\Validation\Authorization\" />
+    <None Remove="Implementation\Commands\Payments\" />
+    <None Remove="Implementation\Handlers\Payments\" />
+    <None Remove="Implementation\Messaging\" />
+    <None Remove="Implementation\Messaging\Events\" />
+    <None Remove="Services\" />
+    <None Remove="Implementation\Messaging\Publishers\" />
+    <None Remove="Implementation\Messaging\Consumers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+    <Folder Include="Implementation\" />
+    <Folder Include="Implementation\Commands\" />
+    <Folder Include="Implementation\Handlers\" />
+    <Folder Include="Implementation\Queries\" />
+    <Folder Include="Implementation\PipelineBehavior\" />
+    <Folder Include="Implementation\Validation\" />
+    <Folder Include="Implementation\Response\" />
+    <Folder Include="DTO\" />
+    <Folder Include="Implementation\Commands\Authorization\" />
+    <Folder Include="Implementation\Handlers\Authorization\" />
+    <Folder Include="Implementation\Validation\Authorization\" />
+    <Folder Include="Implementation\Commands\Payments\" />
+    <Folder Include="Implementation\Handlers\Payments\" />
+    <Folder Include="Implementation\Messaging\" />
+    <Folder Include="Implementation\Messaging\Events\" />
+    <Folder Include="Services\" />
+    <Folder Include="Implementation\Messaging\Publishers\" />
+    <Folder Include="Implementation\Messaging\Consumers\" />
+  </ItemGroup>
+   <ItemGroup>
+  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+   <PackageReference Include="MediatR" Version="12.0.1" />
+  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  <PackageReference Include="FluentValidation" Version="11.5.2" />
+  <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Stripe.net" Version="42.4.0" />
+  </ItemGroup>
+   <ItemGroup>
+     <ProjectReference Include="..\BeerDispencer.Domain\BeerDispenser.Domain.csproj" />
+     <ProjectReference Include="..\BeerDispencer.Shared\BeerDispenser.Shared.csproj" />
+     <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Kafka.csproj" />
+   </ItemGroup>
+</Project>

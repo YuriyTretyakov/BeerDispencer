@@ -1,0 +1,17 @@
+﻿@page "/dologout"
+
+@using Implementation;
+
+@inject NavigationManager NavManager
+@inject AccountService accountService;
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await accountService.LogoutAsync();
+        NavManager.NavigateTo("/account");
+    }
+}
+

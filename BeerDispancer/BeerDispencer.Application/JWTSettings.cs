@@ -1,7 +1,7 @@
 ﻿using System;
-using BeerDispencer.Application.Abstractions;
+using BeerDispenser.Application.Abstractions;
 
-namespace BeerDispencer.Application
+namespace BeerDispenser.Application
 {
     public class JWTSettings
     {

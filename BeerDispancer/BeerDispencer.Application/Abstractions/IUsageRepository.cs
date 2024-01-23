@@ -1,10 +1,10 @@
 ﻿using System;
-using BeerDispancer.Application.DTO;
-using BeerDispencer.Application.Abstractions;
+using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Abstractions;
 
-namespace BeerDispencer.Application.Abstractions
+namespace BeerDispenser.Application.Abstractions
 {
-    public interface IUsageRepository:IRepository<UsageDto,int>
+    public interface IUsageRepository:IRepository<UsageDto>
     {
         Task<UsageDto[]> GetByDispencerIdAsync(Guid dispencerId);
     }

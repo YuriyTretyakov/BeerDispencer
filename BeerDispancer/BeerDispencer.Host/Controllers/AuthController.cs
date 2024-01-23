@@ -1,11 +1,12 @@
-﻿using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispancer.Application.Implementation.Queries;
-using BeerDispencer.Application.Implementation.Commands.Authorization;
+﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Implementation.Queries;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BeerDispenser.Shared.Dto;
 
-namespace BeerDispencer.WebApi.Controllers
+namespace BeerDispenser.WebApi.Controllers
 {
     [Route("api/[controller]")]
     public class AuthController : Controller
@@ -25,8 +26,6 @@ namespace BeerDispencer.WebApi.Controllers
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
         }
 
-      
-
         [Authorize]
         [HttpGet("logout")]
         public async Task<IActionResult> logoutAsync()
@@ -35,7 +34,7 @@ namespace BeerDispencer.WebApi.Controllers
             return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails); 
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserCommand createUser)
         {
@@ -43,12 +42,20 @@ namespace BeerDispencer.WebApi.Controllers
             return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ProblemDetails);
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = Roles.Administrator)]
         [HttpGet("getallusers")]
         public async Task<IActionResult> GetAllUsersAsycn()
         {
             var result = await _mediator.Send(new GetAllUsersQuery());
             return Ok(result);
+        }
+
+       
+        [HttpPost("google-signin")]
+        public async Task<IActionResult> GoogleSignInCallback()
+        {
+           // var result = await _mediator.Send(new GetAllUsersQuery());
+            return Ok();
         }
     }
 }

@@ -1,19 +1,17 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BeerDispancer.Application.Implementation.Commands.Authorization;
-using BeerDispencer.Application.Abstractions;
-using BeerDispencer.Application.Implementation.Response;
+using BeerDispenser.Application.Implementation.Commands.Authorization;
+using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 
-namespace BeerDispencer.Application.Implementation.Handlers.Authorization
+namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-	public class LoginUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
+    public class LoginUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
 	{
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -72,9 +70,9 @@ namespace BeerDispencer.Application.Implementation.Handlers.Authorization
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserName)
             };
+            claims.Add(new Claim("Id", user.Id));
 
-
-            var isAdmin = userClaims.Contains(UserRoles.Admin);
+            var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 
             var token = new JwtSecurityToken(_jwtSettings.Audience,
                 _jwtSettings.Issuer,

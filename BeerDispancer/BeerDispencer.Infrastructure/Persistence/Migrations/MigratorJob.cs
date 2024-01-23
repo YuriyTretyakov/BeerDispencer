@@ -1,5 +1,5 @@
 ﻿using System;
-using BeerDispencer.Infrastructure.Settings;
+using BeerDispenser.Infrastructure.Settings;
 using FluentMigrator.Runner;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,9 +7,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace BeerDispencer.Infrastructure.Migrations
+namespace BeerDispenser.Infrastructure.Migrations
 {
-	public class MigratorJob:BackgroundService
+	public class MigratorJob
 	{
         private readonly IServiceProvider _service;
         private readonly DBSettings _dbSettings;
@@ -20,7 +20,7 @@ namespace BeerDispencer.Infrastructure.Migrations
             _dbSettings = dbSettings.Value;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task ExecuteAsync()
         {
          
             using (var scope = _service.CreateScope())

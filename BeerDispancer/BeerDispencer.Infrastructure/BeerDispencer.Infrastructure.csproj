@@ -35,8 +35,9 @@
   
   <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+   <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj" />
+    <ProjectReference Include="..\BeerDispencer.Application\BeerDispenser.Application.csproj" />
   </ItemGroup>
 </Project>

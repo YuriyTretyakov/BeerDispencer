@@ -1,5 +1,19 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using Implementation;
+
+@inject AccountService accountService;
+
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
+        
+        @*<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                @if (!accountService.IsLoggedIn)
+                {
+                    <BeerDispenser.WebUi.Pages.AccountPage />
+                }
+                
+            </NotAuthorized>
+        </AuthorizeRouteView>*@
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>

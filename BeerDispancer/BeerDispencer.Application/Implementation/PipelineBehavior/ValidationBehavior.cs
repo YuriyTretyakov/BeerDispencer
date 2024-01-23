@@ -3,7 +3,7 @@ using FluentValidation;
 using MediatR;
 
 
-namespace BeerDispancer.Application.Implementation.PipelineBehavior
+namespace BeerDispenser.Application.Implementation.PipelineBehavior
 {
 	public class ValidationBehavior<TRequest, TResponse>:IPipelineBehavior<TRequest, TResponse>
         where TRequest:IRequest<TResponse>
