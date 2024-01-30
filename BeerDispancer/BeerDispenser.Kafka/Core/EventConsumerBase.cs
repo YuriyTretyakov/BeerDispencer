@@ -1,113 +1,95 @@
-﻿using Confluent.Kafka;
+﻿using System.Text;
+using Azure.Messaging.EventHubs.Consumer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace BeerDispenser.Kafka.Core
 {
-    public abstract class EventConsumerBase<T> :IDisposable where T : class
+    public abstract class EventConsumerBase<T>:IDisposable where T : class
     {
-        IConsumer<string, EventHolder<T>> _consumer;
-        private string _topicName;
+        private string _eventHubName;
+        private string _connectionString;
+        private EventHubConsumerClient _consumerClient;
+        
         private readonly ILogger _logger;
+        private readonly string _consumerId;
 
         public abstract string ConfigSectionName { get; }
 
         public class NewMessageEvent : EventArgs
         {
-            public ConsumeResult<string, EventHolder<T>>  Event { get; init; }
+            public  EventHolder<T>  Event { get; init; }
         }
 
         public delegate void NotifyNewMessage(object sender, NewMessageEvent e);
 
         public event NotifyNewMessage OnNewMessage;
 
-        public EventConsumerBase(ILogger logger, KafkaConfig configuration, string consumerId)
+        protected EventConsumerBase(ILogger logger, KafkaConfig configuration, string consumerId)
         {
             _logger = logger;
-
-            var consumerConfig = new ConsumerConfig
-            {
-                BootstrapServers = configuration.GetBroker(),
-                GroupId = consumerId,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                Debug = "broker, consumer",
-                ReconnectBackoffMs = 1000,
-                ReconnectBackoffMaxMs = 60 * 1000,
-                MessageMaxBytes = 1000,
-                EnableAutoCommit = false
-            };
-
-            _logger.LogInformation("{name}: {@consumerConfig}", nameof(ConsumerConfig), consumerConfig);
-
-            _consumer = new ConsumerBuilder<string, EventHolder<T>>(consumerConfig)
-                .SetKeyDeserializer(Deserializers.Utf8)
-                .SetValueDeserializer(new DefaultJsonDeserializer<EventHolder<T>>())
-                .SetErrorHandler(OnConsumerError)
-                .Build();
-
-            _topicName = configuration.GetTopicName(ConfigSectionName);
-            _logger.LogInformation("Consumer built for {eventholder} topic name: {name}", typeof(EventHolder<T>), _topicName);
+            _consumerId = consumerId;
+            _eventHubName = configuration.GetEventHubName(ConfigSectionName);
+            _connectionString = configuration.GetConnectionString();
         }
 
-        private void OnConsumerError(IConsumer<string, EventHolder<T>> consumer, Error error)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogError("Consumer {name} error: {@error}", _topicName, error);
+            _logger.LogInformation("Consuming Started {name}", _eventHubName);
+
+            _consumerClient = new EventHubConsumerClient(_consumerId, _connectionString, _eventHubName);
+
+           
+
+            _= Task.Factory.StartNew(x => StartConsumingAsync(cancellationToken), TaskCreationOptions.LongRunning);
         }
 
-        private void FireNewMessageEvent(ConsumeResult<string, EventHolder<T>> consumeResult )
+        private void FireNewMessageEvent(EventHolder<T> consumeResult )
         {
             OnNewMessage?.Invoke(this, new NewMessageEvent { Event = consumeResult });
         }
 
-        public void Commit(ConsumeResult<string, EventHolder<T>> consumeResult)
-        {
-            _consumer.Commit(consumeResult);
-        }
-
-        private void ConsumeAsync(CancellationToken cancellationToken)
-        {
-           _= Task.Factory.StartNew(() =>
-           {
-               while (!cancellationToken.IsCancellationRequested)
-               {
-                   var consumeResult = _consumer.Consume(1000);
-                   //var message = consumeResult?.Message?.Value;
-
-                   if (consumeResult is null)
-                   {
-                       continue;
-                   }
-
-                   _logger.LogInformation("Consumer {name} message received: {@message} Offset: {offset}",
-                       _topicName,
-                       consumeResult?.Message?.Value,
-                       consumeResult.Offset);
-                   FireNewMessageEvent(consumeResult);
-               }
-           },
-           TaskCreationOptions.LongRunning
-           ).ConfigureAwait(false);
-        }
-
         public void Dispose()
         {
-            _logger.LogInformation("Consumer built for topic name: {name} dispose called", _topicName);
-            _consumer.Close();
-            _consumer.Dispose();
+            _logger.LogInformation("Consumer built for topic name: {name} dispose called", _eventHubName);
+            _consumerClient?.CloseAsync().GetAwaiter().GetResult();
+            _consumerClient?.DisposeAsync().GetAwaiter().GetResult();
         }
 
-        public void StartConsuming(CancellationToken cancellationToken)
+        private async Task StartConsumingAsync(CancellationToken cancellationToken)
         {
-            _consumer.Subscribe(_topicName);
-            _logger.LogInformation("Consuming started {name}", _topicName);
-            ConsumeAsync(cancellationToken);
+            EventPosition startingPosition = EventPosition.Earliest;
+
+            var ro = new ReadEventOptions { MaximumWaitTime = TimeSpan.FromSeconds(1), PrefetchCount = 1 };
+            while (!cancellationToken.IsCancellationRequested)
+            {
+
+                await foreach (var partitionEvent in _consumerClient.ReadEventsAsync(
+                       ro, cancellationToken))
+                {
+                    if (partitionEvent.Data is null)
+                    {
+                        _logger.LogInformation("Consumer {eventholder} No Data found", typeof(EventHolder<T>));
+                    }
+                    else
+                    {
+                        var json = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
+
+                        _logger.LogInformation("Consumer built for {eventholder} topic name: {name}", typeof(EventHolder<T>), _eventHubName);
+
+                        var @event = JsonConvert.DeserializeObject<EventHolder<T>>(json);
+                        FireNewMessageEvent(@event);
+                    }
+                }
+                }
         }
 
-        public void Stop(CancellationToken cancellationToken)
+        public Task Stop(CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Consuming stopped {name}", _topicName);
-            _consumer.Unsubscribe();
-            _consumer.Close();
-            _consumer.Dispose();
+            _logger.LogInformation("Consuming stopped {name}", _eventHubName);
+
+            Dispose();
+            return Task.CompletedTask;
         }
     }
 }

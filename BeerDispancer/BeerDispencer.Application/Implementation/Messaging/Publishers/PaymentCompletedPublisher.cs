@@ -7,7 +7,7 @@ namespace BeerDispenser.Application.Implementation.Messaging.Publishers
     public class PaymentCompletedPublisher:EventPublisher<PaymentCompletedEvent>
 	{
 		public PaymentCompletedPublisher(ILogger<PaymentCompletedPublisher> logger, KafkaConfig configuration)
-			:base(configuration, nameof(PaymentCompletedEvent), logger)
+			:base(configuration,  logger)
 		{
 		}
 	}

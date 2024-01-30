@@ -5,7 +5,6 @@ using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
 using BeerDispenser.Kafka.Core;
-using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -34,9 +33,10 @@ namespace BeerDispenser.Application.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _completedEventConsumer.StartConsuming(cancellationToken);
             _completedEventConsumer.OnNewMessage += OnNewMessage;
 
+            _ = _completedEventConsumer.StartAsync(cancellationToken);
+            
              Task.Factory.StartNew(
                 () =>
                 {},
@@ -48,10 +48,10 @@ namespace BeerDispenser.Application.Services
 
         private async void OnNewMessage(object sender, EventConsumerBase<PaymentCompletedEvent>.NewMessageEvent e)
         {
-            if (e.Event.Message is not null)
+            if (e.Event is not null)
             {
-                await ProcessPaymentAsync(e.Event.Message.Value);
-                _completedEventConsumer.Commit(e.Event);
+                await ProcessPaymentAsync(e.Event);
+              //  _completedEventConsumer.Commit(e.Event);
             }
         }
 

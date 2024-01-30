@@ -1,63 +1,57 @@
 ﻿using System.Diagnostics;
-using Confluent.Kafka;
+using Azure.Messaging.EventHubs;
+using Azure.Messaging.EventHubs.Producer;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BeerDispenser.Kafka.Core
 {
-    public class Producer<T> :IDisposable where T : class
+    public class Producer<T>:IDisposable  where T : class
     {
-        private string _broker { get; set; }
+        private string _connectionString { get; set; }
 
-        private IProducer<string, string> _kafkaProducer;
         private JsonSerializerSettings _settings;
         private readonly ILogger _logger;
+        private readonly string _eventHubName;
+        private readonly EventHubProducerClient _producerClient;
 
         public Producer(KafkaConfig kafkaConfig, ILogger logger)
         {
-            _broker = kafkaConfig.GetBroker();
-
-            var config = new ProducerConfig
-            {
-                BootstrapServers = _broker,
-                Acks =Acks.Leader
-            };
-
-            _kafkaProducer = new ProducerBuilder<string, string>(config).Build();
+            _connectionString = kafkaConfig.GetConnectionString();
             _logger = logger;
+            _eventHubName = kafkaConfig.GetEventHubName(typeof(T).Name);
+
+            _producerClient = new EventHubProducerClient(_connectionString, _eventHubName);
         }
 
         public async Task ProduceAsync(
-            string topicName,
             IReadonlyEventHolder<T> @event,
             CancellationToken cancellationToken)
         {
             var messageJson = JsonConvert.SerializeObject(@event, _settings);
 
-            var kafkaMessage = new Message<string, string>
-            {
-                Key = @event.Key.ToString(),
-                Value = messageJson
-            };
+            using var eventBatch = await _producerClient.CreateBatchAsync();
+            
+            var eventData = new EventData(Encoding.UTF8.GetBytes(messageJson));
+            eventBatch.TryAdd(eventData);
+
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            var result = await _kafkaProducer
-                .ProduceAsync(topicName, kafkaMessage, cancellationToken);
-
+            await _producerClient.SendAsync(eventBatch, cancellationToken);
             stopWatch.Stop();
 
             _logger.LogInformation(
-                "Producer {topicName} producing message: {@event} Offset: {offset} Duration: {time}",
-                topicName,
+                "Producer {topicName} producing message: {@event}  Duration: {time}",
+                _eventHubName,
                 @event,
-                result.Offset,
                 stopWatch.Elapsed);
         }
 
         public void Dispose()
         {
-            _logger.LogInformation("Producer {type} Dispose initiated", typeof(T));
-            _kafkaProducer.Dispose();
+            _producerClient.CloseAsync().GetAwaiter().GetResult();
+            _producerClient.DisposeAsync().GetAwaiter().GetResult();
         }
     }
 }

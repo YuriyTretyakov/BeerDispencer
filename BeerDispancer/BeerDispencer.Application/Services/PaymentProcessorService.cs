@@ -3,7 +3,6 @@ using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Kafka.Core;
 using BeerDispenser.Shared.Dto;
-using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
@@ -29,8 +28,10 @@ namespace BeerDispenser.Application.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _toProcessConsumer.StartConsuming(cancellationToken);
             _toProcessConsumer.OnNewMessage += OnNewMessage;
+
+            _= _toProcessConsumer.StartAsync(cancellationToken);
+           
 
              Task.Factory.StartNew(
                 () =>
@@ -43,11 +44,11 @@ namespace BeerDispenser.Application.Services
 
         private async void OnNewMessage(object sender, EventConsumerBase<PaymentToProcessEvent>.NewMessageEvent e)
         {
-            if (e.Event?.Message?.Value is not null)
+            if (e.Event is not null)
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessMessageAsync(scope, e.Event?.Message?.Value);
-                _toProcessConsumer.Commit(e.Event);
+                await ProcessMessageAsync(scope, e.Event);
+             //   _toProcessConsumer.Commit(e.Event);
             }
         }
 

@@ -11,24 +11,24 @@ namespace BeerDispenser.Kafka.Core
             _configuration = configuration;
         }
 
-        public string GetBroker()
+        public string GetConnectionString()
         {
             return _configuration.GetSection(nameof(KafkaConfig)).Get<KafkaSection>()
-                .Broker;
+                .ConnectionString;
         }
 
-        public string GetTopicName(string sectionName)
+        public string GetEventHubName(string sectionName)
         {
             return _configuration.GetSection(nameof(KafkaConfig)).Get<KafkaSection>()
-                .Topics[sectionName];
+                .EventHubs[sectionName];
         }
     }
 
 
     public class KafkaSection
     {
-        public Dictionary<string, string> Topics { get; set; }
-        public string Broker { get; set; }
+        public Dictionary<string, string> EventHubs { get; set; }
+        public string ConnectionString { get; set; }
     }
 }
 
