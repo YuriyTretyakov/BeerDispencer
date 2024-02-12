@@ -72,7 +72,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     .PaymentCardRepository
                     .GetDefaultCard(request.UserId);
 
-                    var amount = ((long)recentUsage.TotalSpent * 100) < 50 ? 50 : ((long)recentUsage.TotalSpent * 100);
+                    int amount = (recentUsage.TotalSpent * 100) < 50 ? 50 : (int)Math.Round(recentUsage.TotalSpent.Value * 100, 0);
 
                     paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent
                     {
@@ -104,6 +104,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
 
                 await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
 
+                // take a look at idempotancy or de-duplication
                 // how to handle if event sent to messaging but status update in db leads to error?
 
                 outboxEntry.EventState = EventStateDto.Completed;
