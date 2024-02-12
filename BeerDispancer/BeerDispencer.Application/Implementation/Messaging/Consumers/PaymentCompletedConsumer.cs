@@ -1,5 +1,5 @@
 ﻿using BeerDispenser.Application.Implementation.Messaging.Events;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Consumers
@@ -8,7 +8,7 @@ namespace BeerDispenser.Application.Implementation.Messaging.Consumers
 	{
 		public PaymentCompletedConsumer(
 			ILogger<PaymentCompletedConsumer> logger,
-			KafkaConfig configuration)
+			EventHubConfig configuration)
 			: base(logger, configuration, nameof(PaymentCompletedConsumer))
 		{
 		}

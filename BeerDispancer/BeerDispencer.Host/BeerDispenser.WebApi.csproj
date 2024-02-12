@@ -48,13 +48,10 @@
     <Folder Include="HealthChecks\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BeerDispencer.Application\BeerDispencer.Application.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
     <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Kafka.csproj">
+    <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Messaging.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

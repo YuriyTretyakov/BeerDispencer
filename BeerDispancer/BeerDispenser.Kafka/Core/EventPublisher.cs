@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace BeerDispenser.Kafka.Core
+namespace BeerDispenser.Messaging.Core
 {
     public abstract class EventPublisher<T> : IDisposable where T : class
     {
         private readonly Producer<T> _producer;
 
-        public EventPublisher(KafkaConfig configuration,  ILogger logger)
+        public EventPublisher(EventHubConfig configuration, ILogger logger)
         {
             _producer = new Producer<T>(configuration, logger);
         }

@@ -5,9 +5,9 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace BeerDispenser.Kafka.Core
+namespace BeerDispenser.Messaging.Core
 {
-    public class Producer<T>:IDisposable  where T : class
+    public class Producer<T> : IAsyncDisposable where T : class
     {
         private string _connectionString { get; set; }
 
@@ -16,7 +16,7 @@ namespace BeerDispenser.Kafka.Core
         private readonly string _eventHubName;
         private readonly EventHubProducerClient _producerClient;
 
-        public Producer(KafkaConfig kafkaConfig, ILogger logger)
+        public Producer(EventHubConfig kafkaConfig, ILogger logger)
         {
             _connectionString = kafkaConfig.GetConnectionString();
             _logger = logger;
@@ -32,7 +32,7 @@ namespace BeerDispenser.Kafka.Core
             var messageJson = JsonConvert.SerializeObject(@event, _settings);
 
             using var eventBatch = await _producerClient.CreateBatchAsync();
-            
+
             var eventData = new EventData(Encoding.UTF8.GetBytes(messageJson));
             eventBatch.TryAdd(eventData);
 
@@ -48,10 +48,10 @@ namespace BeerDispenser.Kafka.Core
                 stopWatch.Elapsed);
         }
 
-        public void Dispose()
+        public async Task DisposeAsync()
         {
-            _producerClient.CloseAsync().GetAwaiter().GetResult();
-            _producerClient.DisposeAsync().GetAwaiter().GetResult();
+            await _producerClient.CloseAsync();
+            await _producerClient.DisposeAsync();
         }
     }
 }

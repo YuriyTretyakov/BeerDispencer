@@ -4,7 +4,7 @@ using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Application.Services;
 using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Settings;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 
 namespace BeerDispenser.WebApi.Extensions
 {
@@ -19,7 +19,7 @@ namespace BeerDispenser.WebApi.Extensions
 
         public static void AddMessaging(this IServiceCollection collection)
         {
-            collection.AddSingleton<KafkaConfig>();
+            collection.AddSingleton<EventHubConfig>();
 
             collection.AddTransient<PaymentCompletedPublisher>();
             collection.AddSingleton<PaymentCompletedConsumer>();

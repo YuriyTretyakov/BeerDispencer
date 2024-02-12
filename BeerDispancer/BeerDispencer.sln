@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Domain", "Bee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Shared", "BeerDispencer.Shared\BeerDispenser.Shared.csproj", "{CE5BECF6-12FC-4282-9B23-8F69C77769DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Kafka", "BeerDispenser.Kafka\BeerDispenser.Kafka.csproj", "{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Messaging", "BeerDispenser.Kafka\BeerDispenser.Messaging.csproj", "{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

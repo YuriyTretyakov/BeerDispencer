@@ -1,9 +1,8 @@
-﻿using System;
-using BeerDispenser.Kafka.Core;
+﻿using BeerDispenser.Messaging.Core;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Events
 {
-	public class PaymentCompletedEventHolder : EventHolder<PaymentCompletedEvent>
+    public class PaymentCompletedEventHolder : EventHolder<PaymentCompletedEvent>
 	{
 		public PaymentCompletedEventHolder(PaymentCompletedEvent @event, int retryCount, Guid correlationId)
 			: base(@event, retryCount, correlationId)

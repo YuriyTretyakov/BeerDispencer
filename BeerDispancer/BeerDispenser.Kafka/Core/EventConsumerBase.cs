@@ -3,14 +3,14 @@ using Azure.Messaging.EventHubs.Consumer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace BeerDispenser.Kafka.Core
+namespace BeerDispenser.Messaging.Core
 {
-    public abstract class EventConsumerBase<T>:IDisposable where T : class
+    public abstract class EventConsumerBase<T> : IDisposable where T : class
     {
         private string _eventHubName;
         private string _connectionString;
         private EventHubConsumerClient _consumerClient;
-        
+
         private readonly ILogger _logger;
         private readonly string _consumerId;
 
@@ -18,14 +18,14 @@ namespace BeerDispenser.Kafka.Core
 
         public class NewMessageEvent : EventArgs
         {
-            public  EventHolder<T>  Event { get; init; }
+            public EventHolder<T> Event { get; init; }
         }
 
         public delegate void NotifyNewMessage(object sender, NewMessageEvent e);
 
         public event NotifyNewMessage OnNewMessage;
 
-        protected EventConsumerBase(ILogger logger, KafkaConfig configuration, string consumerId)
+        protected EventConsumerBase(ILogger logger, EventHubConfig configuration, string consumerId)
         {
             _logger = logger;
             _consumerId = consumerId;
@@ -39,12 +39,12 @@ namespace BeerDispenser.Kafka.Core
 
             _consumerClient = new EventHubConsumerClient(_consumerId, _connectionString, _eventHubName);
 
-           
 
-            _= Task.Factory.StartNew(x => StartConsumingAsync(cancellationToken), TaskCreationOptions.LongRunning);
+
+            _ = Task.Factory.StartNew(x => StartConsumingAsync(cancellationToken), TaskCreationOptions.LongRunning);
         }
 
-        private void FireNewMessageEvent(EventHolder<T> consumeResult )
+        private void FireNewMessageEvent(EventHolder<T> consumeResult)
         {
             OnNewMessage?.Invoke(this, new NewMessageEvent { Event = consumeResult });
         }
@@ -81,7 +81,7 @@ namespace BeerDispenser.Kafka.Core
                         FireNewMessageEvent(@event);
                     }
                 }
-                }
+            }
         }
 
         public Task Stop(CancellationToken cancellationToken = default)

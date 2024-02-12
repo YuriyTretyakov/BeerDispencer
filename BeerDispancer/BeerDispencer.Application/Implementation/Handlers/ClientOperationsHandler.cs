@@ -5,7 +5,7 @@ using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 using BeerDispenser.Shared.Dto;
 using MediatR;
 using Newtonsoft.Json;

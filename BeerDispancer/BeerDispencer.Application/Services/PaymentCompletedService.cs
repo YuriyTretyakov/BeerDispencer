@@ -1,10 +1,9 @@
-﻿using System.Threading;
-using BeerDispenser.Application.Abstractions;
+﻿using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Messaging.Consumers;
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

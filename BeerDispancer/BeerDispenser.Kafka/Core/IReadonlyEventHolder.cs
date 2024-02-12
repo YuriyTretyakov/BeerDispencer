@@ -1,4 +1,4 @@
-﻿namespace BeerDispenser.Kafka.Core
+﻿namespace BeerDispenser.Messaging.Core
 {
     public interface IReadonlyEventHolder<T> where T : class
     {

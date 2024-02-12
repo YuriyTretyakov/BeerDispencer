@@ -1,7 +1,7 @@
 ﻿using BeerDispenser.Application.Implementation.Messaging.Consumers;
 using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 using BeerDispenser.Shared.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

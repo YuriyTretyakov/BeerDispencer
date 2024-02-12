@@ -62,6 +62,6 @@
    <ItemGroup>
      <ProjectReference Include="..\BeerDispencer.Domain\BeerDispenser.Domain.csproj" />
      <ProjectReference Include="..\BeerDispencer.Shared\BeerDispenser.Shared.csproj" />
-     <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Kafka.csproj" />
+     <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Messaging.csproj" />
    </ItemGroup>
 </Project>

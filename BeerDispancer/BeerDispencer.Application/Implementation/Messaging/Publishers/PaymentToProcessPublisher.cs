@@ -1,12 +1,12 @@
 ﻿using BeerDispenser.Application.Implementation.Messaging.Events;
-using BeerDispenser.Kafka.Core;
+using BeerDispenser.Messaging.Core;
 using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Publishers
 {
     public class PaymentToProcessPublisher : EventPublisher<PaymentToProcessEvent>
 	{
-		public PaymentToProcessPublisher(ILogger<PaymentToProcessPublisher> logger, KafkaConfig configuration)
+		public PaymentToProcessPublisher(ILogger<PaymentToProcessPublisher> logger, EventHubConfig configuration)
 			:base(configuration, logger)
 		{
 		}

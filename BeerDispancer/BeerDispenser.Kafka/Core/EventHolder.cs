@@ -1,19 +1,19 @@
-﻿namespace BeerDispenser.Kafka.Core
+﻿namespace BeerDispenser.Messaging.Core
 {
     public class EventHolder<T> : IReadonlyEventHolder<T> where T : class
     {
 
         public string Type => typeof(T).Name;
         public DateTimeOffset CreatedAt { get; set; }
-        public Guid Key { get;  set; } 
-        public T Event { get;  set; }
+        public Guid Key { get; set; }
+        public T Event { get; set; }
         public int Offset { get; set; }
-        public Guid CorrelationId { get;  set; }
+        public Guid CorrelationId { get; set; }
 
-        public int RetryCount { get;  set; }
+        public int RetryCount { get; set; }
 
         public EventHolder()
-        { 
+        {
         }
 
         public EventHolder(T @event)

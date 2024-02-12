@@ -1,5 +1,4 @@
-﻿using BeerDispenser.Kafka.Core;
-using BeerDispenser.Shared.Dto;
+﻿using BeerDispenser.Shared.Dto;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Events
 {
