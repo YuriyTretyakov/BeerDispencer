@@ -48,10 +48,10 @@ namespace BeerDispenser.Messaging.Core
                 stopWatch.Elapsed);
         }
 
-        public async Task DisposeAsync()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
-            await _producerClient.CloseAsync();
-            await _producerClient.DisposeAsync();
+             await _producerClient.CloseAsync();
+             await _producerClient.DisposeAsync();
         }
     }
 }

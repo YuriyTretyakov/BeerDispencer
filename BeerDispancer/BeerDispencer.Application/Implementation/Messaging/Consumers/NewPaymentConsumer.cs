@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Consumers
 {
-    public class PaymentToProcessConsumer : EventConsumerBase<PaymentInProccessEvent>
+    public class NewPaymentConsumer : EventConsumerBase<NewPaymentEvent>
 	{
-		public PaymentToProcessConsumer(ILogger<PaymentToProcessConsumer> logger, EventHubConfig configuration)
+		public NewPaymentConsumer(ILogger<EventConsumerBase<NewPaymentEvent>> logger, EventHubConfig configuration)
 			: base(logger, configuration)
 		{
 		}

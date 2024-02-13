@@ -1,6 +1,6 @@
 ﻿namespace BeerDispenser.Application.Implementation.Messaging.Events
 {
-    public class PaymentToProcessEvent
+    public class PaymentInProccessEvent
     {
         public string CustomerId { get; set; }
         public string CardId { get; set; }

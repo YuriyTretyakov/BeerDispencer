@@ -16,12 +16,12 @@ namespace BeerDispenser.Application.Implementation.Handlers
 	{
         private readonly IDispencerUof _dispencerUof;
         private readonly IBeerFlowSettings _beerFlowSettings;
-        private readonly PaymentToProcessPublisher _eventsTrigger;
+        private readonly NewPaymentPublisher _eventsTrigger;
 
         public ClientOperationsHandler(
             IDispencerUof dispencerUof,
             IBeerFlowSettings beerFlowSettings,
-            PaymentToProcessPublisher eventsTrigger)
+            NewPaymentPublisher eventsTrigger)
 		{
             _dispencerUof = dispencerUof;
             _beerFlowSettings = beerFlowSettings;
@@ -61,7 +61,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
             {
                 var recentUsage = dispenser.Close().ToDto();
 
-                EventHolder<PaymentToProcessEvent> paymentEvent;
+                EventHolder<NewPaymentEvent> paymentEvent;
                 OutboxDto outboxEntry;
 
                 using (var transaction = _dispencerUof.StartTransaction())
@@ -74,7 +74,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
 
                     var amount = ((long)recentUsage.TotalSpent * 100) < 50 ? 50 : ((long)recentUsage.TotalSpent * 100);
 
-                    paymentEvent = new EventHolder<PaymentToProcessEvent>(new PaymentToProcessEvent
+                    paymentEvent = new EventHolder<NewPaymentEvent>(new NewPaymentEvent
                     {
                         PaymentInitiatedBy = request.UserId,
                         Amount = amount,
@@ -89,7 +89,7 @@ namespace BeerDispenser.Application.Implementation.Handlers
                     outboxEntry = new OutboxDto
                     {
                         Id = Guid.NewGuid(),
-                        EventType = typeof(EventHolder<PaymentToProcessEvent>).ToString(),
+                        EventType = typeof(EventHolder<NewPaymentEvent>).ToString(),
                         Payload = JsonConvert.SerializeObject(paymentEvent),
                         CreatedAt = DateTime.UtcNow,
                         EventState = EventStateDto.Created

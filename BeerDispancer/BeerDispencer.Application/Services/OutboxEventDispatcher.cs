@@ -13,13 +13,13 @@ namespace BeerDispenser.Application.Services
     public class OutboxEventDispatcher : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly PaymentToProcessPublisher _eventsTrigger;
+        private readonly NewPaymentPublisher _eventsTrigger;
         private readonly ILogger<OutboxEventDispatcher> _logger;
         private ManualResetEvent _ready;
 
         public OutboxEventDispatcher(
             IServiceScopeFactory serviceScopeFactory,
-            PaymentToProcessPublisher eventsTrigger,
+            NewPaymentPublisher eventsTrigger,
             ILogger<OutboxEventDispatcher> logger,
             IHostApplicationLifetime lifetime)
         {
@@ -58,7 +58,7 @@ namespace BeerDispenser.Application.Services
         {
             try
             {
-                if (outboxEvent.EventType == typeof(EventHolder<PaymentToProcessEvent>).ToString())
+                if (outboxEvent.EventType == typeof(EventHolder<NewPaymentEvent>).ToString())
                 {
                     await ProcessPaymentEventAsync(outboxEvent, uow, cancellationToken);
                 }
@@ -73,7 +73,7 @@ namespace BeerDispenser.Application.Services
         {
             using var transaction = uow.StartTransaction();
 
-            var paymentEvent = JsonConvert.DeserializeObject<EventHolder<PaymentToProcessEvent>>(outboxEvent.Payload);
+            var paymentEvent = JsonConvert.DeserializeObject<EventHolder<NewPaymentEvent>>(outboxEvent.Payload);
             await _eventsTrigger.RaiseEventAsync(paymentEvent, cancellationToken);
 
             outboxEvent.EventState = EventStateDto.Completed;

@@ -30,7 +30,7 @@ namespace BeerDispenser.Application.Services
         {
             _toProcessConsumer.OnNewMessage += OnNewMessage;
 
-            _= _toProcessConsumer.StartAsync(cancellationToken);
+            _= _toProcessConsumer.Start(cancellationToken);
            
 
              Task.Factory.StartNew(
@@ -42,7 +42,7 @@ namespace BeerDispenser.Application.Services
             return Task.CompletedTask;
         }
 
-        private async void OnNewMessage(object sender, EventConsumerBase<PaymentToProcessEvent>.NewMessageEvent e)
+        private async void OnNewMessage(object sender, EventConsumerBase<PaymentInProccessEvent>.NewMessageEvent e)
         {
             if (e.Event is not null)
             {
@@ -52,20 +52,18 @@ namespace BeerDispenser.Application.Services
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _toProcessConsumer.Stop(cancellationToken);
-            _toProcessConsumer.Dispose();
-            return Task.CompletedTask;
+           await _toProcessConsumer.Stop(cancellationToken);
         }
 
         private async Task ProcessMessageAsync(
             IServiceScope scope,
-            IReadonlyEventHolder<PaymentToProcessEvent> message)
+            IReadonlyEventHolder<PaymentInProccessEvent> message)
         {
             EventPublisher<PaymentCompletedEvent> paymentCompletedTrigger = null;
 
-            EventPublisher<PaymentToProcessEvent> paymentToProcessTrigger = null;
+            EventPublisher<PaymentInProccessEvent> paymentToProcessTrigger = null;
 
             try
             {

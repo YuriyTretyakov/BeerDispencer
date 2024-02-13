@@ -34,7 +34,7 @@ namespace BeerDispenser.Application.Services
         {
             _completedEventConsumer.OnNewMessage += OnNewMessage;
 
-            _ = _completedEventConsumer.StartAsync(cancellationToken);
+            _ = _completedEventConsumer.Start(cancellationToken);
             
              Task.Factory.StartNew(
                 () =>
@@ -54,11 +54,9 @@ namespace BeerDispenser.Application.Services
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _completedEventConsumer.Stop(_cancellationToken);
-            _completedEventConsumer.Dispose();
-            return Task.CompletedTask;
+           await _completedEventConsumer.Stop(_cancellationToken);
         }
 
         private async Task ProcessPaymentAsync(

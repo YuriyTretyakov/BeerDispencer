@@ -1,8 +1,5 @@
 ﻿using System.Text;
-using BeerDispenser.Application;
 using BeerDispenser.Application.Services;
-using BeerDispenser.Domain.Abstractions;
-using BeerDispenser.Domain.Implementations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +11,7 @@ namespace BeerDispenser.Application.Implementation
     {
         public static void AddApplication(this IServiceCollection collection)
         {
-            collection.AddHostedService<OutboxEventDispatcher>();
+         //   collection.AddHostedService<OutboxEventDispatcher>();
         }
 
         public static void AddJWTAuthentication(this IServiceCollection collection, ConfigurationManager configuration)

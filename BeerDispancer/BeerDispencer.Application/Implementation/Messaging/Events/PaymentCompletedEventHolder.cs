@@ -9,7 +9,7 @@ namespace BeerDispenser.Application.Implementation.Messaging.Events
 		{
 		}
 
-		public PaymentCompletedEventHolder(EventHolder<PaymentToProcessEvent> toProcessEventHolder)
+		public PaymentCompletedEventHolder(EventHolder<PaymentInProccessEvent> toProcessEventHolder)
 			: base(
 				 new PaymentCompletedEvent
 				 {

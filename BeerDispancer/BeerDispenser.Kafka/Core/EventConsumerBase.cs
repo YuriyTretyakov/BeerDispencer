@@ -5,16 +5,14 @@ using Newtonsoft.Json;
 
 namespace BeerDispenser.Messaging.Core
 {
-    public abstract class EventConsumerBase<T> : IDisposable where T : class
+    public abstract class EventConsumerBase<T> where T : class
     {
         private string _eventHubName;
         private string _connectionString;
         private EventHubConsumerClient _consumerClient;
 
-        private readonly ILogger _logger;
+        private readonly ILogger<EventConsumerBase<T>> _logger;
         private readonly string _consumerId;
-
-        public abstract string ConfigSectionName { get; }
 
         public class NewMessageEvent : EventArgs
         {
@@ -25,41 +23,33 @@ namespace BeerDispenser.Messaging.Core
 
         public event NotifyNewMessage OnNewMessage;
 
-        protected EventConsumerBase(ILogger logger, EventHubConfig configuration, string consumerId)
+        protected EventConsumerBase(ILogger<EventConsumerBase<T>> logger, EventHubConfig configuration)
         {
             _logger = logger;
-            _consumerId = consumerId;
-            _eventHubName = configuration.GetEventHubName(ConfigSectionName);
+            //_consumerId = consumerId;
+            _eventHubName = configuration.GetEventHubName(typeof(T).Name);
             _connectionString = configuration.GetConnectionString();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task Start(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Consuming Started {name}", _eventHubName);
+            _consumerClient = new EventHubConsumerClient(
+                EventHubConsumerClient.DefaultConsumerGroupName,
+                _connectionString,
+                _eventHubName);
 
-            _consumerClient = new EventHubConsumerClient(_consumerId, _connectionString, _eventHubName);
-
-
-
-            _ = Task.Factory.StartNew(x => StartConsumingAsync(cancellationToken), TaskCreationOptions.LongRunning);
+            return Task.Factory.StartNew(x => StartConsumingAsync(cancellationToken), TaskCreationOptions.LongRunning);
         }
 
         private void FireNewMessageEvent(EventHolder<T> consumeResult)
         {
+            _logger.LogInformation("EventHub Consumer [{hub}]: New message consumed: {@message}", typeof(EventHolder<T>).Name, consumeResult);
             OnNewMessage?.Invoke(this, new NewMessageEvent { Event = consumeResult });
-        }
-
-        public void Dispose()
-        {
-            _logger.LogInformation("Consumer built for topic name: {name} dispose called", _eventHubName);
-            _consumerClient?.CloseAsync().GetAwaiter().GetResult();
-            _consumerClient?.DisposeAsync().GetAwaiter().GetResult();
         }
 
         private async Task StartConsumingAsync(CancellationToken cancellationToken)
         {
-            EventPosition startingPosition = EventPosition.Earliest;
-
+            _logger.LogInformation("EventHub Consumer [{eventholder}]:  name '{name}' - Consuming started", typeof(EventHolder<T>).Name, _eventHubName);
             var ro = new ReadEventOptions { MaximumWaitTime = TimeSpan.FromSeconds(1), PrefetchCount = 1 };
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -67,30 +57,26 @@ namespace BeerDispenser.Messaging.Core
                 await foreach (var partitionEvent in _consumerClient.ReadEventsAsync(
                        ro, cancellationToken))
                 {
-                    if (partitionEvent.Data is null)
-                    {
-                        _logger.LogInformation("Consumer {eventholder} No Data found", typeof(EventHolder<T>));
-                    }
-                    else
-                    {
+                    //if (partitionEvent.Data is null)
+                    //{
+                    //    _logger.LogInformation("Consumer {eventholder} No Data found", typeof(EventHolder<T>));
+                    //}
+                    //else
+                    //{
                         var json = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
-
-                        _logger.LogInformation("Consumer built for {eventholder} topic name: {name}", typeof(EventHolder<T>), _eventHubName);
 
                         var @event = JsonConvert.DeserializeObject<EventHolder<T>>(json);
                         FireNewMessageEvent(@event);
-                    }
+                    //}
                 }
             }
         }
 
-        public Task Stop(CancellationToken cancellationToken = default)
+        public async Task Stop(CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Consuming stopped {name}", _eventHubName);
-
-            Dispose();
-            return Task.CompletedTask;
+            _logger.LogInformation("EventHub Consumer [{eventholder}]: Stopped.", _eventHubName);
+            await _consumerClient.CloseAsync();
+            await _consumerClient.DisposeAsync();
         }
     }
 }
-

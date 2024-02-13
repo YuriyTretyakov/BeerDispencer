@@ -21,14 +21,18 @@ namespace BeerDispenser.WebApi.Extensions
         {
             collection.AddSingleton<EventHubConfig>();
 
+            collection.AddTransient<NewPaymentPublisher>();
+            collection.AddSingleton<NewPaymentConsumer>();
+
             collection.AddTransient<PaymentCompletedPublisher>();
             collection.AddSingleton<PaymentCompletedConsumer>();
 
             collection.AddTransient<PaymentToProcessPublisher>();
-           collection.AddSingleton<PaymentToProcessConsumer>();
+            collection.AddSingleton<PaymentToProcessConsumer>();
 
             collection.AddHostedService<PaymentInprocessService>();
-           collection.AddHostedService<PaymentCompletedService>();
+            collection.AddHostedService<PaymentCompletedService>();
+            collection.AddHostedService<NewPaymentService>();
         }
     }
 }

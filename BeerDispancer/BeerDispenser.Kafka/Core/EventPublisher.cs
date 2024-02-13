@@ -26,7 +26,7 @@ namespace BeerDispenser.Messaging.Core
 
         public void Dispose()
         {
-            _producer.Dispose();
+            //_producer.DisposeAsync();
         }
     }
 }

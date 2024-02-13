@@ -9,11 +9,9 @@ namespace BeerDispenser.Application.Implementation.Messaging.Consumers
 		public PaymentCompletedConsumer(
 			ILogger<PaymentCompletedConsumer> logger,
 			EventHubConfig configuration)
-			: base(logger, configuration, nameof(PaymentCompletedConsumer))
+			: base(logger, configuration)
 		{
 		}
-
-        public override string ConfigSectionName => nameof(PaymentCompletedEvent);
     }
 }
 
