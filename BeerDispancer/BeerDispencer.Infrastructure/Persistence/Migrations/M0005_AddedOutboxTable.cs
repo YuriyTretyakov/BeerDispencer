@@ -15,9 +15,9 @@ public class M0005_AddedOutboxTable : Migration
         Create.Table("Outbox")
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("EventType").AsAnsiString().NotNullable()
-            .WithColumn("Payload").AsAnsiString().NotNullable()
-            .WithColumn("CreatedAt").AsCustom("timestamp with time zone").NotNullable()
-            .WithColumn("UpdatedAt").AsCustom("timestamp with time zone").Nullable()
-            .WithColumn("EventState").AsInt16().NotNullable();
+            .WithColumn("Payload").AsAnsiString(2000).NotNullable()
+            .WithColumn("CreatedAt").AsDateTimeOffset().NotNullable()
+            .WithColumn("UpdatedAt").AsDateTimeOffset().Nullable()
+            .WithColumn("EventState").AsInt32().NotNullable();
     }
 }

@@ -9,8 +9,8 @@
     public class UsageEntry
     {
         public Guid Id { get; set; }
-        public DateTime? OpenedAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
+        public DateTimeOffset? OpenedAt { get; set; }
+        public DateTimeOffset? ClosedAt { get; set; }
         public decimal? FlowVolume { get; set; }
         public decimal? TotalSpent { get; set; }
 

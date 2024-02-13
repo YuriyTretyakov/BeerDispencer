@@ -9,7 +9,7 @@ namespace BeerDispenser.Domain.Entity
     {
         public decimal Volume { get; private set; }
         public DispenserStatusDto Status { get; private set; }
-        public string ReservedFor { get; private set; }
+    
         public bool IsActive { get; private set; }
 
         private IBeerFlowSettings _beerFlowSettings;
@@ -23,14 +23,12 @@ namespace BeerDispenser.Domain.Entity
             decimal volume,
             DispenserStatusDto status,
             bool isActive,
-            IBeerFlowSettings beerFlowSettings = null,
-            string reservedFor = null)
+            IBeerFlowSettings beerFlowSettings = null)
         {
             Id = id;
             Volume = volume;
             Status = status;
             _beerFlowSettings = beerFlowSettings;
-            ReservedFor = reservedFor;
             IsActive = isActive;
         }
 
@@ -109,27 +107,6 @@ namespace BeerDispenser.Domain.Entity
 
             return new UsageResponse { Amount = total, Usages = spendings };
         }
-
-        public Usage Reserve(string reservedFor, decimal amount)
-        {
-            if (Status == DispenserStatusDto.Opened || Status == DispenserStatusDto.OutOfService)
-            {
-                throw new InvalidOperationException($"Invalid dispencer state: {Status}");
-            }
-
-            if (!IsActive)
-            {
-                throw new InvalidOperationException($"Unable to operate with deactivated dispenser");
-            }
-
-            Status = DispenserStatusDto.Reserved;
-            ReservedFor = reservedFor;
-
-            var usage = Usage.CreateReserved(Id, amount);
-            _usages.Add(usage);
-            return usage;
-        }
-
 
         public static Dispenser CreateNewDispenser(decimal volume, IBeerFlowSettings beerFlowSettings)
         {

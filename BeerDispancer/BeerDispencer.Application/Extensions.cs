@@ -28,7 +28,6 @@ namespace BeerDispenser.Application
                 Id = domainDispenser.Id,
                 Volume = domainDispenser.Volume,
                 Status = domainDispenser.Status,
-                ReservedFor = domainDispenser.ReservedFor,
                 IsActive = domainDispenser.IsActive
             };
         }

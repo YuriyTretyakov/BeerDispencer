@@ -17,7 +17,7 @@ public class M0001_CreateInitial : Migration
         Create.Table("Dispencer")
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("Volume").AsDecimal()
-            .WithColumn("Status").AsInt16()
+            .WithColumn("Status").AsInt32()
             .WithColumn("ReservedFor").AsAnsiString().Nullable()
             .WithColumn("IsActive").AsBoolean().NotNullable();
 
@@ -26,8 +26,8 @@ public class M0001_CreateInitial : Migration
         Create.Table("Usage")
             .WithColumn("Id").AsGuid().Indexed().NotNullable().PrimaryKey()
             .WithColumn("DispencerId").AsGuid().ForeignKey("Dispencer", "Id")
-            .WithColumn("OpenAt").AsCustom("timestamp with time zone").NotNullable()
-            .WithColumn("ClosedAt").AsCustom("timestamp with time zone").Nullable()
+            .WithColumn("OpenAt").AsDateTimeOffset().NotNullable()
+            .WithColumn("ClosedAt").AsDateTimeOffset().Nullable()
             .WithColumn("FlowVolume").AsDecimal().Nullable()
             .WithColumn("TotalSpent").AsDecimal().Nullable();
 

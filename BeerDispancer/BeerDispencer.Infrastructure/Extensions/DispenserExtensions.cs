@@ -19,7 +19,6 @@ namespace BeerDispenser.Infrastructure.Extensions
 				Id = entity.Id,
 				Status = entity.Status,
 				Volume = entity.Volume,
-				ReservedFor = entity.ReservedFor,
 				IsActive = entity.IsActive
 			};
 		}

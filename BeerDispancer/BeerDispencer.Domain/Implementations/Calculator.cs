@@ -11,7 +11,7 @@ namespace BeerDispenser.Domain.Implementations
             _settings = settings;
         }
 
-        public  decimal? GetFlowVolume(DateTime? closedAt, DateTime? openAt)
+        public  decimal? GetFlowVolume(DateTimeOffset? closedAt, DateTimeOffset? openAt)
         {
             var duration = closedAt - openAt;
 

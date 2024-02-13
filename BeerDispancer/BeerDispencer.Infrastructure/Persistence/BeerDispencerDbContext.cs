@@ -27,7 +27,7 @@ namespace BeerDispenser.Infrastructure.Persistence.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionStr = _dbSettings.ConnectionString;
-            optionsBuilder.UseNpgsql(connectionStr);
+            optionsBuilder.UseSqlServer(connectionStr);
 
         }
 

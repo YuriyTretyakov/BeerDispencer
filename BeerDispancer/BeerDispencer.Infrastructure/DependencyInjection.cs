@@ -52,8 +52,8 @@ namespace BeerDispenser.Infrastructure
 
             collection
            .AddFluentMigratorCore()
-           .ConfigureRunner(x => x.AddPostgres().WithGlobalConnectionString(dbSettings.ConnectionString)
-           .ScanIn(typeof(BeerDispenser.Infrastructure.Migrations.M0002_PaymentsAdded).Assembly)
+           .ConfigureRunner(x => x.AddSqlServer().WithGlobalConnectionString(dbSettings.ConnectionString)
+           .ScanIn(typeof(M0002_PaymentsAdded).Assembly)
            .For
            .Migrations())
            .AddLogging(l => l.AddFluentMigratorConsole());

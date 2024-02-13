@@ -36,22 +36,21 @@ namespace BeerDispenser.Messaging.Core
         private async Task StartConsumingAsync(CancellationToken cancellationToken)
         {
             LogInfo("Consuming started");
-         //   _logger.LogInformation("EventHub Consumer [{name}]: Consuming started",  _eventHubName);
             var ro = new ReadEventOptions { MaximumWaitTime = TimeSpan.FromSeconds(10), PrefetchCount = 1, TrackLastEnqueuedEventProperties = true };
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
                     await foreach (var partitionEvent in _consumerClient.ReadEventsAsync(
-                        true,
-                           ro, cancellationToken))
+                           true,
+                           ro,
+                           cancellationToken))
                     {
                         if (partitionEvent.Data is not null)
                         {
                             var json = Encoding.UTF8.GetString(partitionEvent.Data.EventBody.ToArray());
                             var @event = JsonConvert.DeserializeObject<EventHolder<T>>(json);
-                            //   _logger.LogInformation("EventHub Consumer [{name}]:  Message Received: {@event} Offset: {offset} EnqueuedTime: {time} Partition: {partition}",
-
+                           
                             LogInfo("Message Received: {@event} Offset: {offset} EnqueuedTime: {time} Partition: {partition}",
                             @event,
                             partitionEvent.Data.Offset,
@@ -62,7 +61,6 @@ namespace BeerDispenser.Messaging.Core
                         else
                         {
                             LogInfo("Heartbeat message");
-                            //    _logger.LogInformation("EventHub Consumer [{name}]:  Heartbeat message", _eventHubName);
                         }
                     }
                 }

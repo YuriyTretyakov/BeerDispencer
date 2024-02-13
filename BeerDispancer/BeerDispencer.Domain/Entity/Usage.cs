@@ -7,8 +7,8 @@ namespace BeerDispenser.Domain.Entity
     {
         public Guid Id { get; set; }
         public Guid DispencerId { get; set; }
-        public DateTime OpenAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
+        public DateTimeOffset OpenAt { get; set; }
+        public DateTimeOffset? ClosedAt { get; set; }
         public decimal? FlowVolume { get; set; }
         public decimal? TotalSpent { get; set; }
 
@@ -17,8 +17,8 @@ namespace BeerDispenser.Domain.Entity
         internal Usage(
             Guid id,
         Guid dispencerId,
-         DateTime openAt,
-         DateTime? closedAt,
+         DateTimeOffset openAt,
+         DateTimeOffset? closedAt,
          decimal? flowVolume,
          decimal? totalSpent,
          IBeerFlowSettings beerFlowSettings = null
@@ -46,8 +46,8 @@ namespace BeerDispenser.Domain.Entity
         public static Usage Create(
             Guid id,
         Guid dispencerId,
-         DateTime openAt,
-         DateTime? closedAt,
+         DateTimeOffset openAt,
+         DateTimeOffset? closedAt,
          decimal? flowVolume,
          decimal? totalSpent,
          IBeerFlowSettings beerFlowSettings)

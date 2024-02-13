@@ -1,15 +1,12 @@
-﻿using System;
-using BeerDispenser.Infrastructure.Settings;
+﻿using BeerDispenser.Infrastructure.Settings;
 using FluentMigrator.Runner;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Npgsql;
 
 namespace BeerDispenser.Infrastructure.Migrations
 {
-	public class MigratorJob
+    public class MigratorJob
 	{
         private readonly IServiceProvider _service;
         private readonly DBSettings _dbSettings;
@@ -44,14 +41,14 @@ namespace BeerDispenser.Infrastructure.Migrations
 
         public async Task<bool> CheckIfDbExistsAsync(string connectionStr, string dbname)
         {
-            using (NpgsqlConnection conn = new NpgsqlConnection(connectionStr))
+            using (SqlConnection conn = new SqlConnection(connectionStr))
             {
                 string sql = $"SELECT DATNAME FROM pg_catalog.pg_database WHERE DATNAME = '{dbname}'";
                   
                 var createDbSql = $"CREATE DATABASE \"{dbname}\"  WITH OWNER = postgres ENCODING = 'UTF8' CONNECTION LIMIT = -1;";
 
                 object isDbExist;
-                using (NpgsqlCommand command = new NpgsqlCommand
+                using (SqlCommand command = new SqlCommand
                     (sql, conn))
                 {
                     try
@@ -73,11 +70,11 @@ namespace BeerDispenser.Infrastructure.Migrations
 
         public async Task CreateDbAsync(string connectionStr, string dbname)
         {
-            using (NpgsqlConnection conn = new NpgsqlConnection(connectionStr))
+            using (SqlConnection conn = new SqlConnection(connectionStr))
             {
                 var createDbSql = $"CREATE DATABASE \"{dbname}\"  WITH OWNER = postgres ENCODING = 'UTF8' CONNECTION LIMIT = -1;";
 
-                using (NpgsqlCommand command = new NpgsqlCommand
+                using (SqlCommand command = new SqlCommand
                     (createDbSql, conn))
                 {
                     try
