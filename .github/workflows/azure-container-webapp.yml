@@ -27,13 +27,13 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: your-app-name  # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: Happy Beer Dispensers  # set this to the name of your Azure Web App
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "**" ]
   pull_request: 
-    branches: [ "dev" ]
+    branches: [ "**" ]
   workflow_dispatch:
 
 permissions:
