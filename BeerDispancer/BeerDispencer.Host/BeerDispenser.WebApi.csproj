@@ -53,7 +53,7 @@
     <ProjectReference Include="..\BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\BeerDispenser.Kafka\BeerDispenser.Messaging.csproj">
+    <ProjectReference Include="..\BeerDispenser.Messaging\BeerDispenser.Messaging.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

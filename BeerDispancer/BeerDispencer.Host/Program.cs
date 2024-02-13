@@ -94,6 +94,6 @@ app.MapHealthChecks("/live", new HealthCheckOptions
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
 await app.UseMigration();
-
+await app.UseMessaging();
 app.Run();
 

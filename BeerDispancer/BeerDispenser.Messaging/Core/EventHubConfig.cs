@@ -13,19 +13,19 @@ namespace BeerDispenser.Messaging.Core
 
         public string GetConnectionString()
         {
-            return _configuration.GetSection(nameof(EventHubConfig)).Get<KafkaSection>()
+            return _configuration.GetSection(nameof(EventHubConfig)).Get<EventHubSection>()
                 .ConnectionString;
         }
 
         public string GetEventHubName(string sectionName)
         {
-            return _configuration.GetSection(nameof(EventHubConfig)).Get<KafkaSection>()
+            return _configuration.GetSection(nameof(EventHubConfig)).Get<EventHubSection>()
                 .EventHubs[sectionName];
         }
     }
 
 
-    public class KafkaSection
+    public class EventHubSection
     {
         public Dictionary<string, string> EventHubs { get; set; }
         public string ConnectionString { get; set; }
