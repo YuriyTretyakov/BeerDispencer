@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>3461e225-0b6b-4585-862c-3e5883ee9803</UserSecretsId>
+    <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
@@ -38,6 +39,8 @@
     <None Remove="ViewModels\" />
     <None Remove="ViewModels\Response\" />
     <None Remove="HealthChecks\" />
+    <None Remove="BeerDispencer20240212.log" />
+    <None Remove="BeerDispencer20240213.log" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
