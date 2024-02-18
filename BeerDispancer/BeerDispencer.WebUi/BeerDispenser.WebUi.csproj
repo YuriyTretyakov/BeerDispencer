@@ -18,6 +18,8 @@
     <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="7.0.11" />
     <PackageReference Include="Radzen.Blazor" Version="4.16.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Abstractions\" />
@@ -66,5 +68,10 @@
     <None Update="Pages\payments.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 </Project>
