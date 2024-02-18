@@ -1,88 +1,60 @@
-# This workflow will build and push a Docker container to an Azure Web App when a commit is pushed to your default branch.
-#
-# This workflow assumes you have already created the target Azure App Service web app.
-# For instructions see https://docs.microsoft.com/en-us/azure/app-service/quickstart-custom-container?tabs=dotnet&pivots=container-linux
-#
-# To configure this workflow:
-#
-# 1. Download the Publish Profile for your Azure Web App. You can download this file from the Overview page of your Web App in the Azure Portal.
-#    For more information: https://docs.microsoft.com/en-us/azure/app-service/deploy-github-actions?tabs=applevel#generate-deployment-credentials
-#
-# 2. Create a secret in your repository named AZURE_WEBAPP_PUBLISH_PROFILE, paste the publish profile contents as the value of the secret.
-#    For instructions on obtaining the publish profile see: https://docs.microsoft.com/azure/app-service/deploy-github-actions#configure-the-github-secret
-#
-# 3. Create a GitHub Personal access token with "repo" and "read:packages" permissions.
-#
-# 4. Create three app settings on your Azure Web app:
-#       DOCKER_REGISTRY_SERVER_URL: Set this to "https://ghcr.io"
-#       DOCKER_REGISTRY_SERVER_USERNAME: Set this to the GitHub username or organization that owns the repository
-#       DOCKER_REGISTRY_SERVER_PASSWORD: Set this to the value of your PAT token from the previous step
-#
-# 5. Change the value for the AZURE_WEBAPP_NAME.
-#
-# For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
-# For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
 
-name: Build and deploy a container to an Azure Web App
+name: Publish WebApi to Azure
 
 env:
-  AZURE_WEBAPP_NAME: Happy Beer Dispensers  # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: ugly-coyote # set this to the name of your Azure Web App
+  AZURE_WEBUI_NAME: ugly-coyote-bar
+  
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish/WebApp"
+  AZURE_WEBUI_PACKAGE_PATH: "./publish/WebUi"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "**" ]
   pull_request: 
     branches: [ "**" ]
-  workflow_dispatch:
-
+  
 permissions:
   contents: read
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
-      - name: Log in to GitHub container registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
+          dotnet-version: '7.0.x'
+          
+      - name: Restore
+        run: dotnet restore ./BeerDispancer/BeerDispencer.sln
+        
+      - name: Build WebAPI
+        run: dotnet build ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-restore
+        
+      - name: Publish WebAPI
+        run: dotnet publish ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
 
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-        with:
-          push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./BeerDispancer/BeerDispencer.Host/Dockerfile
-
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy WebAPI
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_WEBAPP }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+
+      - name: Build WebUI
+        run: dotnet build ./BeerDispancer/BeerDispencer.WebUi/BeerDispenser.WebUi.csproj --configuration Release --no-restore
+        
+      - name: Publish WebUI
+        run: dotnet publish ./BeerDispancer/BeerDispencer.WebUi/BeerDispenser.WebUi.csproj  --configuration Release --no-build --output '${{ env.AZURE_WEBUI_PACKAGE_PATH }}'
+
+      - name: Deploy WebUI
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBUI_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_WEBUI }}
+          package: "${{ env.AZURE_WEBUI_PACKAGE_PATH}}"
