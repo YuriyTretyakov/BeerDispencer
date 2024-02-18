@@ -3,7 +3,8 @@ name: Publish WebApi to Azure
 
 env:
   AZURE_WEBAPP_NAME: UglyCoyot # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish/WebApp"
+  AZURE_WEBUI_PACKAGE_PATH: "./publish/WebUi"
 
 on:
   workflow_dispatch:
@@ -36,6 +37,9 @@ jobs:
       - name: Publish
         run: dotnet publish ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
 
-   
-      
-
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_WEBAPP }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
