@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY-}beerdispenser
     build:
       context: .
-      dockerfile: BeerDispencer.Host/Dockerfile
+      dockerfile: ./Dockerfile
