@@ -3,7 +3,7 @@ name: Publish WebApi to Azure
 
 env:
   AZURE_WEBAPP_NAME: ugly-coyote # set this to the name of your Azure Web App
-  AZURE_WEBUI_NAME: ugly-coyote-bar
+  AZURE_WEBUI_NAME: uglycoyote
   
   AZURE_WEBAPP_PACKAGE_PATH: "./publish/WebApp"
   AZURE_WEBUI_PACKAGE_PATH: "./publish/WebUi"
