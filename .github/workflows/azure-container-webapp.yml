@@ -33,24 +33,24 @@ jobs:
       - name: Restore
         run: dotnet restore ./BeerDispancer/BeerDispencer.sln
         
-#      - name: Build WebAPI
-#        run: dotnet build ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-restore
+      - name: Build WebAPI
+        run: dotnet build ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-restore
         
- #     - name: Publish WebAPI
-#        run: dotnet publish ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+      - name: Publish WebAPI
+        run: dotnet publish ./BeerDispancer/BeerDispencer.Host/BeerDispenser.WebApi.csproj --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
 
-#      - name: Deploy WebAPI
- #       uses: azure/webapps-deploy@v2
-#        with:
- #         app-name: ${{ env.AZURE_WEBAPP_NAME }}
- #         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_WEBAPP }}
-  #        package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      - name: Deploy WebAPI
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_WEBAPP }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
 
       - name: Build WebUI
         run: dotnet build ./BeerDispancer/BeerDispencer.WebUi/BeerDispenser.WebUi.csproj --configuration Release --no-restore
         
       - name: Publish WebUI
-        run: dotnet publish ./BeerDispancer/BeerDispencer.WebUi/BeerDispenser.WebUi.csproj  --configuration Release --no-build --output '${{ env.AZURE_WEBUI_PACKAGE_PATH }}'
+        run: dotnet publish ./BeerDispancer/BeerDispencer.WebUi/BeerDispenser.WebUi.csproj  --configuration Release --output '${{ env.AZURE_WEBUI_PACKAGE_PATH }}'
 
       - name: Deploy WebUI
         uses: azure/webapps-deploy@v2
