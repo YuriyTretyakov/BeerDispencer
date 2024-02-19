@@ -11,11 +11,11 @@
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.16" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Microsoft.JSInterop" Version="7.0.11" />
-    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="7.0.11" />
+    <PackageReference Include="Microsoft.JSInterop" Version="7.0.16" />
+    <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="7.0.16" />
     <PackageReference Include="Radzen.Blazor" Version="4.16.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />

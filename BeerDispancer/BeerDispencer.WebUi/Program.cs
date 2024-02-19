@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 
-const string DevApiBaseAddress = "http://localhost:5268";
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
