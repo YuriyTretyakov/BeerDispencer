@@ -40,7 +40,7 @@ jobs:
           push: true
           context: .
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./BeerDispencer.WebUi/Dockerfile
+          file: ./BeerDispancer/BeerDispencer.WebUi/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
