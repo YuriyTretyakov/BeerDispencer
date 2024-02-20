@@ -1,4 +1,4 @@
-name: Build and deploy a container to an Azure Web App
+name: Build And Deploy WebUI
 
 env:
   AZURE_WEBUI_NAME: uglycoyote
