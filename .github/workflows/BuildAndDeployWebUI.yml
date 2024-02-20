@@ -38,7 +38,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: ./BeerDispancer
+          context: .
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
           file: ./BeerDispencer.WebUi/Dockerfile
 
