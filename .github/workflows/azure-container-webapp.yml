@@ -1,5 +1,5 @@
 
-name: Publish WebApi to Azure
+name: Publish WebApi to Azure - it works
 
 env:
   AZURE_WEBAPP_NAME: ugly-coyote # set this to the name of your Azure Web App
