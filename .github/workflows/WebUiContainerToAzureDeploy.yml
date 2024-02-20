@@ -4,9 +4,11 @@ env:
   AZURE_WEBUI_NAME: uglycoyote
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ "**" ]
+  pull_request: 
+    branches: [ "**" ]
 
 permissions:
   contents: 'read'
