@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  beerdispenser.webapi:
+  beerdispenser.webui:
     image: ${DOCKER_REGISTRY-}beerdispenser
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: BeerDispencer.WebUi/Dockerfile
