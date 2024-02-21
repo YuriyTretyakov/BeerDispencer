@@ -65,11 +65,13 @@ var app = builder.Build();
 await app.SeedLoginDbAsync();
 
 
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+    await app.UseMigration();
+}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
@@ -92,7 +94,7 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("live")
 });
-await app.UseMigration();
+
 await app.UseMessaging();
 
 
