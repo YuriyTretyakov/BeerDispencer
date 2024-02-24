@@ -65,10 +65,10 @@ var app = builder.Build();
 await app.SeedLoginDbAsync();
 
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     await app.UseMigration();
-}
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

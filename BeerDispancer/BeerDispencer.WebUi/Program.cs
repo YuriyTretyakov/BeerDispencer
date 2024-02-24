@@ -1,4 +1,5 @@
-﻿using BeerDispenser.WebUi.Abstractions;
+﻿using BeerDispenser.WebUi;
+using BeerDispenser.WebUi.Abstractions;
 using BeerDispenser.WebUi.Implementation;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
