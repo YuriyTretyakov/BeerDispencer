@@ -1,25 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1705.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.WebApi", "BeerDispencer.Host\BeerDispenser.WebApi.csproj", "{0EFC082C-BFF4-4D2A-B267-C33D9F266ECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.WebApi", "BeerDispencer.Host\BeerDispenser.WebApi.csproj", "{0EFC082C-BFF4-4D2A-B267-C33D9F266ECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.Infrastructure", "BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj", "{BD59878C-688B-438A-8550-FF871A1DCBE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispencer.Infrastructure", "BeerDispencer.Infrastructure\BeerDispencer.Infrastructure.csproj", "{BD59878C-688B-438A-8550-FF871A1DCBE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Application", "BeerDispencer.Application\BeerDispenser.Application.csproj", "{6930450B-B91C-43F8-B783-D6F896C73C5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.Application", "BeerDispencer.Application\BeerDispenser.Application.csproj", "{6930450B-B91C-43F8-B783-D6F896C73C5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispencer.UnitTests", "BeerDispencer.UnitTests\BeerDispencer.UnitTests.csproj", "{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispencer.UnitTests", "BeerDispencer.UnitTests\BeerDispencer.UnitTests.csproj", "{F0AD86B6-9034-4F1B-98FC-B6DC3800A1E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.WebUi", "BeerDispencer.WebUi\BeerDispenser.WebUi.csproj", "{70831137-2495-4358-A5BF-AA63F5DBFE37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.WebUi", "BeerDispencer.WebUi\BeerDispenser.WebUi.csproj", "{70831137-2495-4358-A5BF-AA63F5DBFE37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Domain", "BeerDispencer.Domain\BeerDispenser.Domain.csproj", "{5CF3C8CB-322D-4F67-8571-5700BA126418}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.Domain", "BeerDispencer.Domain\BeerDispenser.Domain.csproj", "{5CF3C8CB-322D-4F67-8571-5700BA126418}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Shared", "BeerDispencer.Shared\BeerDispenser.Shared.csproj", "{CE5BECF6-12FC-4282-9B23-8F69C77769DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.Shared", "BeerDispencer.Shared\BeerDispenser.Shared.csproj", "{CE5BECF6-12FC-4282-9B23-8F69C77769DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeerDispenser.Messaging", "BeerDispenser.Messaging\BeerDispenser.Messaging.csproj", "{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B7BF7FDD-8ED0-4157-A278-ACD5CBE9B7F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeerDispenser.Messaging", "BeerDispenser.Messaging\BeerDispenser.Messaging.csproj", "{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +57,6 @@ Global
 		{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4B583F1-ADA2-4719-9D8F-5B5C5F80F599}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7BF7FDD-8ED0-4157-A278-ACD5CBE9B7F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7BF7FDD-8ED0-4157-A278-ACD5CBE9B7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7BF7FDD-8ED0-4157-A278-ACD5CBE9B7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7BF7FDD-8ED0-4157-A278-ACD5CBE9B7F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
