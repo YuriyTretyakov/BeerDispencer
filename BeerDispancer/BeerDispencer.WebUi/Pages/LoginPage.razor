@@ -12,7 +12,7 @@
 @inject HttpClient _httpClient;
 
 @inject IJSRuntime JSRuntime
-@inject BlazorSchoolAuthenticationStateProvider BlazorSchoolAuthenticationStateProvider
+@inject GoogleAuthenticationStateProvider BlazorSchoolAuthenticationStateProvider
 
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
@@ -36,8 +36,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var blazorSchoolAuthenticationStateProvider = DotNetObjectReference.Create<BlazorSchoolAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
-        await JSRuntime.InvokeVoidAsync("blazorSchoolGoogleInitialize", "445014183184-fgvruaa5litvbvfqolp2eb0o357acgfm.apps.googleusercontent.com", blazorSchoolAuthenticationStateProvider);
+        var blazorSchoolAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        await JSRuntime.InvokeVoidAsync("blazorGoogleInitialize", "445014183184-fgvruaa5litvbvfqolp2eb0o357acgfm.apps.googleusercontent.com", blazorSchoolAuthenticationStateProvider);
         var element = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
         await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", element, new { theme = "filled_blue", size = "large" });
 

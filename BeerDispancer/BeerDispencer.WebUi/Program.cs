@@ -36,19 +36,11 @@ internal class Program
         builder.Services.AddSingleton<TimeZoneService>();
         builder.Services.AddSingleton<ILocalStorage, LocalStorage>();
         builder.Services.AddSingleton<AccountService>();
-        builder.Services.AddScoped<AuthenticationDataMemoryStorage>();
-        builder.Services.AddScoped<BlazorSchoolUserService>();
-        builder.Services.AddScoped<BlazorSchoolAuthenticationStateProvider>();
-        builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<BlazorSchoolAuthenticationStateProvider>());
+     
+        builder.Services.AddScoped<GoogleAuthenticationStateProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<GoogleAuthenticationStateProvider>());
         builder.Services.AddAuthorizationCore();
 
-
-        //builder.Services.AddGoogle(opt =>
-        // {
-        //     opt.ClientId = configuration["OAUTH:Google:ClientId"];
-        //     opt.ClientSecret = configuration["OAUTH:Google:Key"];
-        //     opt.CallbackPath = "/api/auth/google-signin";
-        // });
 
         builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = webApiHost)
             .AddHttpMessageHandler<HttpRequestMessageHandler>();
