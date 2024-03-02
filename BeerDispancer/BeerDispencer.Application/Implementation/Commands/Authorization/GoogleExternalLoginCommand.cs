@@ -4,8 +4,8 @@ using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Commands.Authorization
 {
-    public class GoogleLoginCommand:IRequest<AuthResponseDto>
+    public class GoogleExternalLoginCommand:IRequest<AuthResponseDto>
     {
-        public string Code { get; set; }
+        public string GoogleJwt { get; set; }
     }
 }

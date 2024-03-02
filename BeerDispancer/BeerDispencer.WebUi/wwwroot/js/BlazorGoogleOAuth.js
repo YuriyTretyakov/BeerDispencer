@@ -22,5 +22,5 @@ function blazorGooglePrompt()
 
 function blazorCallback(googleResponse)
 {
-    blazorAuthenticationStateProviderInstance.invokeMethodAsync("GoogleLogin", { ClientId: googleResponse.clientId, SelectedBy: googleResponse.select_by, Credential: googleResponse.credential });   
+    blazorAuthenticationStateProviderInstance.invokeMethodAsync("GoogleLoginAsync", { ClientId: googleResponse.clientId, SelectedBy: googleResponse.select_by, Credential: googleResponse.credential });   
 }

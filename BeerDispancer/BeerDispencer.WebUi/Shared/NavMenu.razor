@@ -18,13 +18,14 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="bar">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Bar
-            </NavLink>
-        </div>
-       
+        @if (@accountService.IsLoggedIn == true)
+            {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="bar">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Bar
+                </NavLink>
+            </div>
+        }
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="account">
                 <span class="oi oi-key" aria-hidden="true"></span> Account
@@ -32,7 +33,7 @@
         </div>
 
         @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Operator)
-            {
+        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="manage">
                     <span class="oi oi-briefcase" aria-hidden="true"></span> Manage Dispensers
@@ -40,15 +41,15 @@
             </div>
         }
         @if (@accountService.Role == BeerDispenser.Shared.Dto.UserRolesDto.Administrator)
-            {
+        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="administration">
                     <span class="oi oi-people" aria-hidden="true"></span> Manage Users
                 </NavLink>
             </div>
         }
-        @if (@accountService.Role != BeerDispenser.Shared.Dto.UserRolesDto.Client)
-            {
+        @if (@accountService.IsLoggedIn ==true && @accountService.Role != BeerDispenser.Shared.Dto.UserRolesDto.Client)
+        {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="analytics">
                     <span class="oi oi-bar-chart" aria-hidden="true"></span> Analytics

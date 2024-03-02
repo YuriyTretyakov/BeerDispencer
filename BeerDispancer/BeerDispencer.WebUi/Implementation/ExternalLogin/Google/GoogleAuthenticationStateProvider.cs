@@ -1,27 +1,34 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace BeerDispenser.WebUi.Implementation.ExternalLogin.Google;
 
 public class GoogleAuthenticationStateProvider : AuthenticationStateProvider
 {
+    private readonly AccountService _accountService;
+
+    public GoogleAuthenticationStateProvider(AccountService accountService)
+    {
+        _accountService = accountService;
+    }
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         return new(new ClaimsPrincipal());
     }
 
     [JSInvokable]
-    public void GoogleLogin(GoogleResponse googleResponse)
+    public async Task GoogleLoginAsync(GoogleResponse googleResponse)
     {
-        Console.WriteLine("GoogleLogin " + googleResponse.Credential);
-        var principal = new ClaimsPrincipal();
-        var user = User.FromGoogleJwt(googleResponse.Credential);
-        // CurrentUser = user;
+        var tokenHandler = new JwtSecurityTokenHandler();
 
-        if (user is not null)
+        if (tokenHandler.CanReadToken(googleResponse.Credential))
         {
-            principal = user.ToClaimsPrincipal();
+            Console.WriteLine("GoogleLogin " + googleResponse.Credential);
+
+            await _accountService.ProcessExternalUserAsync(googleResponse.Credential);
+             
         }
     }
 }

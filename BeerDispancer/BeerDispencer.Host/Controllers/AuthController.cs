@@ -14,7 +14,6 @@ namespace BeerDispenser.WebApi.Controllers
     public class AuthController : Controller
     {
         private readonly IMediator _mediator;
-       
 
         public AuthController(IMediator mediator)
         {
@@ -33,7 +32,7 @@ namespace BeerDispenser.WebApi.Controllers
         public async Task<IActionResult> logoutAsync()
         {
             var result = await _mediator.Send(new LogoutCommand());
-            return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails); 
+            return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails);
         }
 
         [Authorize(Roles = Roles.Administrator)]
@@ -46,30 +45,22 @@ namespace BeerDispenser.WebApi.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("getallusers")]
-        public async Task<IActionResult> GetAllUsersAsycn()
+        public async Task<IActionResult> GetAllUsersAsync()
         {
             var result = await _mediator.Send(new GetAllUsersQuery());
             return Ok(result);
         }
 
         [AllowAnonymous]
-        [HttpGet("google-signin")]
-        public async Task<IActionResult> GoogleSignInCallback(string code)
+        [HttpGet("google-external-user/{googleJwt}")]
+        public async Task<IActionResult> ProcessExternalGoogleUserAsync(string googleJwt)
         {
-            var tokenResult = await _mediator.Send(new GoogleLoginCommand { Code = code });
-
-            var response = JsonConvert.SerializeObject(tokenResult);
-           
-            //return RedirectToAction()
-
-            //HttpContext.ChallengeAsync(Defaultauthentication)
-            
-            Response.StatusCode = (int)HttpStatusCode.Gone;
-            return new JsonResult(response);
+            var createUserResult = await _mediator.Send(new GoogleExternalLoginCommand { GoogleJwt = googleJwt });
+            return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.Data);
         }
 
-        [HttpGet("google-consent-url")]
-        public async Task<string> GetGoogleConsentScreenUrl()
+        [HttpGet("google-options")]
+        public async Task<string> GetGoogleOptionsAsync()
         {
             return await _mediator.Send(new GoogleConsentUrlQuery());
         }
