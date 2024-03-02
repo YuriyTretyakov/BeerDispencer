@@ -1,4 +1,4 @@
-name: Build And Deploy WebUI
+name: Build And Deploy WebUI in Container
 
 env:
   AZURE_WEBUI_NAME: uglycoyote
@@ -40,7 +40,7 @@ jobs:
           push: true
           context: "{{defaultContext}}:BeerDispancer"
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./BeerDispencer.WebUi/Dockerfile
+          file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
     needs: build
 
     environment:
-      name: 'production'
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
