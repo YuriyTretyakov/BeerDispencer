@@ -42,6 +42,7 @@ namespace BeerDispenser.Messaging.Core
                 try
                 {
                     await foreach (var partitionEvent in _consumerClient.ReadEventsAsync(
+                        false,
                            ro,
                            cancellationToken))
                     {

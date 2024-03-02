@@ -1,8 +1,19 @@
 ﻿@page "/login"
 @using Implementation;
+@using Microsoft.AspNetCore.Components.Authorization
+@using BeerDispenser.WebUi.Implementation.ExternalLogin.Google;
+
 @inject NavigationManager NavManager
 @inject AccountService accountService;
 @inject UserNotificationService NotificationService;
+
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
+@inject IJSRuntime JSRuntime
+@inject BlazorSchoolAuthenticationStateProvider BlazorSchoolAuthenticationStateProvider
+
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
     <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
@@ -12,22 +23,24 @@
                      ResetPassword=@(args=>OnResetPassword(args))
                      Register=@(OnRegister) />
     </RadzenTemplateForm>
+
+    
 </RadzenCard>
 
-
+<div id="google-button"></div>
 
 @code {
 
     bool rememberMe = false;
+    string loginUrl;
 
-
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (accountService.IsLoggedIn)
-        {
-            NavManager.NavigateTo($"/account");
-        }
-       
+        var blazorSchoolAuthenticationStateProvider = DotNetObjectReference.Create<BlazorSchoolAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        await JSRuntime.InvokeVoidAsync("blazorSchoolGoogleInitialize", "445014183184-fgvruaa5litvbvfqolp2eb0o357acgfm.apps.googleusercontent.com", blazorSchoolAuthenticationStateProvider);
+        var element = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
+        await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", element, new { theme = "filled_blue", size = "large" });
+
     }
 
     async Task OnLogin(LoginArgs args)
@@ -55,5 +68,6 @@
     {
         Console.WriteLine($"ResetPassword for user: {value}");
     }
+
     }
 

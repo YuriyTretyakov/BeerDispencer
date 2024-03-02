@@ -1,6 +1,7 @@
 ﻿using System;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

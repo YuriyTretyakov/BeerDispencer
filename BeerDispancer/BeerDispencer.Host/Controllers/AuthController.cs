@@ -1,10 +1,12 @@
 ﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Queries;
-using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BeerDispenser.Shared.Dto;
+using System.Net;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -50,12 +52,26 @@ namespace BeerDispenser.WebApi.Controllers
             return Ok(result);
         }
 
-       
-        [HttpPost("google-signin")]
-        public async Task<IActionResult> GoogleSignInCallback()
+        [AllowAnonymous]
+        [HttpGet("google-signin")]
+        public async Task<IActionResult> GoogleSignInCallback(string code)
         {
-           // var result = await _mediator.Send(new GetAllUsersQuery());
-            return Ok();
+            var tokenResult = await _mediator.Send(new GoogleLoginCommand { Code = code });
+
+            var response = JsonConvert.SerializeObject(tokenResult);
+           
+            //return RedirectToAction()
+
+            //HttpContext.ChallengeAsync(Defaultauthentication)
+            
+            Response.StatusCode = (int)HttpStatusCode.Gone;
+            return new JsonResult(response);
+        }
+
+        [HttpGet("google-consent-url")]
+        public async Task<string> GetGoogleConsentScreenUrl()
+        {
+            return await _mediator.Send(new GoogleConsentUrlQuery());
         }
     }
 }

@@ -71,12 +71,23 @@ namespace BeerDispenser.WebUi.Implementation
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                     SetAccountProperties(token);
+                    SetAccountProperties(token);
                     RaiseloginEvent();
                 }
                 return (true, string.Empty);
             }
             return (false, await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task OnExternalLogin(string token)
+        {
+            await _localStorage.SaveStringAsync("user", token);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                SetAccountProperties(token);
+                RaiseloginEvent();
+            }
         }
 
         private void RaiseloginEvent()

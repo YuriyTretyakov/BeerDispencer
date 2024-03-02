@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 namespace BeerDispenser.Application.Implementation
 {
@@ -23,9 +27,19 @@ namespace BeerDispenser.Application.Implementation
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 
             })
+                .AddCookie()
+                .AddGoogle(opt =>
+                {
+                    opt.ClientId = configuration["OAUTH:Google:ClientId"];
+                    opt.ClientSecret = configuration["OAUTH:Google:Key"];
+                    
+                    opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    opt.SaveTokens = true;
+                })
 
             .AddJwtBearer(options =>
             {
@@ -47,7 +61,6 @@ namespace BeerDispenser.Application.Implementation
             });
 
             collection.AddAuthorization();
-
         }
     }
 }
