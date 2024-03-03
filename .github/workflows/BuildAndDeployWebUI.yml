@@ -6,9 +6,8 @@ env:
 on:
   workflow_dispatch:
   push:
-    branches: [ "**" ]
-  pull_request: 
-    branches: [ "**" ]
+    branches: [ "release/*" ]
+ 
 
 permissions:
   contents: 'read'

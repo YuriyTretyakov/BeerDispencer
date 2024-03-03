@@ -1,8 +1,19 @@
 ﻿@page "/login"
 @using Implementation;
+@using Microsoft.AspNetCore.Components.Authorization
+@using BeerDispenser.WebUi.Implementation.ExternalLogin.Google;
+
 @inject NavigationManager NavManager
 @inject AccountService accountService;
 @inject UserNotificationService NotificationService;
+
+
+@inject IHttpClientFactory _httpClientFactory;
+@inject HttpClient _httpClient;
+
+@inject IJSRuntime JSRuntime
+@inject GoogleAuthenticationStateProvider BlazorSchoolAuthenticationStateProvider
+
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
     <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
@@ -12,6 +23,9 @@
                      ResetPassword=@(args=>OnResetPassword(args))
                      Register=@(OnRegister) />
     </RadzenTemplateForm>
+
+    <div id="google-button"></div>
+    
 </RadzenCard>
 
 
@@ -19,15 +33,20 @@
 @code {
 
     bool rememberMe = false;
+    string clientId;
 
-
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (accountService.IsLoggedIn)
-        {
-            NavManager.NavigateTo($"/account");
-        }
-       
+        _httpClient = _httpClientFactory.CreateClient("ServerAPI");
+        clientId = await _httpClient.GetStringAsync("api/auth/google-options");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var blazorSchoolAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        await JSRuntime.InvokeVoidAsync("blazorGoogleInitialize", clientId, blazorSchoolAuthenticationStateProvider);
+        var element = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
+        await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", element, new { theme = "filled_blue", size = "large" });
     }
 
     async Task OnLogin(LoginArgs args)
@@ -55,5 +74,6 @@
     {
         Console.WriteLine($"ResetPassword for user: {value}");
     }
+
     }
 

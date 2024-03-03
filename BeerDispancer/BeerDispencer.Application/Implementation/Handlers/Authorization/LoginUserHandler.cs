@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
+using BeerDispenser.Shared;
 using BeerDispenser.Shared.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

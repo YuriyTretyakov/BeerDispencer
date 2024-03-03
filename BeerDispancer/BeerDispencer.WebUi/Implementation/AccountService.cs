@@ -1,17 +1,17 @@
 ﻿using System.Net.Http.Json;
 using BeerDispenser.Shared.Dto;
 using BeerDispenser.WebUi.Abstractions;
+using Microsoft.JSInterop;
 
 namespace BeerDispenser.WebUi.Implementation
 {
-
 
     public class AccountStateChangedArgs:EventArgs
     {
         public bool IsLoggedIn { get; set; }
     }
 
-    public class AccountService
+    public class AccountService:IDisposable
     {
         private readonly ILocalStorage _localStorage;
        
@@ -28,6 +28,8 @@ namespace BeerDispenser.WebUi.Implementation
         public DateTimeOffset? ValidUntil { get; private set; }
         public DateTimeOffset? Now { get; private set; }
 
+        public string PictureUrl { get; set; }
+
         public bool IsLoggedIn { private set; get; }
 
         private bool _previousState;
@@ -42,6 +44,8 @@ namespace BeerDispenser.WebUi.Implementation
 
         public async Task InitializeAsync()
         {
+            PictureUrl = "/images/no-avatar.png";
+
             var token = await ReadTokenasync();
 
             if (!string.IsNullOrEmpty(token))
@@ -71,12 +75,33 @@ namespace BeerDispenser.WebUi.Implementation
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                     SetAccountProperties(token);
+                    SetAccountProperties(token);
                     RaiseloginEvent();
                 }
                 return (true, string.Empty);
             }
             return (false, await response.Content.ReadAsStringAsync());
+        }
+
+        [JSInvokable]
+        public async Task ProcessExternalUserAsync(string googleJwt)
+        {
+            var response = await _beClient.GetAsync($"/api/Auth/google-external-user/{googleJwt}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var token = await response.Content.ReadAsStringAsync();
+                await _localStorage.SaveStringAsync("user", token);
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    SetAccountProperties(token);
+                    RaiseloginEvent();
+                }
+            }
+            {
+                //handle error
+            }
         }
 
         private void RaiseloginEvent()
@@ -91,13 +116,14 @@ namespace BeerDispenser.WebUi.Implementation
 
         private void SetAccountProperties(string jwtToken)
         {
-           var (token, role, username, validUntil, validUntilLocalTime) =   InitClaimsByFromJwt(jwtToken);
+           var (token, role, username, validUntil, validUntilLocalTime, pictureUrl) =   InitClaimsByFromJwt(jwtToken);
             Token = token;
             Role = role;
             UserName = username;
             ValidUntil = validUntil;
             Now = validUntilLocalTime;
             IsLoggedIn = true;
+            PictureUrl = pictureUrl;
         }
 
 
@@ -112,6 +138,7 @@ namespace BeerDispenser.WebUi.Implementation
             Token = null;
             ValidUntil = null;
             Now = null;
+            PictureUrl = "/images/no-avatar.png";
             RaiselogoutEvent();
         }
 
@@ -120,7 +147,8 @@ namespace BeerDispenser.WebUi.Implementation
             UserRolesDto Role,
             string Name,
             DateTimeOffset ValidUntil,
-            DateTimeOffset ValidUntilLocalTime)
+            DateTimeOffset ValidUntilLocalTime,
+            string PictureUr)
             InitClaimsByFromJwt(string jwt)
         {
             var payload = jwt.Split('.')[1];
@@ -134,7 +162,7 @@ namespace BeerDispenser.WebUi.Implementation
             string username = null;
             DateTimeOffset validUntil = default;
             DateTimeOffset localTime = default;
-
+            string picture = null;
             foreach (var kv in keyValuePairs)
             {
                 if (kv.Key.EndsWith("role"))
@@ -147,6 +175,11 @@ namespace BeerDispenser.WebUi.Implementation
                     username = kv.Value.ToString();
                 }
 
+                if (kv.Key.EndsWith("picture"))
+                {
+                    picture = kv.Value.ToString();
+                }
+
                 if (kv.Key.EndsWith("exp"))
                 {
                     var utcValidUntil =DateTime.UnixEpoch.AddSeconds((long)kv.Value);
@@ -155,7 +188,7 @@ namespace BeerDispenser.WebUi.Implementation
                 }
             }
 
-            return (jwt, role, username, validUntil, localTime);
+            return (jwt, role, username, validUntil, localTime, picture);
         }
 
         private byte[] ParseBase64WithoutPadding(string base64)
@@ -225,6 +258,11 @@ namespace BeerDispenser.WebUi.Implementation
                 await Task.Delay(1000);
 
             }
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

@@ -2,6 +2,7 @@
 using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.Implementation.Response;
 using MediatR;
+using BeerDispenser.Shared;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {

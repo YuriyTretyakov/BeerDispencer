@@ -36,7 +36,7 @@
                     @if (AccountService.IsLoggedIn)
                         {
                             <div style="display:inline-block">
-                                <img class="avatar" src="/images/no-avatar.png" @onclick=@(() => NavManager.NavigateTo("/account")) />
+                            <img class="avatar" src=@AccountService.PictureUrl @onclick=@(() => NavManager.NavigateTo("/account")) />
                                 <a style="margin-left:0" href="account"><b>@AccountService.UserName</b></a>
                             </div>
                             <button style="margin-left:50px" class="btn btn-sm btn-danger" title="Logout" @onclick="AccountService.LogoutAsync"><span class="oi oi-account-logout"></span></button>
@@ -72,8 +72,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        AccountService.OnAccountStateChanged += AccountStateEventHandler;
         await base.OnInitializedAsync();
-       
     }
 
+    private void AccountStateEventHandler(object sender, AccountStateChangedArgs args)
+    {
+        if (!args.IsLoggedIn)
+        {
+            NavManager.NavigateTo("/login");
+        }
+        else
+        {
+            NavManager.NavigateTo("/bar");
+        }
     }
+}

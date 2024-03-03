@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -29,16 +29,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
-    <Folder Include="Implementation\" />
-    <Folder Include="Implementation\Commands\" />
-    <Folder Include="Implementation\Handlers\" />
-    <Folder Include="Implementation\Queries\" />
     <Folder Include="Implementation\PipelineBehavior\" />
     <Folder Include="Implementation\Validation\" />
     <Folder Include="Implementation\Response\" />
     <Folder Include="DTO\" />
-    <Folder Include="Implementation\Commands\Authorization\" />
-    <Folder Include="Implementation\Handlers\Authorization\" />
     <Folder Include="Implementation\Validation\Authorization\" />
     <Folder Include="Implementation\Commands\Payments\" />
     <Folder Include="Implementation\Handlers\Payments\" />
@@ -49,6 +43,7 @@
     <Folder Include="Implementation\Messaging\Consumers\" />
   </ItemGroup>
    <ItemGroup>
+  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.16" />
   <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
    <PackageReference Include="MediatR" Version="12.0.1" />
   <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

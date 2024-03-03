@@ -1,10 +1,12 @@
 ﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Queries;
-using BeerDispenser.Application.Implementation.Commands.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BeerDispenser.Shared.Dto;
+using System.Net;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -12,7 +14,6 @@ namespace BeerDispenser.WebApi.Controllers
     public class AuthController : Controller
     {
         private readonly IMediator _mediator;
-       
 
         public AuthController(IMediator mediator)
         {
@@ -31,7 +32,7 @@ namespace BeerDispenser.WebApi.Controllers
         public async Task<IActionResult> logoutAsync()
         {
             var result = await _mediator.Send(new LogoutCommand());
-            return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails); 
+            return result.IsSuccess ? NoContent() : BadRequest(result.ProblemDetails);
         }
 
         [Authorize(Roles = Roles.Administrator)]
@@ -44,18 +45,24 @@ namespace BeerDispenser.WebApi.Controllers
 
         [Authorize(Roles = Roles.Administrator)]
         [HttpGet("getallusers")]
-        public async Task<IActionResult> GetAllUsersAsycn()
+        public async Task<IActionResult> GetAllUsersAsync()
         {
             var result = await _mediator.Send(new GetAllUsersQuery());
             return Ok(result);
         }
 
-       
-        [HttpPost("google-signin")]
-        public async Task<IActionResult> GoogleSignInCallback()
+        [AllowAnonymous]
+        [HttpGet("google-external-user/{googleJwt}")]
+        public async Task<IActionResult> ProcessExternalGoogleUserAsync(string googleJwt)
         {
-           // var result = await _mediator.Send(new GetAllUsersQuery());
-            return Ok();
+            var createUserResult = await _mediator.Send(new GoogleExternalLoginCommand { GoogleJwt = googleJwt });
+            return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.Data);
+        }
+
+        [HttpGet("google-options")]
+        public async Task<string> GetGoogleOptionsAsync()
+        {
+            return await _mediator.Send(new GoogleConsentUrlQuery());
         }
     }
 }

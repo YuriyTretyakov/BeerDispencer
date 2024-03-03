@@ -7,16 +7,19 @@
 
 
 <PageTitle>Index</PageTitle>
+<RadzenCard>
+<RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H3" TagName="TagName.H5" TextAlign="TextAlign.Center">Bar Ugly Coyote</RadzenText>
+<RadzenImage Path="images/ugly-coyote-intro.jpg" Style="width: 100%; height:60%; display: block;" />
 
-@if (accountService.IsLoggedIn)
+     @if (accountService.IsLoggedIn)
 {
-    <h2>Welcome back, @accountService.UserName</h2>
-}
-<p>Now (UTC): @DateTimeOffset.UtcNow.ToString()</p>
-<p>Now (local): @now.ToString()</p>
-
-
-
+        <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Welcome back, @accountService.UserName</RadzenText>
+    }
+    else
+    {
+    <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Welcome stranger. Before you come you'll tell me who you are</RadzenText>
+    }
+</RadzenCard>
 
 @code {
     [CascadingParameter]

@@ -53,27 +53,24 @@
 }
 else
 {
-    <RadzenDataGrid Data="@dispencers" TItem="DispenserResponseDto" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
-                    AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
+    if (accountService.IsLoggedIn && accountService.Role != UserRolesDto.Client)
+    {
+
+
+
+        <RadzenDataGrid Data="@dispencers" TItem="DispenserResponseDto" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
+        AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
         <Columns>
 
-            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />
-
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />accountService
             <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Volume" Title="Volume" Width="150px" />
 
             <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Status" Title="Status" Width="100px" />
-            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="ReservedFor" Title="Reservation" Width="150px" />
-            <RadzenDataGridColumn Visible="@IsNotClientRole" TItem="DispenserResponseDto" Context="DispenserWithStatus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="156px">
-                <Template Context="DispenserWithStatus">
-                    <RadzenButton Text="Reserve" Icon="credit_card" ButtonStyle="ButtonStyle.Success" Click="@(args => onPrePayClick(DispenserWithStatus.Id))"
-                                  @onclick:stopPropagation="true" Visible="DispenserWithStatus.AllowReservation" Size="ButtonSize.Small">
-                    </RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
+           
         </Columns>
 
     </RadzenDataGrid>
-
+    }
 
     <div class="container">
         @foreach (var dispencer in dispencers)
@@ -88,12 +85,6 @@ else
             {
                 <div @onclick="@(() => onDispencerClick(@dispencer.Id, @dispencer.Status))">
                     <img class="dispencer" style="bottom:15%" src="/images/kran_inuse.png" alt="BeerDispencer" height="200px" width="100px" />
-                </div>
-            }
-            @if (dispencer.Status == DispenserStatusDto.Reserved)
-            {
-                <div>
-                    <img class="dispencer" style="bottom:15%" src="/images/kran_reserved.png" alt="BeerDispencer" height="200px" width="100px" />
                 </div>
             }
         }
