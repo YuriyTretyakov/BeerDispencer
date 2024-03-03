@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BeerDispenser.Application.DTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BeerDispenser.Infrastructure.Authorization
 {
-    public class LoginDbContext : IdentityDbContext<IdentityUser>, ILoginDbContext
+    public class LoginDbContext : IdentityDbContext<CoyoteUser>, ILoginDbContext
     {
         private readonly LoginDBSettings _loginDBSettings;
 

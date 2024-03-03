@@ -21,7 +21,6 @@
     <Folder Include="Persistence\Entities\" />
     <Folder Include="Persistence\Abstractions\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Authorization\" />
     <Folder Include="Middleware\" />
   </ItemGroup>
   <ItemGroup>

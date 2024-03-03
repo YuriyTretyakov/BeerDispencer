@@ -1,4 +1,5 @@
-﻿using BeerDispenser.Application.Implementation.Queries;
+﻿using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.Implementation.Queries;
 using BeerDispenser.Shared.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -8,9 +9,9 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
     public class GetAllUserHandler : IRequestHandler<GetAllUsersQuery, UserCredentialsDto[]>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CoyoteUser> _userManager;
 
-        public GetAllUserHandler(UserManager<IdentityUser> userManager)
+        public GetAllUserHandler(UserManager<CoyoteUser> userManager)
         {
             _userManager = userManager;
         }

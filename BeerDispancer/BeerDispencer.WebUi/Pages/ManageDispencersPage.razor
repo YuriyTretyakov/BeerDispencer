@@ -42,8 +42,6 @@ else
                 <RadzenDataGridColumn TItem="DispenserResponseDto" Property="IsActive" Title="IsActive" Width="150px">
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn TItem="DispenserResponseDto" Property="ReservedFor" Title="Reservation" Width="150px" />
-
                 <RadzenDataGridColumn TItem="DispenserResponseDto" Context="DispenserResponseDto" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
                     <Template Context="DispenserResponseDto">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(DispenserResponseDto))" @onclick:stopPropagation="true">

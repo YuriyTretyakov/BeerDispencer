@@ -32,7 +32,6 @@
     <Folder Include="Implementation\PipelineBehavior\" />
     <Folder Include="Implementation\Validation\" />
     <Folder Include="Implementation\Response\" />
-    <Folder Include="DTO\" />
     <Folder Include="Implementation\Validation\Authorization\" />
     <Folder Include="Implementation\Commands\Payments\" />
     <Folder Include="Implementation\Handlers\Payments\" />
