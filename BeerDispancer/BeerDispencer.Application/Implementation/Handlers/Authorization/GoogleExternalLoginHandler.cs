@@ -43,7 +43,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                     user = await CreateExternalUserAsync(userProfile, "Google");
                 }
 
-                var picture = userProfile.Picture.Split('=').FirstOrDefault();
+                
 
 
                 var jwt = GenerateToken(user, new[] { Roles.Client });
@@ -90,10 +90,10 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>(userClaims.Select(x => new Claim(ClaimTypes.Role, x)))
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName)
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim("Id", user.Id),
+                new Claim("picture", user.PictureUrl)
             };
-            claims.Add(new Claim("Id", user.Id));
-
             var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 
             var token = new JwtSecurityToken(_jwtSettings.Audience,
