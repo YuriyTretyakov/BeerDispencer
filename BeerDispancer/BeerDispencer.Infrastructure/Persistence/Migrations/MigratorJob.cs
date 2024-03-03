@@ -25,12 +25,6 @@ namespace BeerDispenser.Infrastructure.Migrations
 
                 var _migrationRunner = scope.ServiceProvider.GetService<IMigrationRunner>();               
 
-                //if (await CheckIfDbExistsAsync(_dbSettings.SpecialConnectionString, _dbSettings.DbName)!=true)
-                //{
-                //    await CreateDbAsync(_dbSettings.SpecialConnectionString, _dbSettings.DbName);
-                //}
-              
-
                 if (_migrationRunner.HasMigrationsToApplyUp())
                 {
                     _migrationRunner.ListMigrations();

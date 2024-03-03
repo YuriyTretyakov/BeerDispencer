@@ -43,7 +43,8 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                     user = await CreateExternalUserAsync(userProfile, "Google");
                 }
 
-               
+                var picture = userProfile.Picture.Split('=').FirstOrDefault();
+
 
                 var jwt = GenerateToken(user, new[] { Roles.Client });
                 return new AuthResponseDto { IsSuccess = true, Data = jwt };
@@ -76,7 +77,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 NormalizedUserName = (userProfile?.GivenName ?? userProfile.Email).ToUpper(),
                 LoginProvider = externalProvider,
                 PictureUrl =userProfile.Picture?.Split('=')?.FirstOrDefault()
-        };
+            };
             await _userManager.CreateAsync(user);
             await _userManager.AddToRoleAsync(user, Roles.Client);
             return user;
@@ -92,7 +93,6 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 new Claim(ClaimTypes.NameIdentifier, user.UserName)
             };
             claims.Add(new Claim("Id", user.Id));
-            claims.Add(new Claim("picture", user.PictureUrl));
 
             var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 
