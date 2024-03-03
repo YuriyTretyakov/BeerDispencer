@@ -7,11 +7,10 @@
 
 
 <PageTitle>Index</PageTitle>
-
+<RadzenCard>
 <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H3" TagName="TagName.H5" TextAlign="TextAlign.Center">Bar Ugly Coyote</RadzenText>
-<RadzenImage Path="images/ugly-coyote-intro.jpg" Style="width: 100%; height:auto; display: block;" />
+<RadzenImage Path="images/ugly-coyote-intro.jpg" Style="width: 100%; height:60%; display: block;" />
 
- <RadzenCard>
      @if (accountService.IsLoggedIn)
 {
         <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Welcome back, @accountService.UserName</RadzenText>

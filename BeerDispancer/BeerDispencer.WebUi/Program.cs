@@ -46,8 +46,9 @@ internal class Program
             .AddHttpMessageHandler<HttpRequestMessageHandler>();
 
         builder.Services.AddRadzenComponents();
-
+        
         var host = builder.Build();
+
         await host.Services.GetRequiredService<AccountService>().InitializeAsync();
 
         await host.RunAsync();
