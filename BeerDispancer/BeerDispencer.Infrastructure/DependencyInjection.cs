@@ -1,4 +1,5 @@
 ﻿using BeerDispenser.Application.Abstractions;
+using BeerDispenser.Application.DTO;
 using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Middleware;
 using BeerDispenser.Infrastructure.Migrations;
@@ -74,7 +75,7 @@ namespace BeerDispenser.Infrastructure
                     await rolesStore.CreateAsync(new IdentityRole { Name = UserRolesDto.Client.ToString(), NormalizedName = UserRolesDto.Client.ToString().ToUpper() });
 
 
-                    var user = new IdentityUser
+                    var user = new CoyoteUser
                     {
                         Email = "xxxx@example.com",
                         NormalizedEmail = "XXXX@EXAMPLE.COM",
@@ -86,15 +87,15 @@ namespace BeerDispenser.Infrastructure
                         SecurityStamp = Guid.NewGuid().ToString("D")
                     };
 
-                    var password = new PasswordHasher<IdentityUser>();
+                    var password = new PasswordHasher<CoyoteUser>();
                     var hashed = password.HashPassword(user, "admin");
                     user.PasswordHash = hashed;
 
-                    var userStore = new UserStore<IdentityUser>(dbContext);
+                    var userStore = new UserStore<CoyoteUser>(dbContext);
                     await userStore.CreateAsync(user);
 
 
-                    using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<IdentityUser>>();
+                    using var _userManager = serviceScope.ServiceProvider.GetService<UserManager<CoyoteUser>>();
                     var result = await _userManager.AddToRolesAsync(user, new[] { UserRolesDto.Administrator.ToString() });
                 }
             }
@@ -102,7 +103,7 @@ namespace BeerDispenser.Infrastructure
 
         public static void AddIdentity(this IServiceCollection collection)
         {
-            collection.AddIdentity<IdentityUser, IdentityRole>(opt =>
+            collection.AddIdentity<CoyoteUser, IdentityRole>(opt =>
                 {
                     opt.SignIn.RequireConfirmedAccount = false;
                     opt.Password.RequireDigit = false;

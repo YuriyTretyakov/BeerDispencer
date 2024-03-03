@@ -10,16 +10,17 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using BeerDispenser.Shared;
+using BeerDispenser.Application.DTO;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
     internal class GoogleExternalLoginHandler : IRequestHandler<GoogleExternalLoginCommand, AuthResponseDto>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CoyoteUser> _userManager;
         private readonly JWTSettings _jwtSettings;
 
         public GoogleExternalLoginHandler(
-            UserManager<IdentityUser> userManager,
+            UserManager<CoyoteUser> userManager,
             IOptions<JWTSettings> jwtSettings)
         {
             _userManager = userManager;
@@ -35,16 +36,16 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 var jwtSecurityToken = tokenHandler.ReadJwtToken(request.GoogleJwt);
                 var userProfile = ParseGoogleJwtToken(jwtSecurityToken);
 
-                IdentityUser user = await _userManager.FindByEmailAsync(userProfile.Email);
+                var user = await _userManager.FindByEmailAsync(userProfile.Email);
 
                 if (user is null)
                 {
                     user = await CreateExternalUserAsync(userProfile, "Google");
                 }
 
-                var picture = userProfile.Picture.Split('=').FirstOrDefault();
+               
 
-                var jwt = GenerateToken(user, new[] { Roles.Client }, picture);
+                var jwt = GenerateToken(user, new[] { Roles.Client });
                 return new AuthResponseDto { IsSuccess = true, Data = jwt };
             }
 
@@ -64,23 +65,24 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             };
         }
 
-        private async Task<IdentityUser> CreateExternalUserAsync(UserProfileDto userProfile, string externalProvider)
+        private async Task<CoyoteUser> CreateExternalUserAsync(UserProfileDto userProfile, string externalProvider)
         {
-            var user = new IdentityUser
+            var user = new CoyoteUser
             {
                 UserName = userProfile?.GivenName?? userProfile.Email,
                 Email = userProfile.Email,
                 EmailConfirmed = userProfile.VerifiedEmail,
                 NormalizedEmail = userProfile.Email.ToUpper(),
                 NormalizedUserName = (userProfile?.GivenName ?? userProfile.Email).ToUpper(),
-                
-            };
+                LoginProvider = externalProvider,
+                PictureUrl =userProfile.Picture?.Split('=')?.FirstOrDefault()
+        };
             await _userManager.CreateAsync(user);
             await _userManager.AddToRoleAsync(user, Roles.Client);
             return user;
         }
 
-        private string GenerateToken(IdentityUser user, IList<string> userClaims, string picture)
+        private string GenerateToken(CoyoteUser user, IList<string> userClaims)
         {
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
@@ -90,7 +92,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 new Claim(ClaimTypes.NameIdentifier, user.UserName)
             };
             claims.Add(new Claim("Id", user.Id));
-            claims.Add(new Claim("picture", picture));
+            claims.Add(new Claim("picture", user.PictureUrl));
 
             var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 

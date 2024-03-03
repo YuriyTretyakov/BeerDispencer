@@ -1,4 +1,5 @@
 ﻿using System;
+using BeerDispenser.Application.DTO;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
 using BeerDispenser.Shared;
@@ -9,9 +10,9 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
 	public class CreateUserHandler:IRequestHandler<CreateUserCommand, AuthResponseDto>
 	{
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CoyoteUser> _userManager;
 
-        public CreateUserHandler(UserManager<IdentityUser> userManager)
+        public CreateUserHandler(UserManager<CoyoteUser> userManager)
 		{
             _userManager = userManager;
         }
@@ -19,7 +20,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
         public async Task<AuthResponseDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var response = new AuthResponseDto();
-            var user = new IdentityUser { UserName = request.UserName };
+            var user = new CoyoteUser { UserName = request.UserName };
 
             var result = await _userManager.CreateAsync(user);
 

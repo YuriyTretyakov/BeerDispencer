@@ -55,14 +55,11 @@ else
 {
     if (accountService.IsLoggedIn && accountService.Role != UserRolesDto.Client)
     {
-
-
-
         <RadzenDataGrid Data="@dispencers" TItem="DispenserResponseDto" AllowColumnResize="true" AllowSorting="true" AllowFiltering="true"
         AllowPaging="true" PageSize="4" PagerHorizontalAlign="HorizontalAlign.Center">
         <Columns>
 
-            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />accountService
+            <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Id" Title="Id" Width="150px" />
             <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Volume" Title="Volume" Width="150px" />
 
             <RadzenDataGridColumn TItem="DispenserResponseDto" Property="Status" Title="Status" Width="100px" />

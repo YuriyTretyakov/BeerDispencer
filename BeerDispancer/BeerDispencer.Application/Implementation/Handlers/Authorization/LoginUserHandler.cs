@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BeerDispenser.Application.DTO;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
 using BeerDispenser.Shared;
@@ -14,13 +15,13 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
     public class LoginUserHandler:IRequestHandler<UserLoginCommand, AuthResponseDto>
 	{
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<CoyoteUser> _userManager;
+        private readonly SignInManager<CoyoteUser> _signInManager;
         private readonly JWTSettings _jwtSettings;
 
         public LoginUserHandler(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<CoyoteUser> userManager,
+            SignInManager<CoyoteUser> signInManager,
             IOptions<JWTSettings> jwtSettings)
 		{
             _userManager = userManager;
@@ -62,7 +63,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             };
         }
 
-        private string GenerateToken(IdentityUser user, IList<string> userClaims)
+        private string GenerateToken(CoyoteUser user, IList<string> userClaims)
         {
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
