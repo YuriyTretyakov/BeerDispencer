@@ -58,12 +58,6 @@ namespace BeerDispenser.WebApi.Controllers
             var createUserResult = await _mediator.Send(new GoogleExternalLoginCommand { GoogleJwt = googleJwt });
             return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.Data);
         }
-
-        [HttpGet("google-options")]
-        public async Task<string> GetGoogleOptionsAsync()
-        {
-            return await _mediator.Send(new GoogleConsentUrlQuery());
-        }
     }
 }
 

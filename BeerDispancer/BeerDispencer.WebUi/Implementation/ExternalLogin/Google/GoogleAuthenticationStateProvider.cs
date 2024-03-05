@@ -31,4 +31,22 @@ public class GoogleAuthenticationStateProvider : AuthenticationStateProvider
              
         }
     }
+
+    [JSInvokable]
+    public async Task FacebookLoginAsync(object facebookResponse)
+    {
+
+        Console.WriteLine($"Facebook {facebookResponse.ToString()}");
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        await _accountService.ProcessExternalFaceBookUserAsync(facebookResponse);
+
+        //if (tokenHandler.CanReadToken(googleResponse.Credential))
+        //{
+        //    Console.WriteLine("GoogleLogin " + googleResponse.Credential);
+
+        // await _accountService.ProcessExternalUserAsync(googleResponse.Credential);
+
+        //}
+    }
 }

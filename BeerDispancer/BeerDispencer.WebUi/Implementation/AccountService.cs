@@ -84,6 +84,13 @@ namespace BeerDispenser.WebUi.Implementation
         }
 
         [JSInvokable]
+        public async Task ProcessExternalFaceBookUserAsync(object faceBookResponse)
+        {
+            Console.WriteLine("ProcessExternalFaceBookUserAsync" + faceBookResponse);
+        }
+        
+
+        [JSInvokable]
         public async Task ProcessExternalUserAsync(string googleJwt)
         {
             var response = await _beClient.GetAsync($"/api/Auth/google-external-user/{googleJwt}");
