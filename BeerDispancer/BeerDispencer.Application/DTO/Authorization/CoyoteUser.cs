@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BeerDispenser.Application.DTO
+namespace BeerDispenser.Application.DTO.Authorization
 {
     public class CoyoteUser : IdentityUser
     {

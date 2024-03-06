@@ -1,5 +1,5 @@
 ﻿using System;
-using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.DTO.Authorization;
 using BeerDispenser.Application.Implementation.Commands.Authorization;
 using BeerDispenser.Application.Implementation.Response;
 using BeerDispenser.Shared;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
-	public class CreateUserHandler:IRequestHandler<CreateUserCommand, AuthResponseDto>
+    public class CreateUserHandler:IRequestHandler<CreateUserCommand, AuthResponseDto>
 	{
         private readonly UserManager<CoyoteUser> _userManager;
 

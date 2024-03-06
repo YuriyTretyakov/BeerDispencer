@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace BeerDispenser.Shared.Dto.ExternalProviders.Google
+namespace BeerDispenser.Application.DTO.Authorization
 {
-    public class UserProfileDto
+    public class GoogleUserProfileDto
     {
         [JsonProperty("id")]
         public string Id { get; set; }

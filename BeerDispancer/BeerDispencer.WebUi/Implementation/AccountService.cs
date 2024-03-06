@@ -1,7 +1,9 @@
 ﻿using System.Net.Http.Json;
 using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.ExternalProviders;
 using BeerDispenser.WebUi.Abstractions;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 
 namespace BeerDispenser.WebUi.Implementation
 {
@@ -34,13 +36,14 @@ namespace BeerDispenser.WebUi.Implementation
 
         private bool _previousState;
 
-        public AccountService(ILocalStorage localStorage, IHttpClientFactory httpClientFactory)
+        public AccountService(
+            ILocalStorage localStorage,
+            IHttpClientFactory httpClientFactory)
         {
             _localStorage = localStorage;
             _beClient = httpClientFactory.CreateClient("ServerAPI");
             _previousState = false;
         }
-
 
         public async Task InitializeAsync()
         {
@@ -84,9 +87,27 @@ namespace BeerDispenser.WebUi.Implementation
         }
 
         [JSInvokable]
-        public async Task ProcessExternalFaceBookUserAsync(object faceBookResponse)
+        public async Task ProcessExternalFaceBookUserAsync(FaceBookResponse faceBookResponse)
         {
             Console.WriteLine("ProcessExternalFaceBookUserAsync" + faceBookResponse);
+
+            var response = await _beClient.PostAsJsonAsync($"/api/Auth/fb-external-user", faceBookResponse);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var token = await response.Content.ReadAsStringAsync();
+                await _localStorage.SaveStringAsync("user", token);
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    SetAccountProperties(token);
+                    RaiseloginEvent();
+                }
+            }
+            {
+                
+            }
+
         }
         
 

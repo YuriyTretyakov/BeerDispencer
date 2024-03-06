@@ -1,4 +1,4 @@
-﻿using BeerDispenser.Application.DTO;
+﻿using BeerDispenser.Application.DTO.Authorization;
 using BeerDispenser.Application.Implementation.Queries;
 using BeerDispenser.Shared.Dto;
 using MediatR;

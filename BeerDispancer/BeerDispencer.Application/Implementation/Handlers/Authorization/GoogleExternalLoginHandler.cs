@@ -1,5 +1,4 @@
 ﻿using BeerDispenser.Application.Implementation.Commands.Authorization;
-using BeerDispenser.Shared.Dto.ExternalProviders.Google;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
@@ -10,7 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using BeerDispenser.Shared;
-using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.DTO.Authorization;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 {
@@ -18,6 +17,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
     {
         private readonly UserManager<CoyoteUser> _userManager;
         private readonly JWTSettings _jwtSettings;
+        private readonly JWtTokenProvider _jwtTokenProvider;
 
         public GoogleExternalLoginHandler(
             UserManager<CoyoteUser> userManager,
@@ -25,6 +25,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings.Value;
+            _jwtTokenProvider = new JWtTokenProvider(jwtSettings.Value);
         }
 
         public async Task<AuthResponseDto> Handle(GoogleExternalLoginCommand request, CancellationToken cancellationToken)
@@ -40,33 +41,36 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 
                 if (user is null)
                 {
-                    user = await CreateExternalUserAsync(userProfile, "Google");
+                    user = await CreateInternalUserAsync(userProfile, "Google");
                 }
 
-                
-
-
-                var jwt = GenerateToken(user, new[] { Roles.Client });
+                var jwt = _jwtTokenProvider.GenerateToken(user, new[] { Roles.Client });
                 return new AuthResponseDto { IsSuccess = true, Data = jwt };
             }
 
-            return new AuthResponseDto { IsSuccess = false, Data = "Unable to login withexternal user" };
+            return  AuthResponseDto.CreateProblemDetails("Unable to read Google JWT token");
         }
-         private UserProfileDto ParseGoogleJwtToken(JwtSecurityToken googleToken)
+         private GoogleUserProfileDto ParseGoogleJwtToken(JwtSecurityToken googleToken)
         {
-            return new UserProfileDto
+            var prictureRaw = googleToken.Claims.FirstOrDefault(c => c.Type == "picture").Value;
+            if (prictureRaw != null) 
+            {
+                prictureRaw= prictureRaw.Split("=").FirstOrDefault();
+            }
+
+            return new GoogleUserProfileDto
             {
                 Email = googleToken.Claims.First(c => c.Type == "email").Value,
                 VerifiedEmail = bool.Parse(googleToken.Claims.First(c => c.Type == "email_verified").Value),
-                Name =googleToken.Claims.First(c => c.Type == "name").Value,
+                Name = googleToken.Claims.First(c => c.Type == "name").Value,
                 GivenName = googleToken.Claims.First(c => c.Type == "given_name").Value,
                 FamilyName = googleToken.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value,
                 Locale = googleToken.Claims.First(c => c.Type == "locale").Value,
-                Picture = googleToken.Claims.First(c => c.Type == "picture").Value,
+                Picture = prictureRaw;
             };
         }
 
-        private async Task<CoyoteUser> CreateExternalUserAsync(UserProfileDto userProfile, string externalProvider)
+        private async Task<CoyoteUser> CreateInternalUserAsync(GoogleUserProfileDto userProfile, string externalProvider)
         {
             var user = new CoyoteUser
             {
@@ -81,49 +85,6 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
             await _userManager.CreateAsync(user);
             await _userManager.AddToRoleAsync(user, Roles.Client);
             return user;
-        }
-
-        private string GenerateToken(CoyoteUser user, IList<string> userClaims)
-        {
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new List<Claim>(userClaims.Select(x => new Claim(ClaimTypes.Role, x)))
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
-                new Claim("Id", user.Id),
-                new Claim("picture", user.PictureUrl)
-            };
-            var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
-
-            var token = new JwtSecurityToken(_jwtSettings.Audience,
-                _jwtSettings.Issuer,
-                claims,
-                expires: isAdmin ? DateTime.Now.AddMinutes(15) : DateTime.Now.AddDays(1),
-                signingCredentials: credentials);
-
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-
-        }
-
-        private async Task<UserProfileDto> GetUserProfileAsync(string token, CancellationToken cancellationToken)
-        {
-            HttpResponseMessage userInfoResponse;
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("https://www.googleapis.com/oauth2/v1/");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
-                userInfoResponse = await client.GetAsync("userinfo?alt=json", cancellationToken);
-            }
-
-            if (!userInfoResponse.IsSuccessStatusCode)
-                return null;
-
-            var userInfoStr = await userInfoResponse.Content.ReadAsStringAsync(cancellationToken);
-            var userProfile = JsonConvert.DeserializeObject<UserProfileDto>(userInfoStr);
-            return userProfile;
         }
     }
 }
