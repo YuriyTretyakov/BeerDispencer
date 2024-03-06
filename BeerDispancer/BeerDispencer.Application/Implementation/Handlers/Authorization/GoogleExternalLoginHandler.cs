@@ -66,7 +66,7 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
                 GivenName = googleToken.Claims.First(c => c.Type == "given_name").Value,
                 FamilyName = googleToken.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value,
                 Locale = googleToken.Claims.First(c => c.Type == "locale").Value,
-                Picture = prictureRaw;
+                Picture = prictureRaw
             };
         }
 

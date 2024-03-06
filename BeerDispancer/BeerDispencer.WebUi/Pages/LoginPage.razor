@@ -17,11 +17,10 @@
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
     <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
-        <RadzenLogin AllowRegister="true" AllowResetPassword="true" Username="" Password=""
-                     AllowRememberMe="true" RememberMe="@rememberMe"
+        <RadzenLogin AllowRegister="true"  Username="" Password="" AllowResetPassword="false"
                      Login=@(args =>OnLogin(args))
-                     ResetPassword=@(args=>OnResetPassword(args))
                      Register=@(OnRegister) />
+                     
     </RadzenTemplateForm>
 
     <div class="social" style="display: flex;justify-content: space-between;">
@@ -33,12 +32,6 @@
     </div> 
 </RadzenCard>
 
-<p id="status"></p>
-
-
-
-
-
 @code {
     DotNetObjectReference<GoogleAuthenticationStateProvider> jsInteropStateProvider;
     bool rememberMe = false;
@@ -48,14 +41,11 @@
     {
         _httpClient = _httpClientFactory.CreateClient("ServerAPI");
         jsInteropStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
-        
-        // clientId = await _httpClient.GetStringAsync("api/auth/google-options");
     }
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-       
         await JSRuntime.InvokeVoidAsync("blazorGoogleInitialize", clientId, jsInteropStateProvider);
         var googleSignInElement = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
         await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", googleSignInElement, new { theme = "filled_blue", size = "large" });
@@ -68,16 +58,11 @@
         var blazorAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
         
         await JSRuntime.InvokeVoidAsync("InitSdk", blazorAuthenticationStateProvider);
-        //await JSRuntime.InvokeVoidAsync("fbAsyncInit", "1862605724198810");
         await JSRuntime.InvokeVoidAsync("fbAsyncInit");
-
-
     }
 
     async Task onFacebookLoginClick()
     {
-        //var blazorAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
-       // await JSRuntime.InvokeAsync<object>("fbLogin", blazorAuthenticationStateProvider);
         await JSRuntime.InvokeAsync<object>("fbLogin", jsInteropStateProvider);
     }
 
@@ -99,7 +84,8 @@
 
     void OnRegister()
     {
-        Console.WriteLine("-> Register");
+        NotificationService.ShowErrorNotification(@"Registration feature isn't ready yet.
+        Try login with existing user or use social login");
     }
 
     void OnResetPassword(string value)

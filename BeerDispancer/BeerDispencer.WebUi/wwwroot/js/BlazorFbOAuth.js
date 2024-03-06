@@ -15,8 +15,6 @@ function InitSdk(stateProvider) {
 
 function statusChangeCallback(response) {
     
-    console.log('statusChangeCallback provider=' + stateProviderInstance); 
-
     if (response.status === 'connected') {
         console.log("Connected: UserId " + response.authResponse.userID + "Token " + response.authResponse.accessToken);
 
@@ -34,7 +32,6 @@ function fbAsyncInit() {
         xfbml: true,
         version: 'v7.0'
     });
-    document.getElementById('status').innerHTML = 'Inited';
 }
 
 function fbLogin() {

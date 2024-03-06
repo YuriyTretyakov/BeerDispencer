@@ -24,9 +24,14 @@ namespace BeerDispenser.Application.Implementation
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim("Id", user.Id),
-                new Claim("picture", user.PictureUrl)
+                
             };
-            
+
+            if (user.PictureUrl is not null)
+            {
+                claims.Add(new Claim("picture", user.PictureUrl));
+            }
+
             var isAdmin = userClaims.Contains(UserRolesDto.Administrator.ToString());
 
             var token = new JwtSecurityToken(_jwtSettings.Audience,
