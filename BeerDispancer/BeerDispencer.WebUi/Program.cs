@@ -40,7 +40,7 @@ internal class Program
         builder.Services.AddScoped<GoogleAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<GoogleAuthenticationStateProvider>());
         builder.Services.AddAuthorizationCore();
-
+        
 
         builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = webApiHost)
             .AddHttpMessageHandler<HttpRequestMessageHandler>();

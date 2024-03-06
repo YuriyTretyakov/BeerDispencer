@@ -1,4 +1,4 @@
-﻿using BeerDispenser.Application.DTO;
+﻿using BeerDispenser.Application.DTO.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

@@ -7,6 +7,7 @@ using BeerDispenser.Shared.Dto;
 using System.Net;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication;
+using BeerDispenser.Shared.Dto.ExternalProviders;
 
 namespace BeerDispenser.WebApi.Controllers
 {
@@ -56,13 +57,15 @@ namespace BeerDispenser.WebApi.Controllers
         public async Task<IActionResult> ProcessExternalGoogleUserAsync(string googleJwt)
         {
             var createUserResult = await _mediator.Send(new GoogleExternalLoginCommand { GoogleJwt = googleJwt });
-            return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.Data);
+            return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.ProblemDetails);
         }
-
-        [HttpGet("google-options")]
-        public async Task<string> GetGoogleOptionsAsync()
+        [AllowAnonymous]
+        [HttpPost("fb-external-user")]
+        public async Task<IActionResult> ProcessExternalFbUserAsync([FromBody] FaceBookResponse fbResponse)
         {
-            return await _mediator.Send(new GoogleConsentUrlQuery());
+            var command = new FBExternalLoginCommand { FbResponse = fbResponse };
+            var createUserResult = await _mediator.Send(command);
+            return createUserResult.IsSuccess ? Ok(createUserResult.Data) : BadRequest(createUserResult.ProblemDetails);
         }
     }
 }

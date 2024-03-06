@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Implementation\Validation\Authorization\**" />
+    <EmbeddedResource Remove="Implementation\Validation\Authorization\**" />
+    <None Remove="Implementation\Validation\Authorization\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Abstractions\" />
     <None Remove="Implementation\" />
     <None Remove="Implementation\Commands\" />
@@ -32,7 +38,6 @@
     <Folder Include="Implementation\PipelineBehavior\" />
     <Folder Include="Implementation\Validation\" />
     <Folder Include="Implementation\Response\" />
-    <Folder Include="Implementation\Validation\Authorization\" />
     <Folder Include="Implementation\Commands\Payments\" />
     <Folder Include="Implementation\Handlers\Payments\" />
     <Folder Include="Implementation\Messaging\" />

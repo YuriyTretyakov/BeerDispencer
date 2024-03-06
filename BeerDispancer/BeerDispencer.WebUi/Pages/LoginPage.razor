@@ -17,36 +17,53 @@
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
     <RadzenTemplateForm Data=@("LoginWithDefaultValues")>
-        <RadzenLogin AllowRegister="true" AllowResetPassword="true" Username="" Password=""
-                     AllowRememberMe="true" RememberMe="@rememberMe"
+        <RadzenLogin AllowRegister="true"  Username="" Password="" AllowResetPassword="false"
                      Login=@(args =>OnLogin(args))
-                     ResetPassword=@(args=>OnResetPassword(args))
                      Register=@(OnRegister) />
+                     
     </RadzenTemplateForm>
 
-    <div id="google-button"></div>
+    <div class="social" style="display: flex;justify-content: space-between;">
+    <div id="google-button" style="display: flex;flex-direction: column"></div>
+        <fb:login-button class="fb-login-button" style="display: flex;flex-direction: column" data-size=" large" data-button-type="login_with"  scope="public_profile,email" onlogin="checkLoginState();">
+        </fb:login-button>
     
+   @*  <div @onlogin="checkLoginState" @onclick="onFacebookLoginClick" class="fb-login-button" style="display: flex;flex-direction: column" data-size=" large" data-button-type="login_with" data-layout="" data-auto-logout-link="true" data-use-continue-as="false"></div>*@
+    </div> 
 </RadzenCard>
 
-
-
 @code {
-
+    DotNetObjectReference<GoogleAuthenticationStateProvider> jsInteropStateProvider;
     bool rememberMe = false;
-    string clientId;
+    string clientId = "445014183184-fgvruaa5litvbvfqolp2eb0o357acgfm.apps.googleusercontent.com";
 
-    protected override async Task OnInitializedAsync()
+    protected override void  OnInitialized()
     {
         _httpClient = _httpClientFactory.CreateClient("ServerAPI");
-        clientId = await _httpClient.GetStringAsync("api/auth/google-options");
+        jsInteropStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
     }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var blazorSchoolAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
-        await JSRuntime.InvokeVoidAsync("blazorGoogleInitialize", clientId, blazorSchoolAuthenticationStateProvider);
-        var element = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
-        await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", element, new { theme = "filled_blue", size = "large" });
+        await JSRuntime.InvokeVoidAsync("blazorGoogleInitialize", clientId, jsInteropStateProvider);
+        var googleSignInElement = await JSRuntime.InvokeAsync<IJSObjectReference>("document.getElementById", "google-button");
+        await JSRuntime.InvokeVoidAsync("google.accounts.id.renderButton", googleSignInElement, new { theme = "filled_blue", size = "large" });
+
+        await PrepareFacebookAsync();
+    }
+
+    private async Task PrepareFacebookAsync()
+    {
+        var blazorAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        
+        await JSRuntime.InvokeVoidAsync("InitSdk", blazorAuthenticationStateProvider);
+        await JSRuntime.InvokeVoidAsync("fbAsyncInit");
+    }
+
+    async Task onFacebookLoginClick()
+    {
+        await JSRuntime.InvokeAsync<object>("fbLogin", jsInteropStateProvider);
     }
 
     async Task OnLogin(LoginArgs args)
@@ -67,7 +84,8 @@
 
     void OnRegister()
     {
-        Console.WriteLine("-> Register");
+        NotificationService.ShowErrorNotification(@"Registration feature isn't ready yet.
+        Try login with existing user or use social login");
     }
 
     void OnResetPassword(string value)

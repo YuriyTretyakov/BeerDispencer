@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using BeerDispenser.Shared.Dto.ExternalProviders;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -25,10 +26,13 @@ public class GoogleAuthenticationStateProvider : AuthenticationStateProvider
 
         if (tokenHandler.CanReadToken(googleResponse.Credential))
         {
-            Console.WriteLine("GoogleLogin " + googleResponse.Credential);
-
             await _accountService.ProcessExternalUserAsync(googleResponse.Credential);
-             
         }
+    }
+
+    [JSInvokable]
+    public async Task FacebookLoginAsync(FaceBookResponse facebookResponse)
+    { 
+        await _accountService.ProcessExternalFaceBookUserAsync(facebookResponse);
     }
 }

@@ -24,18 +24,32 @@
         </svg>
         <div class="loading-progress-text"></div>
     </div>
-
+    <div id="fb-root"></div>
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <!--Google-->
     <script src="js/BlazorGoogleOAuth.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!--Google-->
+    <!--Facebook-->
+    <div id="fb-root"></div>
+    <script src="js/BlazorFbOAuth.js"></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/uk_UA/sdk.js#xfbml=1&version=v19.0&appId=839222513209116" nonce="FQ9XQPwk"></script>
+    <!--script-- src="js/BlazorFbOAuth.js"></!--script-->
+    <!--Facebook-->
+    <!--Stripe-->
+
+
+
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script src="js/StripeAddCard.js"></script>
+    <!--Stripe-->
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
 </body>
 </html>
 

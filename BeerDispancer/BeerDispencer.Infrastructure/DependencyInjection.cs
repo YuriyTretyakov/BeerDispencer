@@ -1,5 +1,5 @@
 ﻿using BeerDispenser.Application.Abstractions;
-using BeerDispenser.Application.DTO;
+using BeerDispenser.Application.DTO.Authorization;
 using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Middleware;
 using BeerDispenser.Infrastructure.Migrations;
