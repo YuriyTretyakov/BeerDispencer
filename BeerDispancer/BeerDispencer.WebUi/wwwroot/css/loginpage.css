@@ -1,0 +1,30 @@
+﻿
+/*small*/
+@media (max-width: 533px) {
+    .social {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .social-login {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Styles for medium screens */
+@media (min-width: 540px) and (max-width: 1600px) {
+    .social {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .social-login {
+        width: 50%;
+        display: flex;
+        flex-direction: column
+    }
+}
+

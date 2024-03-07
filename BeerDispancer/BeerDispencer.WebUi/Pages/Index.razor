@@ -4,19 +4,12 @@
 @page "/"
 @inject TimeZoneService TimeZoneService
 @inject AccountService accountService; 
-
+string intro message = 
 
 <PageTitle>Index</PageTitle>
 <RadzenCard>
-     @if (accountService.IsLoggedIn)
-{
-        <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Welcome to back to Ugly Coyote, @accountService.UserName</RadzenText>
-    }
-    else
-    {
-        <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">Welcome to Ugly Coyote stranger. Before you come you'll tell me who you are</RadzenText>
-    }
-
+   
+    <RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">@welcomeMessage</RadzenText>
     <RadzenImage Path="images/ugly-coyote-intro.jpg" Style="width: 100%; height:60%; display: block;" />
 </RadzenCard>
 
@@ -24,6 +17,7 @@
     [CascadingParameter]
     public MainLayout mainLayout { get; set; }
 
+    string welcomeMessage;
     DateTimeOffset now;
 
 
@@ -31,6 +25,17 @@
     {
         var offset = await TimeZoneService.GetUTCOffset();
         now = new DateTimeOffset(DateTime.Now, offset.Value);
+    }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (@accountService.IsLoggedIn)
+        {
+            welcomeMessage = $"Welcome back to ye Ugly Coyote, {@accountService.UserName}";
+        }
+        else
+        {
+            welcomeMessage = $"Welcome to ye Ugly Coyote, stranger. You have to sign in";
+        }
     }
 }

@@ -37,8 +37,8 @@ internal class Program
         builder.Services.AddSingleton<ILocalStorage, LocalStorage>();
         builder.Services.AddSingleton<AccountService>();
      
-        builder.Services.AddScoped<GoogleAuthenticationStateProvider>();
-        builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<GoogleAuthenticationStateProvider>());
+        builder.Services.AddScoped<ExternalLoginCallbackHandler>();
+     
         builder.Services.AddAuthorizationCore();
         
 

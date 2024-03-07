@@ -1,22 +1,16 @@
 ﻿using BeerDispenser.Shared.Dto.ExternalProviders;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace BeerDispenser.WebUi.Implementation.ExternalLogin.Google;
 
-public class GoogleAuthenticationStateProvider : AuthenticationStateProvider
+public class ExternalLoginCallbackHandler
 {
     private readonly AccountService _accountService;
 
-    public GoogleAuthenticationStateProvider(AccountService accountService)
+    public ExternalLoginCallbackHandler(AccountService accountService)
     {
         _accountService = accountService;
-    }
-    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-    {
-        return new(new ClaimsPrincipal());
     }
 
     [JSInvokable]

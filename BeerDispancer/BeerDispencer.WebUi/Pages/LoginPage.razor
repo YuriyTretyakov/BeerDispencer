@@ -12,7 +12,7 @@
 @inject HttpClient _httpClient;
 
 @inject IJSRuntime JSRuntime
-@inject GoogleAuthenticationStateProvider BlazorSchoolAuthenticationStateProvider
+@inject ExternalLoginCallbackHandler ExternalLoginCallbackHandler
 
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
@@ -23,24 +23,25 @@
                      
     </RadzenTemplateForm>
 
-    <div class="social" style="display: flex;justify-content: space-between;">
-    <div id="google-button" style="display: flex;flex-direction: column"></div>
-        <fb:login-button class="fb-login-button" style="display: flex;flex-direction: column" data-size=" large" data-button-type="login_with"  scope="public_profile,email" onlogin="checkLoginState();">
-        </fb:login-button>
+   
+    <div class="social" >
+    <div id="google-button" class="social-login"></div>
+        <fb:login-button class="fb-login-button social-login" data-size=" large" data-button-type="login_with" scope="public_profile,email" onlogin="checkLoginState();">
+            </fb:login-button>
     
-   @*  <div @onlogin="checkLoginState" @onclick="onFacebookLoginClick" class="fb-login-button" style="display: flex;flex-direction: column" data-size=" large" data-button-type="login_with" data-layout="" data-auto-logout-link="true" data-use-continue-as="false"></div>*@
+  
     </div> 
 </RadzenCard>
 
 @code {
-    DotNetObjectReference<GoogleAuthenticationStateProvider> jsInteropStateProvider;
+    DotNetObjectReference<ExternalLoginCallbackHandler> jsInteropStateProvider;
     bool rememberMe = false;
     string clientId = "445014183184-fgvruaa5litvbvfqolp2eb0o357acgfm.apps.googleusercontent.com";
 
     protected override void  OnInitialized()
     {
         _httpClient = _httpClientFactory.CreateClient("ServerAPI");
-        jsInteropStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        jsInteropStateProvider = DotNetObjectReference.Create<ExternalLoginCallbackHandler>(ExternalLoginCallbackHandler);
     }
 
 
@@ -55,7 +56,7 @@
 
     private async Task PrepareFacebookAsync()
     {
-        var blazorAuthenticationStateProvider = DotNetObjectReference.Create<GoogleAuthenticationStateProvider>(BlazorSchoolAuthenticationStateProvider);
+        var blazorAuthenticationStateProvider = DotNetObjectReference.Create<ExternalLoginCallbackHandler>(ExternalLoginCallbackHandler);
         
         await JSRuntime.InvokeVoidAsync("InitSdk", blazorAuthenticationStateProvider);
         await JSRuntime.InvokeVoidAsync("fbAsyncInit");
