@@ -2,7 +2,7 @@
 using BeerDispenser.Application.Abstractions;
 using BeerDispenser.Application.DTO;
 using BeerDispenser.Application.Implementation.Queries;
-using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Handlers.Payments

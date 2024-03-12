@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using BeerDispenser.Shared;
-using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 using BeerDispenser.WebUi.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

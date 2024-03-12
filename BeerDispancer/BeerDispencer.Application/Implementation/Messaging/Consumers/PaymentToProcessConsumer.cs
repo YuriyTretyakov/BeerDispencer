@@ -1,7 +1,7 @@
 ﻿using BeerDispenser.Application.Implementation.Messaging.Events;
 using BeerDispenser.Application.Implementation.Messaging.Publishers;
 using BeerDispenser.Messaging.Core;
-using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Stripe;

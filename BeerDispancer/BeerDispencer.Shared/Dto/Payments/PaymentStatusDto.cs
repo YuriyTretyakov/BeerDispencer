@@ -1,4 +1,4 @@
-﻿namespace BeerDispenser.Shared.Dto
+﻿namespace BeerDispenser.Shared.Dto.Payments
 {
     public enum PaymentStatusDto
     {

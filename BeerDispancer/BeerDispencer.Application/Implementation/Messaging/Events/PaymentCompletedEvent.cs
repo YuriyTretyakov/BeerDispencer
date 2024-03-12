@@ -1,4 +1,4 @@
-﻿using BeerDispenser.Shared.Dto;
+﻿using BeerDispenser.Shared.Dto.Payments;
 
 namespace BeerDispenser.Application.Implementation.Messaging.Events
 {

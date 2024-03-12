@@ -1,10 +1,11 @@
-﻿@using Microsoft.JSInterop;
+﻿@using BeerDispenser.Shared.Dto.Payments
+@using Microsoft.JSInterop;
 @using BeerDispenser.Shared.Dto;
 @using BeerDispenser.Shared;
 @inject NavigationManager NavManager
 @using Implementation;
 @inject AccountService accountService;
-
+@inject UserNotificationService NotificationService;
 
 @page "/bar"
 
@@ -109,6 +110,14 @@ else
 
         if (accountService.Role == UserRolesDto.Client)
         {
+            var paymentsAvailable = await _httpClient.GetFromJsonAsync<PaymentAvailabilityDto>($"api/Payments/is-payments-allowed");
+
+            if (paymentsAvailable?.IsAvailable is not true)
+            {
+                NotificationService.ShowErrorNotification($"Error at attempt to open dispenser: {paymentsAvailable?.Details}");
+                return;
+            }
+
             await _httpClient.PostAsJsonAsync<DispenserUpdateModel>($"api/Dispenser/{id}/clientChangeStatus", update);
             requested = true;
         }
