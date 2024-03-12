@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BeerDispenser.Application.Implementation.Messaging.Events;
-using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 
 namespace BeerDispenser.Infrastructure.Persistence.Entities
 {

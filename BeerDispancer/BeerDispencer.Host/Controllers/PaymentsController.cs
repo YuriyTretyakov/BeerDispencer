@@ -1,12 +1,8 @@
-﻿using BeerDispenser.Application.Implementation.Commands;
-using BeerDispenser.Application.Implementation.Queries;
+﻿using BeerDispenser.Application.Implementation.Queries;
 using BeerDispenser.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using BeerDispenser.Application.Implementation.Commands.Payments;
 
 namespace BeerDispenser.WebApi.Controllers
@@ -15,7 +11,6 @@ namespace BeerDispenser.WebApi.Controllers
     public class PaymentsController : Controller
     {
         private readonly IMediator _mediator;
-        private static string _webUiBaseUrl;
 
         public PaymentsController(IMediator mediator)
         {
@@ -130,6 +125,19 @@ namespace BeerDispenser.WebApi.Controllers
 
             var result = await _mediator.Send(paymentStatusQuery);
             return StatusCode((int)result);
+        }
+
+        [Authorize()]
+        [HttpGet("is-payments-allowed")]
+        public async Task<ActionResult> IsPaymnetsAllowed()
+        {
+            var claim = User.Claims.First(x => x.Type == "Id");
+            var id = Guid.Parse(claim.Value);
+
+            var command = new CheckPaymentAvailabilityQuery { UserId = id };
+
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }

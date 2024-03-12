@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BeerDispenser.Shared.Dto
+namespace BeerDispenser.Shared.Dto.Payments
 {
     public class PaymentRequiredDto
     {

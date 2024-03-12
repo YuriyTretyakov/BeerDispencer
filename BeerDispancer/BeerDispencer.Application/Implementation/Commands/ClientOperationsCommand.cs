@@ -1,5 +1,6 @@
 ﻿using System;
 using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 using MediatR;
 
 namespace BeerDispenser.Application.Implementation.Commands

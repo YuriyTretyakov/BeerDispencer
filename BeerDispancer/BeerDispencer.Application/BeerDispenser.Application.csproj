@@ -39,7 +39,6 @@
     <Folder Include="Implementation\Validation\" />
     <Folder Include="Implementation\Response\" />
     <Folder Include="Implementation\Commands\Payments\" />
-    <Folder Include="Implementation\Handlers\Payments\" />
     <Folder Include="Implementation\Messaging\" />
     <Folder Include="Implementation\Messaging\Events\" />
     <Folder Include="Services\" />

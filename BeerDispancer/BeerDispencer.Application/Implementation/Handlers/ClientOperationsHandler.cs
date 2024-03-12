@@ -7,6 +7,7 @@ using BeerDispenser.Domain.Abstractions;
 using BeerDispenser.Domain.Entity;
 using BeerDispenser.Messaging.Core;
 using BeerDispenser.Shared.Dto;
+using BeerDispenser.Shared.Dto.Payments;
 using MediatR;
 using Newtonsoft.Json;
 
