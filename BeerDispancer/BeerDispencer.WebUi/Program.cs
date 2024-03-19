@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using BeerDispenser.WebUi.Implementation.ExternalLogin.Google;
 using Microsoft.AspNetCore.Components.Authorization;
+using BeerDispenser.WebUi.Implementation.Spinner;
 internal class Program
 {
     private static async Task Main(string[] args)
@@ -14,7 +15,7 @@ internal class Program
 
         Uri webApiHost;
 
-
+        Console.WriteLine(builder.HostEnvironment.Environment);
         if (builder.HostEnvironment.Environment == "Development")
         {
             webApiHost = new Uri("http://localhost:5268");
@@ -24,11 +25,15 @@ internal class Program
             webApiHost = new Uri("https://ugly-coyote.azurewebsites.net");
         }
 
+        Console.WriteLine($"Web api host: {webApiHost}");
+
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         builder.Services.AddScoped<NotificationService>();
         builder.Services.AddScoped<DialogService>();
+
+        builder.Services.AddScoped<SpinnerService>();
 
         builder.Services.AddScoped<UserNotificationService>();
         builder.Services.AddScoped<HttpRequestMessageHandler>();

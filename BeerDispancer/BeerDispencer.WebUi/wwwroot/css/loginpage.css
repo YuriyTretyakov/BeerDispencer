@@ -14,8 +14,8 @@
     }
 }
 
-/* Styles for medium screens */
-@media (min-width: 540px) and (max-width: 1600px) {
+/* Styles for medium screens  and (max-width: 1600px) */
+@media (min-width: 540px) {
     .social {
         display: flex;
         justify-content: space-between;

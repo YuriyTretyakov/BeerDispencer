@@ -1,5 +1,6 @@
 ﻿
 @using BeerDispenser.WebUi.Implementation;
+@using BeerDispenser.WebUi.Implementation.Spinner;
 
 @inherits LayoutComponentBase
 @inject NavigationManager NavManager
@@ -22,14 +23,14 @@
 </style>
 
 <CascadingValue Value="this">
-
-
+    
+    
     <div class="page">
         <div class="sidebar">
             <NavMenu />
 
         </div>
-
+       
         <main>
             <div class="top-row px-4">
                 <div style="width:200px;text-align:right;">
@@ -47,8 +48,10 @@
                         }
                 </div>
             </div>
-            <article class="content px-4">
+            <article id="contentarea" class="content px-4">
+                <div id="cover-spin"></div>
                 @Body
+               
             </article>
         </main>
     </div>

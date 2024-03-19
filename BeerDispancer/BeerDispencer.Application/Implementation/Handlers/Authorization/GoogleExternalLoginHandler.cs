@@ -60,12 +60,12 @@ namespace BeerDispenser.Application.Implementation.Handlers.Authorization
 
             return new GoogleUserProfileDto
             {
-                Email = googleToken.Claims.First(c => c.Type == "email").Value,
-                VerifiedEmail = bool.Parse(googleToken.Claims.First(c => c.Type == "email_verified").Value),
-                Name = googleToken.Claims.First(c => c.Type == "name").Value,
-                GivenName = googleToken.Claims.First(c => c.Type == "given_name").Value,
+                Email = googleToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value,
+                VerifiedEmail = bool.Parse(googleToken.Claims.FirstOrDefault(c => c.Type == "email_verified")?.Value),
+                Name = googleToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value,
+                GivenName = googleToken.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value,
                 FamilyName = googleToken.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value,
-                Locale = googleToken.Claims.First(c => c.Type == "locale").Value,
+                Locale = googleToken.Claims.FirstOrDefault(c => c.Type == "locale")?.Value,
                 Picture = prictureRaw
             };
         }
