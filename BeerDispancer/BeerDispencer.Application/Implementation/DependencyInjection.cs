@@ -31,15 +31,15 @@ namespace BeerDispenser.Application.Implementation
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 
             })
-                .AddCookie()
-                .AddGoogle(opt =>
-                {
-                    opt.ClientId = configuration["OAUTH:Google:ClientId"];
-                    opt.ClientSecret = configuration["OAUTH:Google:Key"];
+                //.AddCookie()
+                //.AddGoogle(opt =>
+                //{
+                //    opt.ClientId = configuration["OAUTH:Google:ClientId"];
+                //    opt.ClientSecret = configuration["OAUTH:Google:Key"];
                     
-                    opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    opt.SaveTokens = true;
-                })
+                //    opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //    opt.SaveTokens = true;
+                //})
 
             .AddJwtBearer(options =>
             {
