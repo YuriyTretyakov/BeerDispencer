@@ -46,11 +46,11 @@ jobs:
           package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
         
         env:
-          Stripe__SecretKey: ${{ secrets.Stripe_SecretKey }}
-          Stripe__PubKey: ${{secrets.Stripe_PubKey }}
-          LoginDBSettings__ConnectionString: ${{secrets.LoginDBSettings_ConnectionString}}
-          DbSettings__ConnectionString:  ${{secrets.DbSettings_ConnectionString}}
-          EventHubConfig__ConnectionString: ${{secrets.EventHubConfig_ConnectionString}}
+          Stripe__SecretKey: ${{ secrets.STRIPE_SECRETKEY }}
+          Stripe__PubKey: ${{secrets.STRIPE_PUBKEY }}
+          LoginDBSettings__ConnectionString: ${{secrets.LOGINDBSETTINGS_CONNECTIONSTRING}}
+          DbSettings__ConnectionString:  ${{secrets.DBSETTINGS_CONNECTIONSTRING}}
+          EventHubConfig__ConnectionString: ${{secrets.EVENTHUBCONFIG_CONNECTIONSTRING}}
         
 
 #      - name: Build WebUI
