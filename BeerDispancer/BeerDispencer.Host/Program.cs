@@ -12,13 +12,21 @@ using Serilog;
 using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Stripe;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
+if (builder.Environment.EnvironmentName.Equals("development", StringComparison.CurrentCultureIgnoreCase))
+{
+    builder.Configuration.AddUserSecrets("3461e225-0b6b-4585-862c-3e5883ee9803");
+}
+else if (builder.Environment.EnvironmentName.Equals("azuredev", StringComparison.CurrentCultureIgnoreCase))
+{
+    builder.Configuration.AddUserSecrets("3461e225-0b6b-4585-862c-3e5883ee9802");
+}
 
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
@@ -91,6 +99,18 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 });
 
 await app.UseMessaging();
+
+Console.WriteLine(Environment.GetEnvironmentVariables());
+
+var logger = app.Services
+    .GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
+
+logger.LogInformation("Environment: {n}", app.Environment.EnvironmentName);
+
+var configService = app.Services.GetRequiredService<IConfiguration>();
+
+logger.LogInformation("Vars ={@vars}", configService.AsEnumerable());
+  
 
 
 app.Run();
