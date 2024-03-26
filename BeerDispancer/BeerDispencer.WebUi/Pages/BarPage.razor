@@ -15,9 +15,8 @@
 @inject HttpClient _httpClient;
 
 
-<PageTitle>Bar</PageTitle>
+<PageTitle>The Ugly Coyot- Bar</PageTitle>
 
-<h1>Bar "The Ugly Coyot"</h1>
 
 <style>
     .container {
@@ -28,7 +27,11 @@
         height: 500px;
         background-size: 100% 100%;
         background-repeat: no-repeat;
-        position: relative;
+        position: absolute;
+        top:0;
+        width: -webkit-fill-available;
+        height:100%;
+        margin-left: 0.4px;
     }
 
     .dispencer {
@@ -45,6 +48,7 @@
         height: inherit;
         width: inherit;
         object-fit: cover;
+        width:100%
     }
 </style>
 

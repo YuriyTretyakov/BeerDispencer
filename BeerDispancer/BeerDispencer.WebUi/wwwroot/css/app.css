@@ -8,7 +8,7 @@
 }
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: cursive;
 }
 
 h1:focus {
@@ -31,6 +31,10 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+}
+
+#contentarea {
+    padding-left: 0rem !important
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -137,6 +141,13 @@ a, .btn-link {
     to {
         transform: rotate(360deg);
     }
+}
+
+#welcomer {
+    position: absolute;
+    top: 0;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
 }
 
 #cover-spin::after {
