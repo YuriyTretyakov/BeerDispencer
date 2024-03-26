@@ -15,9 +15,19 @@ using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-          
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+if (builder.Environment.EnvironmentName.Equals("development", StringComparison.CurrentCultureIgnoreCase))
+{
+    builder.Configuration.AddUserSecrets("3461e225-0b6b-4585-862c-3e5883ee9803");
+}
+else if (builder.Environment.EnvironmentName.Equals("azuredev", StringComparison.CurrentCultureIgnoreCase))
+{
+    builder.Configuration.AddUserSecrets("3461e225-0b6b-4585-862c-3e5883ee9802");
+}
+
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(builder.Configuration));
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
@@ -89,7 +99,6 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 });
 
 await app.UseMessaging();
-
 
 app.Run();
 
