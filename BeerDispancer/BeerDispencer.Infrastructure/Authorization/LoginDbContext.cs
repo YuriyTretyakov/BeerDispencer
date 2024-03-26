@@ -19,9 +19,16 @@ namespace BeerDispenser.Infrastructure.Authorization
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionStr = _loginDBSettings.ConnectionString;
-            optionsBuilder.UseSqlServer(connectionStr, x => x.EnableRetryOnFailure());
+            if (_loginDBSettings.UseInMemory)
+            {
+                optionsBuilder.UseInMemoryDatabase(databaseName: "logindb");
+            }
+            else
+            {
+                var connectionstr = _loginDBSettings.ConnectionString;
+                optionsBuilder.UseSqlServer(connectionstr, x => x.EnableRetryOnFailure());
 
+            }
         }
     }
 }

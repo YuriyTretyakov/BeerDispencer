@@ -1,4 +1,5 @@
 ﻿using BeerDispencer.Infrastructure.Persistence.Entities;
+using BeerDispenser.Infrastructure.Authorization;
 using BeerDispenser.Infrastructure.Persistence.Abstractions;
 using BeerDispenser.Infrastructure.Persistence.Entities;
 using BeerDispenser.Infrastructure.Settings;
@@ -26,9 +27,15 @@ namespace BeerDispenser.Infrastructure.Persistence.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionStr = _dbSettings.ConnectionString;
-            optionsBuilder.UseSqlServer(connectionStr);
-
+            if (_dbSettings.UseInMemory)
+            {
+                optionsBuilder.UseInMemoryDatabase(databaseName: "logindb");
+            }
+            else
+            {
+                var connectionStr = _dbSettings.ConnectionString;
+                optionsBuilder.UseSqlServer(connectionStr);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
