@@ -8,7 +8,7 @@
 }
 
 html, body {
-    font-family: cursive;
+    
 }
 
 h1:focus {
@@ -149,6 +149,7 @@ a, .btn-link {
     width: -webkit-fill-available;
     height: -webkit-fill-available;
 }
+
 
 #cover-spin::after {
     content: '';

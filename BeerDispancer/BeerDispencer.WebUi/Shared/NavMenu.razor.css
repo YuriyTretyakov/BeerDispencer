@@ -8,6 +8,7 @@
 }
 
 .navbar-brand {
+    font-family: cursive;
     font-size: 1.6rem;
 }
 
@@ -19,6 +20,7 @@
 }
 
 .nav-item {
+    font-family: cursive;
     font-size: 1.5rem;
     padding-bottom: 2.5rem;
 }
