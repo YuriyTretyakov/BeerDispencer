@@ -12,12 +12,12 @@ using Serilog;
 using BeerDispenser.WebApi.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Stripe;
-using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 if (builder.Environment.EnvironmentName.Equals("development", StringComparison.CurrentCultureIgnoreCase))
 {
@@ -99,19 +99,6 @@ app.MapHealthChecks("/live", new HealthCheckOptions
 });
 
 await app.UseMessaging();
-
-Console.WriteLine(Environment.GetEnvironmentVariables());
-
-var logger = app.Services
-    .GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
-
-logger.LogInformation("Environment: {n}", app.Environment.EnvironmentName);
-
-var configService = app.Services.GetRequiredService<IConfiguration>();
-
-logger.LogInformation("Vars ={@vars}", configService.AsEnumerable());
-  
-
 
 app.Run();
 
