@@ -5,13 +5,31 @@
 @inject TimeZoneService TimeZoneService
 @inject AccountService accountService; 
  
+<style>
+  /*   .sidebar{
+        display:none;
+    }
 
-<PageTitle>Index</PageTitle>
+    #contentarea{
+        display:none;
+    }
+
+    .top-row{
+        display: none;
+    } */
+
+    .#welcomer{
+        display:block;
+    }
+</style>
 
 
-<RadzenText Style="margin-bottom:50px" TextStyle="TextStyle.H5" TagName="TagName.H5" TextAlign="TextAlign.Center">@welcomeMessage</RadzenText>
-<RadzenImage id="welcomer" Path="images/ugly-coyote-intro.jpg" Style="display:block background-size: 100%;" />
+<PageTitle>Home</PageTitle>
 
+
+<p id="welcome-text">@welcomeMessage</p>
+<RadzenImage id="welcome" Path="images/ugly-coyote-intro.jpg" Style="display:block background-size: 100%;" />
+ 
 
 @code {
     [CascadingParameter]
@@ -23,14 +41,16 @@
 
     protected override Task OnInitializedAsync()
     {
+        welcomeMessage = @"Welcome to Ugly Coyote, 
+where every pour tells a story. Step into our digital tavern, 
+where craft brews meet unrivaled ambiance. 
+Join us in celebrating the art of brewing with a 
+virtual toast to unforgettable experiences.";
 
+         
         if (@accountService.IsLoggedIn)
         {
-            welcomeMessage = $"Welcome back to ye Ugly Coyote, {@accountService.UserName}";
-        }
-        else
-        {
-            welcomeMessage = $"Welcome to ye Ugly Coyote, stranger. You have to sign in";
+          
         }
         return Task.CompletedTask;
     }

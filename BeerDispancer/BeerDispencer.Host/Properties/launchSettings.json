@@ -14,7 +14,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5268",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "azuredev"
+        "ASPNETCORE_ENVIRONMENT": "development"
       },
       "dotnetRunMessages": true
     }
